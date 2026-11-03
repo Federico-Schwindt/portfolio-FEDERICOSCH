@@ -55,7 +55,7 @@ Placeholder covers and the Open Graph image were generated with `npm run covers`
 A GitHub Actions workflow (`.github/workflows/deploy.yml`) builds and publishes to **GitHub Pages** on every push to `main`.
 
 1. In the repository go to **Settings → Pages** and set *Source* to **GitHub Actions**.
-2. Push to `main`. The site will be live at `https://<user>.github.io/portfolio-federicosch/`.
+2. Push to `main`. The site will be live at `https://federico-schwindt.github.io/portfolio-FEDERICOSCH/`.
 
 Using a custom domain? Remove the `BASE_PATH` env from the workflow (so the base path is `/`) and add a `public/CNAME` file with your domain.
 

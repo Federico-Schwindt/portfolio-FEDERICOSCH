@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from '../lib/gsap'
 import { useIsTouch } from '../lib/hooks'
+import { useStore } from '../lib/store'
 
 export function Cursor() {
   const touch = useIsTouch()
@@ -29,15 +30,25 @@ export function Cursor() {
     }
     const over = (e: PointerEvent) => {
       const t = (e.target as HTMLElement | null)?.closest<HTMLElement>('a, button, [data-cursor]')
-      const mode = t ? (t.dataset.cursor ?? 'link') : ''
+      const mode = t ? (t.dataset.cursor ?? 'link') : useStore.getState().hoverView ? 'view' : ''
       ring.current!.dataset.mode = mode
-      if (label.current) label.current.textContent = t?.dataset.cursorLabel ?? (mode === 'view' ? 'View' : '')
+      if (label.current) label.current.textContent = t?.dataset.cursorLabel ?? (mode === 'view' ? (t ? 'View' : 'Open') : '')
     }
     const down = () => ring.current!.classList.add('is-down')
     const up = () => ring.current!.classList.remove('is-down')
     const leave = () => gsap.to([dot.current, ring.current], { opacity: 0, duration: 0.3 })
     const enter = () => gsap.to([dot.current, ring.current], { opacity: 1, duration: 0.3 })
 
+    const unsub = useStore.subscribe((s) => {
+      if (!ring.current || !label.current) return
+      if (s.hoverView) {
+        ring.current.dataset.mode = 'view'
+        label.current.textContent = 'Open'
+      } else if (ring.current.dataset.mode === 'view' && label.current.textContent === 'Open') {
+        ring.current.dataset.mode = ''
+        label.current.textContent = ''
+      }
+    })
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerover', over, { passive: true })
     window.addEventListener('pointerdown', down)
@@ -45,6 +56,7 @@ export function Cursor() {
     document.documentElement.addEventListener('mouseleave', leave)
     document.documentElement.addEventListener('mouseenter', enter)
     return () => {
+      unsub()
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerover', over)
       window.removeEventListener('pointerdown', down)

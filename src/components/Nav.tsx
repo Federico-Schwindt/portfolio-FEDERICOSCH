@@ -1,20 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router'
 import type Lenis from 'lenis'
 import { gsap } from '../lib/gsap'
-import { useStore } from '../lib/store'
-import { site } from '../content'
+import { journeyProgress, useStore } from '../lib/store'
+import { chapters, nav, site } from '../content'
 import { SoundToggle } from './SoundToggle'
-import { SECTION_ORDER, useActiveSection } from '../lib/useActiveSection'
+import { TLink } from './TLink'
+
+const CHAPTER_AT = [0, 0.13, 0.3, 0.49, 0.78, 0.93]
 
 function useLocalTime() {
   const [time, setTime] = useState('')
   useEffect(() => {
-    const fmt = new Intl.DateTimeFormat('en-GB', {
-      timeZone: site.timeZone,
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })
+    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: site.timeZone, hour: '2-digit', minute: '2-digit', hour12: false })
     const tick = () => setTime(fmt.format(new Date()))
     tick()
     const id = window.setInterval(tick, 10000)
@@ -28,10 +26,11 @@ export function Nav() {
   const menuOpen = useStore((s) => s.menuOpen)
   const setMenu = useStore((s) => s.setMenu)
   const lenis = useStore((s) => s.lenis)
+  const { pathname } = useLocation()
+  const home = pathname === '/'
   const ref = useRef<HTMLElement>(null)
+  const chapter = useRef<HTMLSpanElement>(null)
   const time = useLocalTime()
-  const active = useActiveSection()
-  const idx = Math.max(SECTION_ORDER.indexOf(active), 0)
 
   useEffect(() => {
     if (!entered || !ref.current) return
@@ -47,26 +46,41 @@ export function Nav() {
     return () => lenis.off('scroll', onScroll)
   }, [lenis, menuOpen])
 
-  const toTop = (e: React.MouseEvent) => {
-    e.preventDefault()
-    setMenu(false)
-    lenis?.scrollTo(0, { duration: 1.6 })
-  }
+  useEffect(() => {
+    if (!home) return
+    let last = -1
+    const tick = () => {
+      const p = journeyProgress()
+      let i = 0
+      while (i < CHAPTER_AT.length - 1 && p >= CHAPTER_AT[i + 1]) i++
+      if (i !== last && chapter.current) {
+        last = i
+        chapter.current.textContent = `${String(i).padStart(2, '0')} / ${String(chapters.length - 1).padStart(2, '0')} — ${chapters[i].label}`
+      }
+    }
+    gsap.ticker.add(tick)
+    return () => gsap.ticker.remove(tick)
+  }, [home])
 
   return (
     <header className={`nav ${menuOpen ? 'is-light' : ''}`} ref={ref}>
-      <a href="#top" className="nav__logo" onClick={toTop} aria-label="Back to top">
+      <TLink to="/" className="nav__logo" onClick={() => setMenu(false)}>
         {site.firstName} <span>{site.lastName}</span>
-      </a>
+      </TLink>
       <div className="nav__center label">
         <span className="nav__time">
           {site.location} — {time}
         </span>
-        <span className="nav__chapter">
-          {String(idx).padStart(2, '0')} / {String(SECTION_ORDER.length - 1).padStart(2, '0')}
-        </span>
+        {home ? <span className="nav__chapter" ref={chapter}>00 / 05 — Intro</span> : <span className="nav__chapter">{pathname.replace('/', '').split('/')[0] || 'home'}</span>}
       </div>
       <div className="nav__right">
+        <nav className="nav__links label" aria-label="Primary">
+          {nav.map((n) => (
+            <TLink key={n.href} to={n.href} className={pathname.startsWith(n.href) ? 'is-active' : ''}>
+              {n.label}
+            </TLink>
+          ))}
+        </nav>
         <SoundToggle />
         <button className="nav__menu label" onClick={() => setMenu(!menuOpen)} aria-expanded={menuOpen} data-cursor="link">
           <i />

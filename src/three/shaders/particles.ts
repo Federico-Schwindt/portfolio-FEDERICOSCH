@@ -11,16 +11,15 @@ varying float vAlpha;
 
 void main() {
   vec3 p = position;
-  float range = 22.0;
-  p.y = mod(p.y + uTime * aSpeed * 0.12 + uScroll * (0.6 + aSpeed * 0.8) + range * 0.5, range) - range * 0.5;
-  p.x += sin(uTime * 0.25 + aOffset) * 0.25;
+  p.y += sin(uTime * 0.12 * aSpeed + aOffset) * 0.6;
+  p.x += sin(uTime * 0.2 + aOffset) * 0.3;
   p.xy += uParallax * (0.25 + aScale * 0.6);
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   float depth = -mv.z;
-  gl_PointSize = aScale * uSize * uPixelRatio * (10.0 / depth);
+  gl_PointSize = aScale * uSize * uPixelRatio * (10.0 / max(depth, 0.5));
   gl_Position = projectionMatrix * mv;
   float twinkle = 0.6 + 0.4 * sin(uTime * (0.8 + aSpeed) + aOffset * 7.0);
-  vAlpha = smoothstep(26.0, 8.0, depth) * twinkle;
+  vAlpha = smoothstep(40.0, 6.0, depth) * smoothstep(0.3, 2.0, depth) * twinkle;
 }
 `
 

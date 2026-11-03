@@ -1,7 +1,7 @@
 /**
- * Generates placeholder project covers (public/work/*.jpg) and the OG image
- * (public/og.jpg) by rendering HTML compositions with Playwright.
- *   npm run covers
+ * Generates placeholder project covers (public/work/*.jpg) for projects without
+ * screenshots, plus the Open Graph image (public/og.jpg), by rendering HTML
+ * compositions with Playwright.   npm run covers
  */
 import { createRequire } from 'node:module'
 import { readFileSync, mkdirSync } from 'node:fs'
@@ -27,59 +27,52 @@ const fonts = `
 @font-face{font-family:'Serif';src:url(data:font/woff2;base64,${serif}) format('woff2');font-style:italic}
 @font-face{font-family:'Grotesk';src:url(data:font/woff2;base64,${grotesk}) format('woff2');font-weight:300 700}
 `
-
-const grain = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:absolute;inset:0;opacity:.18;mix-blend-mode:overlay"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`
+const grain = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:absolute;inset:0;opacity:.16;mix-blend-mode:overlay"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`
 
 const covers = [
-  { file: '01.jpg', word: 'AURORA', sub: 'Creative studio — brand & website', c1: '#120f33', c2: '#5b4bff', c3: '#ff7ad9', ink: '#f4f2ff', shape: 'orb' },
-  { file: '02.jpg', word: 'NORDIC', sub: 'Specialty coffee — e-commerce', c1: '#1b110b', c2: '#d9a066', c3: '#f3e2c7', ink: '#f8efe2', shape: 'arc' },
-  { file: '03.jpg', word: 'VELA', sub: 'Fintech — product & dashboard', c1: '#04100c', c2: '#19c37d', c3: '#0b3b2a', ink: '#e6fff4', shape: 'grid' },
-  { file: '04.jpg', word: 'KŌYŌ', sub: 'Boutique hotel — website & identity', c1: '#1e0a05', c2: '#e8663d', c3: '#f6c9a0', ink: '#fff2e6', shape: 'sun' },
-  { file: '05.jpg', word: 'PULSE', sub: 'Fitness — campaign & landing', c1: '#120206', c2: '#ff3b5c', c3: '#4a0a18', ink: '#ffffff', shape: 'bars' },
-  { file: '06.jpg', word: 'ORBIT', sub: 'Agency — motion & 3D', c1: '#0a0b06', c2: '#c8ff3b', c3: '#2d3a0c', ink: '#f4ffd6', shape: 'rings' },
+  {
+    file: 'havat-aliza.jpg', word: 'HAVAT ALIZA', sub: 'Horse riding · family business · Israel', c1: '#1a120a', c2: '#8c6a3f', c3: '#e8d3b0', ink: '#f8efe2',
+    art: `<div style="position:absolute;left:-20%;bottom:-60%;width:120%;aspect-ratio:1;border-radius:50%;border:140px solid #8c6a3f;opacity:.75"></div>
+          <div style="position:absolute;right:10%;top:12%;width:26%;aspect-ratio:1;border-radius:50%;background:#e8d3b0;opacity:.9"></div>`,
+  },
+  {
+    file: 'dogstore.jpg', word: 'DOGSTORE', sub: 'Premium dog food & vet supplies · WooCommerce', c1: '#0a1030', c2: '#4a6fff', c3: '#dfe6ff', ink: '#f2f5ff',
+    art: `<div style="position:absolute;right:12%;top:16%;width:30%;aspect-ratio:1;display:grid;grid-template-columns:1fr 1fr;gap:6%;transform:rotate(-18deg)">
+            ${[0, 1, 2, 3].map((i) => `<div style="width:60%;aspect-ratio:1;border-radius:50%;background:#dfe6ff;justify-self:${i % 2 ? 'start' : 'end'};align-self:${i < 2 ? 'end' : 'start'}"></div>`).join('')}
+          </div>
+          <div style="position:absolute;right:16%;top:40%;width:24%;aspect-ratio:1.2;border-radius:50% 50% 45% 45%;background:#dfe6ff;transform:rotate(-18deg)"></div>
+          <div style="position:absolute;inset:0;background:radial-gradient(circle at 20% 90%,#4a6fff55,transparent 50%)"></div>`,
+  },
+  {
+    file: 'reel.jpg', word: 'MOTION REEL', sub: 'Services · stack · achievements in 60 seconds', c1: '#070707', c2: '#ff2b2b', c3: '#2a0a0a', ink: '#ffffff',
+    art: `<div style="position:absolute;left:0;right:0;top:8%;height:12%;background:repeating-linear-gradient(90deg,#1a1a1a 0 60px,#0d0d0d 60px 80px);border-top:3px solid #222;border-bottom:3px solid #222"></div>
+          <div style="position:absolute;left:0;right:0;bottom:30%;height:12%;background:repeating-linear-gradient(90deg,#1a1a1a 0 60px,#0d0d0d 60px 80px);border-top:3px solid #222;border-bottom:3px solid #222"></div>
+          <div style="position:absolute;right:10%;top:28%;width:0;height:0;border-left:170px solid #ff2b2b;border-top:110px solid transparent;border-bottom:110px solid transparent;filter:drop-shadow(0 0 60px #ff2b2b88)"></div>`,
+  },
 ]
 
-function shape(kind, c2, c3, ink) {
-  switch (kind) {
-    case 'orb':
-      return `<div style="position:absolute;right:-10%;top:-20%;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 35%,${c3},${c2} 45%,transparent 72%);filter:blur(2px)"></div>`
-    case 'arc':
-      return `<div style="position:absolute;left:-30%;bottom:-70%;width:120%;aspect-ratio:1;border-radius:50%;border:120px solid ${c2};opacity:.9"></div>`
-    case 'grid':
-      return `<div style="position:absolute;inset:0;background-image:linear-gradient(${c2}33 1px,transparent 1px),linear-gradient(90deg,${c2}33 1px,transparent 1px);background-size:70px 70px"></div><div style="position:absolute;left:12%;top:20%;width:46%;height:52%;border:2px solid ${c2};border-radius:24px;background:${c3}66"></div><div style="position:absolute;left:18%;top:28%;width:34%;height:3px;background:${c2}"></div><div style="position:absolute;left:18%;top:36%;width:22%;height:3px;background:${c2}99"></div>`
-    case 'sun':
-      return `<div style="position:absolute;right:8%;top:14%;width:34%;aspect-ratio:1;border-radius:50%;background:${c2}"></div><div style="position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(180deg,transparent,${c3}55)"></div>`
-    case 'bars':
-      return `<div style="position:absolute;inset:0;display:flex;align-items:flex-end;gap:2%;padding:0 8%">${[40, 65, 30, 85, 55, 95, 45, 70].map((h) => `<div style="flex:1;height:${h}%;background:linear-gradient(180deg,${c2},${c3});border-radius:12px 12px 0 0;opacity:.85"></div>`).join('')}</div>`
-    case 'rings':
-      return [1.2, 0.9, 0.6, 0.3].map((s, i) => `<div style="position:absolute;left:50%;top:50%;width:${s * 90}%;aspect-ratio:1;border-radius:50%;border:${3 + i * 2}px solid ${c2};opacity:${0.25 + i * 0.2};transform:translate(-50%,-50%) rotateX(${60 + i * 6}deg)"></div>`).join('') + `<div style="position:absolute;left:50%;top:50%;width:16%;aspect-ratio:1;border-radius:50%;background:${ink};transform:translate(-50%,-50%);box-shadow:0 0 120px ${c2}"></div>`
-    default:
-      return ''
-  }
-}
-
-function cover({ word, sub, c1, c2, c3, ink, shape: kind }) {
+function cover({ word, sub, c1, c2, c3, ink, art }) {
   return `<!doctype html><html><head><style>${fonts}
-  html,body{margin:0;width:1400px;height:1050px;overflow:hidden;background:${c1};color:${ink};font-family:Grotesk}
-  .bg{position:absolute;inset:0;background:radial-gradient(circle at 20% 80%,${c3}44,transparent 50%),radial-gradient(circle at 80% 20%,${c2}33,transparent 50%)}
-  .word{position:absolute;left:64px;bottom:120px;font-family:Syne;font-weight:800;font-size:170px;letter-spacing:-.06em;line-height:.8}
-  .sub{position:absolute;left:64px;bottom:72px;font-size:22px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
-  .tag{position:absolute;left:64px;top:64px;font-size:20px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
-  .yr{position:absolute;right:64px;top:64px;font-family:Serif;font-style:italic;font-size:44px;opacity:.9}
-  </style></head><body><div class="bg"></div>${shape(kind, c2, c3, ink)}
-  <div class="tag">Case study</div><div class="yr">Concept</div>
+  html,body{margin:0;width:1440px;height:900px;overflow:hidden;background:${c1};color:${ink};font-family:Grotesk}
+  .bg{position:absolute;inset:0;background:radial-gradient(circle at 20% 80%,${c3}33,transparent 50%),radial-gradient(circle at 80% 20%,${c2}33,transparent 50%)}
+  .word{position:absolute;left:64px;bottom:110px;font-family:Syne;font-weight:800;font-size:150px;letter-spacing:-.06em;line-height:.8;white-space:nowrap}
+  .sub{position:absolute;left:64px;bottom:64px;font-size:20px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+  .tag{position:absolute;left:64px;top:56px;font-size:18px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+  .yr{position:absolute;right:64px;top:50px;font-family:Serif;font-style:italic;font-size:40px;opacity:.9}
+  </style></head><body><div class="bg"></div>${art}
+  <div class="tag">Case study</div><div class="yr">Zyneteq</div>
   <div class="word">${word}</div><div class="sub">${sub}</div>${grain}</body></html>`
 }
 
 function og() {
   return `<!doctype html><html><head><style>${fonts}
-  html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#09090b;color:#ecebe6;font-family:Grotesk}
-  .bg{position:absolute;inset:0;background:radial-gradient(circle at 85% 50%,#5b4bff44,transparent 45%),radial-gradient(circle at 70% 60%,#c8ff3b22,transparent 40%)}
-  .orb{position:absolute;right:90px;top:50%;width:360px;height:360px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 35% 35%,#8d85ff,#2a2258 55%,#09090b 75%);box-shadow:0 0 140px #5b4bff55}
-  .ring{position:absolute;right:50px;top:50%;width:440px;height:440px;border-radius:50%;border:1px solid #c8ff3b99;transform:translateY(-50%) rotateX(65deg)}
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden;background:#060606;color:#f2efe9;font-family:Grotesk}
+  .bg{position:absolute;inset:0;background:radial-gradient(circle at 85% 50%,#ff2b2b44,transparent 45%),radial-gradient(circle at 70% 60%,#ff2b2b22,transparent 40%)}
+  .orb{position:absolute;right:90px;top:50%;width:360px;height:360px;border-radius:50%;transform:translateY(-50%);background:radial-gradient(circle at 35% 35%,#ff6b6b,#5a0b0b 55%,#060606 75%);box-shadow:0 0 140px #ff2b2b55}
+  .ring{position:absolute;right:50px;top:50%;width:440px;height:440px;border-radius:50%;border:1px solid #ff2b2b99;transform:translateY(-50%) rotateX(65deg)}
   .name{position:absolute;left:72px;top:150px;font-family:Syne;font-weight:800;font-size:112px;letter-spacing:-.05em;line-height:.84;text-transform:uppercase}
   .tag{position:absolute;left:72px;top:72px;font-size:18px;letter-spacing:.2em;text-transform:uppercase;opacity:.65}
-  .sub{position:absolute;left:72px;bottom:72px;font-family:Serif;font-style:italic;font-size:40px;color:#c8ff3b}
+  .sub{position:absolute;left:72px;bottom:72px;font-family:Serif;font-style:italic;font-size:40px;color:#ff2b2b}
   </style></head><body><div class="bg"></div><div class="orb"></div><div class="ring"></div>
   <div class="tag">Portfolio — Website Development, Design &amp; Marketing</div>
   <div class="name">Federico<br>Schwindt</div>
@@ -87,7 +80,7 @@ function og() {
 }
 
 const browser = await chromium.launch()
-const page = await browser.newPage({ viewport: { width: 1400, height: 1050 }, deviceScaleFactor: 1 })
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 })
 for (const c of covers) {
   await page.setContent(cover(c), { waitUntil: 'load' })
   await page.evaluate(() => document.fonts.ready)

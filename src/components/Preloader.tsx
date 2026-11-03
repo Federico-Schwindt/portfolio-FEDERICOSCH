@@ -1,22 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router'
 import { gsap } from '../lib/gsap'
 import { useStore } from '../lib/store'
 import { ambient } from '../lib/audio'
 import { site } from '../content'
+import { DRAGON_MODEL } from '../three/config'
 
 const STATUS: [number, string][] = [
   [0, 'Loading the experience'],
-  [30, 'Compiling shaders'],
-  [60, 'Tuning frequencies'],
-  [85, 'Almost there'],
+  [25, 'Waking the dragon'],
+  [50, 'Compiling shaders'],
+  [72, 'Tuning frequencies'],
+  [90, 'Almost there'],
 ]
 
 export function Preloader() {
   const sceneReady = useStore((s) => s.sceneReady)
+  const characterReady = useStore((s) => s.characterReady)
+  const dragonReady = useStore((s) => s.dragonReady)
   const lenis = useStore((s) => s.lenis)
   const setEntered = useStore((s) => s.setEntered)
   const setSound = useStore((s) => s.setSound)
   const setLoaded = useStore((s) => s.setLoaded)
+  const { pathname } = useLocation()
+  const home = pathname === '/'
 
   const [count, setCount] = useState(0)
   const [fonts, setFonts] = useState(false)
@@ -24,7 +31,8 @@ export function Preloader() {
   const [gone, setGone] = useState(false)
   const root = useRef<HTMLDivElement>(null)
 
-  const ready = count >= 100 && fonts && (sceneReady || fallback)
+  const assets = !home || (characterReady && (!DRAGON_MODEL || dragonReady))
+  const ready = count >= 100 && fonts && ((sceneReady && assets) || fallback)
 
   useEffect(() => {
     lenis?.stop()
@@ -32,17 +40,12 @@ export function Preloader() {
 
   useEffect(() => {
     const obj = { v: 0 }
-    const tw = gsap.to(obj, {
-      v: 100,
-      duration: 2.8,
-      ease: 'power2.inOut',
-      onUpdate: () => setCount(Math.round(obj.v)),
-    })
+    const tw = gsap.to(obj, { v: 100, duration: 3, ease: 'power2.inOut', onUpdate: () => setCount(Math.round(obj.v)) })
     let cancelled = false
     void document.fonts.ready.then(() => {
       if (!cancelled) setFonts(true)
     })
-    const t = window.setTimeout(() => setFallback(true), 6000)
+    const t = window.setTimeout(() => setFallback(true), 12000)
     return () => {
       cancelled = true
       tw.kill()
@@ -80,7 +83,6 @@ export function Preloader() {
           <span>{site.name}</span>
           <span>Portfolio ©{site.year}</span>
         </div>
-
         <div className="preloader__center">
           {!ready ? (
             <p className="preloader__status" key={status}>
@@ -88,7 +90,7 @@ export function Preloader() {
             </p>
           ) : (
             <div className="preloader__enter">
-              <p className="label">This site has a generative soundtrack</p>
+              <p className="label">Best with headphones — generative soundtrack</p>
               <div className="preloader__buttons">
                 <button className="btn" onClick={() => enter(true)} data-cursor="link">
                   Enter with sound
@@ -100,7 +102,6 @@ export function Preloader() {
             </div>
           )}
         </div>
-
         <div className="preloader__bottom">
           <div className="preloader__count" aria-live="polite">
             {count}

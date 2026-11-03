@@ -1,18 +1,27 @@
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { blobFragment, blobVertex } from './shaders/blob'
 import { ambient } from '../lib/audio'
 import { pointer } from '../lib/store'
-import { sceneTarget } from './keyframes'
+import { RED } from './config'
 
-type Props = { detail: number }
+type Props = {
+  position?: [number, number, number]
+  scale?: number
+  amp?: number
+  freq?: number
+  speed?: number
+  detail?: number
+  reactive?: boolean
+  mouse?: boolean
+  paramsRef?: { current: { amp: number; freq: number; speed: number } }
+}
 
-export function Blob({ detail }: Props) {
+export function Blob({ position = [0, 0, 0], scale = 1, amp = 0.3, freq = 1.1, speed = 0.35, detail = 64, reactive = true, mouse = false, paramsRef }: Props) {
   const mesh = useRef<THREE.Mesh>(null)
   const group = useRef<THREE.Group>(null)
-  const { viewport } = useThree()
 
   const geometry = useMemo(() => {
     const g = new THREE.IcosahedronGeometry(1, detail)
@@ -29,55 +38,46 @@ export function Blob({ detail }: Props) {
         fragmentShader: blobFragment,
         uniforms: {
           uTime: { value: 0 },
-          uAmp: { value: 0.3 },
-          uFreq: { value: 1.1 },
-          uSpeed: { value: 0.35 },
+          uAmp: { value: amp },
+          uFreq: { value: freq },
+          uSpeed: { value: speed },
           uAudio: { value: 0 },
-          uBase: { value: new THREE.Color('#141220') },
-          uAccent: { value: new THREE.Color('#c8ff3b') },
-          uGlow: { value: new THREE.Color('#5b4bff') },
+          uBase: { value: new THREE.Color('#120909') },
+          uAccent: { value: new THREE.Color(RED) },
+          uGlow: { value: new THREE.Color('#ffffff') },
         },
       }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 
-  const smooth = useRef({ x: 0, y: 0, s: 1, amp: 0.3, freq: 1.1, mx: 0, my: 0, speed: 0 })
+  const smooth = useRef({ mx: 0, my: 0, s: scale, pulse: 0 })
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05)
-    const t = sceneTarget.current
     const s = smooth.current
-    const k = 1 - Math.pow(0.001, dt) // frame-rate independent lerp (~fast)
-    const kSlow = 1 - Math.pow(0.02, dt)
+    const k = 1 - Math.pow(0.001, dt)
+    s.mx += (pointer.x - s.mx) * k * 0.5
+    s.my += (pointer.y - s.my) * k * 0.5
 
-    // viewport in world units at z=0
-    const halfW = viewport.width / 2
-    const halfH = viewport.height / 2
-    const base = Math.min(halfW * 0.78, halfH * 0.62)
+    const audio = reactive ? ambient.level() : 0
+    const pulse = reactive ? ambient.pulse() : 0
+    s.pulse += (pulse - s.pulse) * 0.3
 
-    s.x += (t.x * halfW * 0.82 - s.x) * kSlow
-    s.y += (t.y * halfH * 0.78 - s.y) * kSlow
-    s.s += (t.s * base - s.s) * kSlow
-    s.amp += (t.amp - s.amp) * kSlow
-    s.freq += (t.freq - s.freq) * kSlow
-    s.mx += (pointer.x - s.mx) * k * 0.6
-    s.my += (pointer.y - s.my) * k * 0.6
-    s.speed += (pointer.speed - s.speed) * 0.08
-
-    const audio = ambient.level()
     const g = group.current!
-    g.position.set(s.x + s.mx * 0.25, s.y + s.my * 0.2, 0)
-    g.scale.setScalar(s.s)
+    g.position.set(position[0] + (mouse ? s.mx * 0.3 : 0), position[1] + (mouse ? s.my * 0.2 : 0), position[2])
+    g.scale.setScalar(scale * (1 + s.pulse * 0.06))
 
     const m = mesh.current!
     m.rotation.y += dt * 0.12
-    m.rotation.x = Math.sin(state.clock.elapsedTime * 0.15) * 0.25 + s.my * 0.2
-    m.rotation.z = s.mx * 0.15
+    m.rotation.x = Math.sin(state.clock.elapsedTime * 0.15) * 0.25 + (mouse ? s.my * 0.2 : 0)
 
+    const p = paramsRef?.current
     const u = material.uniforms
     u.uTime.value = state.clock.elapsedTime
-    u.uAmp.value = s.amp + s.speed * 0.08 + audio * 0.22
-    u.uFreq.value = s.freq
+    u.uAmp.value = (p ? p.amp : amp) + audio * 0.2 + s.pulse * 0.12 + (mouse ? pointer.speed * 0.05 : 0)
+    u.uFreq.value = p ? p.freq : freq
+    u.uSpeed.value = p ? p.speed : speed
     u.uAudio.value = audio
   })
 

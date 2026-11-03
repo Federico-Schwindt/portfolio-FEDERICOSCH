@@ -1,65 +1,74 @@
 /**
- * Generative ambient soundtrack — no audio files, no copyright.
- * Everything is synthesised with the Web Audio API: slow pads built from
- * detuned oscillators, a sub drone, a breathing noise bed, sparse "shimmer"
- * notes, feedback delay and a procedurally generated reverb.
+ * Generative soundtrack v2 — no audio files, no copyright.
+ *
+ * A tempo-synced, chord-driven piece at 84 BPM in D minor:
+ *  - slow analogue-style pads (detuned saws, breathing filters)
+ *  - sub bass locked to the chord root with a heartbeat rhythm
+ *  - a probabilistic 16th-note pluck arpeggio through dotted-eighth delay
+ *  - soft kick, hats, sparse bell shimmers and a riser before each cycle
+ *  - feedback delay + procedurally generated reverb + compressor
+ * Everything is scheduled with a look-ahead scheduler on the Web Audio clock.
  */
+
+const BPM = 84
+const STEP = 60 / BPM / 4 // one 16th note in seconds
+const BARS_PER_CHORD = 4
+const STEPS_PER_BAR = 16
 
 const mtof = (m: number) => 440 * Math.pow(2, (m - 69) / 12)
 
-// Chord voicings (MIDI) in D minor — dreamy, cinematic.
-const CHORDS: number[][] = [
+// Voicings (MIDI). First note is the root.
+const PROG: number[][] = [
   [38, 53, 57, 60, 64], // Dm9
-  [46, 53, 57, 60, 65], // Bbmaj7(add4)
+  [46, 53, 57, 60, 65], // Bbmaj7(add11)
   [41, 52, 57, 60, 64], // Fmaj9
-  [43, 50, 58, 62, 65], // Gm9
   [36, 52, 55, 59, 62], // Cmaj9
+  [43, 50, 58, 62, 65], // Gm9
   [45, 52, 57, 60, 64], // Am7
+  [46, 53, 57, 60, 65], // Bbmaj7
+  [45, 52, 56, 60, 64], // A7(b9-ish) → resolves to Dm
 ]
 
-type Voice = { nodes: AudioNode[]; gain: GainNode; stop: (t: number) => void }
-
-function makeImpulse(ctx: AudioContext, seconds: number, decay: number) {
+function impulse(ctx: AudioContext, seconds: number, decay: number) {
   const rate = ctx.sampleRate
   const len = Math.floor(rate * seconds)
   const buf = ctx.createBuffer(2, len, rate)
   for (let c = 0; c < 2; c++) {
     const d = buf.getChannelData(c)
-    for (let i = 0; i < len; i++) {
-      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay)
-    }
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay)
   }
   return buf
 }
 
-function makeNoise(ctx: AudioContext) {
-  const len = ctx.sampleRate * 2
+function noiseBuffer(ctx: AudioContext, seconds = 2) {
+  const len = Math.floor(ctx.sampleRate * seconds)
   const buf = ctx.createBuffer(1, len, ctx.sampleRate)
   const d = buf.getChannelData(0)
-  let b0 = 0, b1 = 0, b2 = 0
-  for (let i = 0; i < len; i++) {
-    // cheap pink-ish noise
-    const w = Math.random() * 2 - 1
-    b0 = 0.99765 * b0 + w * 0.099046
-    b1 = 0.963 * b1 + w * 0.2965164
-    b2 = 0.57 * b2 + w * 1.0526913
-    d[i] = (b0 + b1 + b2 + w * 0.1848) * 0.12
-  }
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1
   return buf
 }
+
+type PadVoice = { gain: GainNode; stop: (t: number) => void }
 
 class AmbientEngine {
   private ctx: AudioContext | null = null
   private master!: GainNode
   private analyser!: AnalyserNode
-  private bus!: GainNode
+  private comp!: DynamicsCompressorNode
+  private dry!: GainNode
+  private reverbSend!: GainNode
+  private delaySend!: GainNode
+  private noise!: AudioBuffer
   private freq = new Uint8Array(0)
-  private voices: Voice[] = []
-  private chordTimer: number | null = null
-  private shimmerTimer: number | null = null
-  private sub: { osc: OscillatorNode; gain: GainNode } | null = null
-  private chordIndex = 0
+  private pads: PadVoice[] = []
+  private timer: number | null = null
+  private step = 0
+  private nextTime = 0
+  private chordIdx = -1
+  private kicks: number[] = []
   private smoothed = 0
+  private pulseValue = 0
+  private arpPattern: number[] = []
   playing = false
 
   get ready() {
@@ -72,195 +81,331 @@ class AmbientEngine {
     const Ctor = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
     const ctx = new Ctor()
     this.ctx = ctx
+    this.noise = noiseBuffer(ctx)
 
     this.master = ctx.createGain()
     this.master.gain.value = 0
-
     this.analyser = ctx.createAnalyser()
     this.analyser.fftSize = 256
-    this.analyser.smoothingTimeConstant = 0.8
+    this.analyser.smoothingTimeConstant = 0.82
     this.freq = new Uint8Array(this.analyser.frequencyBinCount)
 
-    const comp = ctx.createDynamicsCompressor()
-    comp.threshold.value = -20
-    comp.ratio.value = 4
-    comp.attack.value = 0.02
-    comp.release.value = 0.4
+    this.comp = ctx.createDynamicsCompressor()
+    this.comp.threshold.value = -18
+    this.comp.knee.value = 12
+    this.comp.ratio.value = 4
+    this.comp.attack.value = 0.01
+    this.comp.release.value = 0.25
 
-    this.bus = ctx.createGain()
-    this.bus.gain.value = 1
+    this.dry = ctx.createGain()
+    this.dry.gain.value = 1
 
     // Reverb
     const convolver = ctx.createConvolver()
-    convolver.buffer = makeImpulse(ctx, 6, 2.2)
-    const wet = ctx.createGain()
-    wet.gain.value = 0.6
-    const dry = ctx.createGain()
-    dry.gain.value = 0.55
+    convolver.buffer = impulse(ctx, 4.5, 2.4)
+    this.reverbSend = ctx.createGain()
+    this.reverbSend.gain.value = 1
+    const reverbOut = ctx.createGain()
+    reverbOut.gain.value = 0.55
+    this.reverbSend.connect(convolver).connect(reverbOut).connect(this.comp)
 
-    // Feedback delay
+    // Dotted-eighth feedback delay
     const delay = ctx.createDelay(2)
-    delay.delayTime.value = 0.46
+    delay.delayTime.value = STEP * 3
     const fb = ctx.createGain()
-    fb.gain.value = 0.38
-    const delayLp = ctx.createBiquadFilter()
-    delayLp.type = 'lowpass'
-    delayLp.frequency.value = 1600
-    const delayWet = ctx.createGain()
-    delayWet.gain.value = 0.22
+    fb.gain.value = 0.42
+    const lp = ctx.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.frequency.value = 2200
+    const delayOut = ctx.createGain()
+    delayOut.gain.value = 0.5
+    this.delaySend = ctx.createGain()
+    this.delaySend.connect(delay)
+    delay.connect(lp)
+    lp.connect(fb).connect(delay)
+    lp.connect(delayOut).connect(this.comp)
+    lp.connect(this.reverbSend)
 
-    this.bus.connect(dry).connect(comp)
-    this.bus.connect(convolver).connect(wet).connect(comp)
-    this.bus.connect(delay)
-    delay.connect(delayLp)
-    delayLp.connect(fb).connect(delay)
-    delayLp.connect(delayWet).connect(comp)
-
-    comp.connect(this.master).connect(this.analyser).connect(ctx.destination)
-
-    // Sub drone
-    const subOsc = ctx.createOscillator()
-    subOsc.type = 'sine'
-    subOsc.frequency.value = mtof(CHORDS[0][0] - 12)
-    const subGain = ctx.createGain()
-    subGain.gain.value = 0.16
-    subOsc.connect(subGain).connect(comp)
-    subOsc.start()
-    this.sub = { osc: subOsc, gain: subGain }
-
-    // Noise bed ("air")
-    const noise = ctx.createBufferSource()
-    noise.buffer = makeNoise(ctx)
-    noise.loop = true
-    const bp = ctx.createBiquadFilter()
-    bp.type = 'bandpass'
-    bp.frequency.value = 900
-    bp.Q.value = 0.6
-    const noiseLfo = ctx.createOscillator()
-    noiseLfo.frequency.value = 0.045
-    const noiseLfoGain = ctx.createGain()
-    noiseLfoGain.gain.value = 500
-    noiseLfo.connect(noiseLfoGain).connect(bp.frequency)
-    noiseLfo.start()
-    const noiseGain = ctx.createGain()
-    noiseGain.gain.value = 0.035
-    noise.connect(bp).connect(noiseGain).connect(this.bus)
-    noise.start()
-
-    this.playChord(0)
-    this.scheduleNextChord()
-    this.scheduleShimmer()
+    this.dry.connect(this.comp)
+    this.comp.connect(this.master).connect(this.analyser).connect(ctx.destination)
   }
 
-  private playChord(i: number) {
+  // ── scheduler ────────────────────────────────────────────────
+  private start() {
     const ctx = this.ctx!
-    const now = ctx.currentTime
-    const chord = CHORDS[i % CHORDS.length]
+    this.nextTime = ctx.currentTime + 0.08
+    if (this.timer) return
+    this.timer = window.setInterval(() => this.tick(), 25)
+  }
 
-    // release old voices
-    for (const v of this.voices) {
-      v.gain.gain.cancelScheduledValues(now)
-      v.gain.gain.setValueAtTime(v.gain.gain.value, now)
-      v.gain.gain.linearRampToValueAtTime(0, now + 7)
-      v.stop(now + 7.5)
+  private stop() {
+    if (this.timer) window.clearInterval(this.timer)
+    this.timer = null
+  }
+
+  private tick() {
+    const ctx = this.ctx!
+    while (this.nextTime < ctx.currentTime + 0.15) {
+      this.scheduleStep(this.step, this.nextTime)
+      this.nextTime += STEP
+      this.step++
     }
-    this.voices = []
+  }
+
+  private scheduleStep(step: number, t: number) {
+    const s = step % STEPS_PER_BAR
+    const bar = Math.floor(step / STEPS_PER_BAR)
+    const chordIdx = Math.floor(bar / BARS_PER_CHORD) % PROG.length
+    const chord = PROG[chordIdx]
+    const root = chord[0]
+
+    if (s === 0 && chordIdx !== this.chordIdx) this.playChord(chordIdx, t)
+
+    // Kick: 1 and 3, with a ghost on the "a" of 4 every other bar.
+    if (s === 0 || s === 8) this.kick(t, s === 0 ? 1 : 0.8)
+    if (s === 14 && bar % 2 === 1) this.kick(t, 0.45)
+
+    // Hats: off-beat 16ths with a swing in level.
+    if (s % 2 === 1) this.hat(t, s % 4 === 3 ? 0.5 : 0.3)
+    if (s === 4 || s === 12) this.hat(t, 0.8, 0.09)
+
+    // Sub bass: heartbeat.
+    if (s === 0) this.sub(t, mtof(root - 12), STEP * 7)
+    if (s === 10) this.sub(t, mtof(root - 12), STEP * 2.5, 0.8)
+    if (s === 12 && bar % 4 === 3) this.sub(t, mtof(root - 5), STEP * 3, 0.6)
+
+    // Arpeggio: probabilistic 16ths through the delay.
+    if (this.arpPattern.length) {
+      const dense = bar % 8 >= 2 // first two bars of each cycle stay sparse
+      const prob = dense ? 0.72 : 0.38
+      if (Math.random() < prob) {
+        const note = this.arpPattern[step % this.arpPattern.length]
+        const vel = 0.55 + Math.random() * 0.45 * (s % 4 === 0 ? 1 : 0.7)
+        this.pluck(t, mtof(note), vel)
+      }
+    }
+
+    // Bell shimmer, sparse.
+    if (Math.random() < 0.035) this.bell(t, mtof(chord[1 + Math.floor(Math.random() * 4)] + 24))
+
+    // Riser into the next cycle.
+    if (s === 0 && bar % 8 === 7) this.riser(t, STEP * 16)
+  }
+
+  // ── voices ───────────────────────────────────────────────────
+  private playChord(i: number, t: number) {
+    const ctx = this.ctx!
+    const chord = PROG[i]
+    this.chordIdx = i
+    // arp pattern: up and down through the voicing plus the octave
+    const up = [chord[1], chord[2], chord[3], chord[4], chord[2] + 12, chord[3] + 12]
+    this.arpPattern = [...up, ...up.slice(1, -1).reverse()]
+
+    for (const v of this.pads) {
+      v.gain.gain.cancelScheduledValues(t)
+      v.gain.gain.setValueAtTime(v.gain.gain.value, t)
+      v.gain.gain.linearRampToValueAtTime(0, t + 5)
+      v.stop(t + 5.5)
+    }
+    this.pads = []
 
     chord.forEach((note, idx) => {
       const f = mtof(note)
       const g = ctx.createGain()
-      g.gain.setValueAtTime(0, now)
-      const target = idx === 0 ? 0.05 : 0.038
-      g.gain.linearRampToValueAtTime(target, now + 5 + idx * 0.6)
+      g.gain.setValueAtTime(0, t)
+      g.gain.linearRampToValueAtTime(idx === 0 ? 0.045 : 0.03, t + 3.5 + idx * 0.4)
 
       const filter = ctx.createBiquadFilter()
       filter.type = 'lowpass'
-      filter.frequency.value = 260 + Math.random() * 420 + idx * 80
-      filter.Q.value = 0.8
-
+      filter.frequency.value = 320 + Math.random() * 380 + idx * 60
+      filter.Q.value = 0.9
       const lfo = ctx.createOscillator()
-      lfo.frequency.value = 0.04 + Math.random() * 0.06
+      lfo.frequency.value = 0.05 + Math.random() * 0.05
       const lfoGain = ctx.createGain()
-      lfoGain.gain.value = 180 + Math.random() * 160
+      lfoGain.gain.value = 160 + Math.random() * 140
       lfo.connect(lfoGain).connect(filter.frequency)
-      lfo.start(now)
+      lfo.start(t)
 
       const o1 = ctx.createOscillator()
       o1.type = 'sawtooth'
       o1.frequency.value = f
-      o1.detune.value = -7
+      o1.detune.value = -6
       const o2 = ctx.createOscillator()
       o2.type = 'sawtooth'
       o2.frequency.value = f
-      o2.detune.value = 7
+      o2.detune.value = 6
       const o3 = ctx.createOscillator()
       o3.type = 'triangle'
       o3.frequency.value = f * 2
       const o3g = ctx.createGain()
-      o3g.gain.value = 0.35
-
+      o3g.gain.value = 0.3
       o1.connect(filter)
       o2.connect(filter)
       o3.connect(o3g).connect(filter)
-      filter.connect(g).connect(this.bus)
-      o1.start(now)
-      o2.start(now)
-      o3.start(now)
-
-      this.voices.push({
-        nodes: [o1, o2, o3, lfo, filter],
+      filter.connect(g)
+      g.connect(this.dry)
+      const send = ctx.createGain()
+      send.gain.value = 0.6
+      g.connect(send).connect(this.reverbSend)
+      o1.start(t)
+      o2.start(t)
+      o3.start(t)
+      this.pads.push({
         gain: g,
-        stop: (t) => {
-          o1.stop(t)
-          o2.stop(t)
-          o3.stop(t)
-          lfo.stop(t)
+        stop: (when) => {
+          o1.stop(when)
+          o2.stop(when)
+          o3.stop(when)
+          lfo.stop(when)
         },
       })
     })
-
-    if (this.sub) {
-      this.sub.osc.frequency.cancelScheduledValues(now)
-      this.sub.osc.frequency.setTargetAtTime(mtof(chord[0] - 12), now, 2.5)
-    }
-    this.chordIndex = i
   }
 
-  private scheduleNextChord() {
-    const wait = 11000 + Math.random() * 5000
-    this.chordTimer = window.setTimeout(() => {
-      // mostly move forward, sometimes jump
-      const next = Math.random() < 0.75 ? this.chordIndex + 1 : Math.floor(Math.random() * CHORDS.length)
-      this.playChord(next % CHORDS.length)
-      this.scheduleNextChord()
-    }, wait)
-  }
-
-  private scheduleShimmer() {
-    const wait = 1800 + Math.random() * 4500
-    this.shimmerTimer = window.setTimeout(() => {
-      if (this.playing) this.shimmer()
-      this.scheduleShimmer()
-    }, wait)
-  }
-
-  private shimmer() {
+  private pluck(t: number, f: number, vel: number) {
     const ctx = this.ctx!
-    const now = ctx.currentTime
-    const chord = CHORDS[this.chordIndex % CHORDS.length]
-    const note = chord[1 + Math.floor(Math.random() * (chord.length - 1))] + 24
-    const osc = ctx.createOscillator()
-    osc.type = 'sine'
-    osc.frequency.value = mtof(note)
+    const o1 = ctx.createOscillator()
+    o1.type = 'triangle'
+    o1.frequency.value = f
+    const o2 = ctx.createOscillator()
+    o2.type = 'square'
+    o2.frequency.value = f
+    o2.detune.value = 4
+    const o2g = ctx.createGain()
+    o2g.gain.value = 0.18
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.Q.value = 2
+    filter.frequency.setValueAtTime(600 + 2600 * vel, t)
+    filter.frequency.exponentialRampToValueAtTime(350, t + 0.28)
     const g = ctx.createGain()
-    g.gain.setValueAtTime(0, now)
-    g.gain.linearRampToValueAtTime(0.045, now + 0.03)
-    g.gain.exponentialRampToValueAtTime(0.0001, now + 3.2)
-    osc.connect(g).connect(this.bus)
-    osc.start(now)
-    osc.stop(now + 3.4)
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.07 * vel, t + 0.006)
+    g.gain.exponentialRampToValueAtTime(0.0005, t + 0.42)
+    o1.connect(filter)
+    o2.connect(o2g).connect(filter)
+    filter.connect(g)
+    g.connect(this.dry)
+    const d = ctx.createGain()
+    d.gain.value = 0.55
+    g.connect(d).connect(this.delaySend)
+    const r = ctx.createGain()
+    r.gain.value = 0.35
+    g.connect(r).connect(this.reverbSend)
+    o1.start(t)
+    o2.start(t)
+    o1.stop(t + 0.5)
+    o2.stop(t + 0.5)
   }
 
+  private kick(t: number, vel: number) {
+    const ctx = this.ctx!
+    const o = ctx.createOscillator()
+    o.type = 'sine'
+    o.frequency.setValueAtTime(150, t)
+    o.frequency.exponentialRampToValueAtTime(42, t + 0.13)
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.linearRampToValueAtTime(0.42 * vel, t + 0.004)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.34)
+    o.connect(g).connect(this.dry)
+    o.start(t)
+    o.stop(t + 0.4)
+    // transient click
+    const n = ctx.createBufferSource()
+    n.buffer = this.noise
+    const hp = ctx.createBiquadFilter()
+    hp.type = 'highpass'
+    hp.frequency.value = 1800
+    const ng = ctx.createGain()
+    ng.gain.setValueAtTime(0.05 * vel, t)
+    ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.02)
+    n.connect(hp).connect(ng).connect(this.dry)
+    n.start(t)
+    n.stop(t + 0.03)
+    this.kicks.push(t)
+  }
+
+  private hat(t: number, vel: number, decay = 0.035) {
+    const ctx = this.ctx!
+    const n = ctx.createBufferSource()
+    n.buffer = this.noise
+    n.playbackRate.value = 1 + Math.random() * 0.2
+    const hp = ctx.createBiquadFilter()
+    hp.type = 'highpass'
+    hp.frequency.value = 7500
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0.028 * vel, t)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + decay)
+    n.connect(hp).connect(g).connect(this.dry)
+    n.start(t)
+    n.stop(t + decay + 0.01)
+  }
+
+  private sub(t: number, f: number, dur: number, vel = 1) {
+    const ctx = this.ctx!
+    const o = ctx.createOscillator()
+    o.type = 'sine'
+    o.frequency.value = f
+    const o2 = ctx.createOscillator()
+    o2.type = 'triangle'
+    o2.frequency.value = f * 2
+    const o2g = ctx.createGain()
+    o2g.gain.value = 0.12
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.22 * vel, t + 0.02)
+    g.gain.setValueAtTime(0.22 * vel, t + dur - 0.08)
+    g.gain.linearRampToValueAtTime(0, t + dur)
+    o.connect(g)
+    o2.connect(o2g).connect(g)
+    g.connect(this.dry)
+    o.start(t)
+    o2.start(t)
+    o.stop(t + dur + 0.02)
+    o2.stop(t + dur + 0.02)
+  }
+
+  private bell(t: number, f: number) {
+    const ctx = this.ctx!
+    const o = ctx.createOscillator()
+    o.type = 'sine'
+    o.frequency.value = f
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0, t)
+    g.gain.linearRampToValueAtTime(0.035, t + 0.02)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 2.8)
+    o.connect(g)
+    g.connect(this.reverbSend)
+    const d = ctx.createGain()
+    d.gain.value = 0.4
+    g.connect(d).connect(this.delaySend)
+    o.start(t)
+    o.stop(t + 3)
+  }
+
+  private riser(t: number, dur: number) {
+    const ctx = this.ctx!
+    const n = ctx.createBufferSource()
+    n.buffer = this.noise
+    n.loop = true
+    const bp = ctx.createBiquadFilter()
+    bp.type = 'bandpass'
+    bp.Q.value = 1.2
+    bp.frequency.setValueAtTime(240, t)
+    bp.frequency.exponentialRampToValueAtTime(3800, t + dur)
+    const g = ctx.createGain()
+    g.gain.setValueAtTime(0.0001, t)
+    g.gain.exponentialRampToValueAtTime(0.05, t + dur * 0.92)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.05)
+    n.connect(bp).connect(g)
+    g.connect(this.dry)
+    g.connect(this.reverbSend)
+    n.start(t)
+    n.stop(t + dur + 0.1)
+  }
+
+  // ── control ──────────────────────────────────────────────────
   setPlaying(on: boolean) {
     if (!this.ctx) return
     this.playing = on
@@ -269,10 +414,12 @@ class AmbientEngine {
     const now = ctx.currentTime
     this.master.gain.cancelScheduledValues(now)
     this.master.gain.setValueAtTime(this.master.gain.value, now)
-    this.master.gain.linearRampToValueAtTime(on ? 0.9 : 0, now + (on ? 2.5 : 0.8))
+    this.master.gain.linearRampToValueAtTime(on ? 0.85 : 0, now + (on ? 2 : 0.7))
+    if (on) this.start()
+    else window.setTimeout(() => !this.playing && this.stop(), 900)
   }
 
-  /** 0..1 energy, smoothed — used to drive visuals. */
+  /** 0..1 overall energy, smoothed. */
   level() {
     if (!this.ctx || !this.playing) {
       this.smoothed += (0 - this.smoothed) * 0.05
@@ -282,28 +429,37 @@ class AmbientEngine {
     let sum = 0
     const n = 48
     for (let i = 2; i < n; i++) sum += this.freq[i]
-    const v = Math.min((sum / n / 255) * 1.8, 1)
-    this.smoothed += (v - this.smoothed) * 0.08
+    const v = Math.min((sum / n / 255) * 1.7, 1)
+    this.smoothed += (v - this.smoothed) * 0.1
     return this.smoothed
   }
 
-  /** Raw spectrum bins for visualisers. */
+  /** 0..1 pulse that spikes on each kick and decays. */
+  pulse() {
+    if (!this.ctx || !this.playing) {
+      this.pulseValue *= 0.9
+      return this.pulseValue
+    }
+    const now = this.ctx.currentTime
+    while (this.kicks.length && this.kicks[0] <= now) {
+      this.kicks.shift()
+      this.pulseValue = 1
+    }
+    if (this.kicks.length > 8) this.kicks.splice(0, this.kicks.length - 8)
+    this.pulseValue *= 0.92
+    return this.pulseValue
+  }
+
+  /** Raw spectrum bins 0..1 for visualisers. */
   spectrum(bins: number) {
     const out = new Array<number>(bins).fill(0)
     if (!this.ctx || !this.playing) return out
     this.analyser.getByteFrequencyData(this.freq)
     for (let i = 0; i < bins; i++) {
-      const idx = Math.floor(2 + (i / bins) * 40)
+      const idx = Math.floor(2 + (i / bins) * 56)
       out[i] = this.freq[idx] / 255
     }
     return out
-  }
-
-  dispose() {
-    if (this.chordTimer) clearTimeout(this.chordTimer)
-    if (this.shimmerTimer) clearTimeout(this.shimmerTimer)
-    void this.ctx?.close()
-    this.ctx = null
   }
 }
 

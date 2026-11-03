@@ -1,5 +1,9 @@
 import { create } from 'zustand'
 import type Lenis from 'lenis'
+import * as THREE from 'three'
+
+export type ZoomTarget = { pos: THREE.Vector3; look: THREE.Vector3; t: number }
+export type LabMode = 'particles' | 'liquid' | 'spectrum'
 
 type State = {
   loaded: boolean
@@ -7,14 +11,25 @@ type State = {
   soundOn: boolean
   menuOpen: boolean
   sceneReady: boolean
+  characterReady: boolean
+  dragonReady: boolean
   lenis: Lenis | null
+  journeyHeight: number
+  zoom: ZoomTarget | null
+  hoverView: boolean
+  lab: LabMode
   setLoaded: (v: boolean) => void
   setEntered: (v: boolean) => void
   setSound: (v: boolean) => void
-  toggleSound: () => void
   setMenu: (v: boolean) => void
   setSceneReady: (v: boolean) => void
+  setCharacterReady: (v: boolean) => void
+  setDragonReady: (v: boolean) => void
   setLenis: (l: Lenis | null) => void
+  setJourneyHeight: (h: number) => void
+  setZoom: (z: ZoomTarget | null) => void
+  setHoverView: (v: boolean) => void
+  setLab: (m: LabMode) => void
 }
 
 export const useStore = create<State>((set) => ({
@@ -23,29 +38,37 @@ export const useStore = create<State>((set) => ({
   soundOn: false,
   menuOpen: false,
   sceneReady: false,
+  characterReady: false,
+  dragonReady: false,
   lenis: null,
+  journeyHeight: 0,
+  zoom: null,
+  hoverView: false,
+  lab: 'particles',
   setLoaded: (loaded) => set({ loaded }),
   setEntered: (entered) => set({ entered }),
   setSound: (soundOn) => set({ soundOn }),
-  toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),
   setMenu: (menuOpen) => set({ menuOpen }),
   setSceneReady: (sceneReady) => set({ sceneReady }),
+  setCharacterReady: (characterReady) => set({ characterReady }),
+  setDragonReady: (dragonReady) => set({ dragonReady }),
   setLenis: (lenis) => set({ lenis }),
+  setJourneyHeight: (journeyHeight) => set({ journeyHeight }),
+  setZoom: (zoom) => set({ zoom }),
+  setHoverView: (hoverView) => set({ hoverView }),
+  setLab: (lab) => set({ lab }),
 }))
 
 /** Mutable, frame-rate data that must not trigger React renders. */
-export const pointer = {
-  x: 0, // -1..1
-  y: 0, // -1..1
-  px: 0, // pixels
-  py: 0,
-  speed: 0,
-}
+export const pointer = { x: 0, y: 0, px: 0, py: 0, speed: 0 }
+export const scroll = { y: 0, progress: 0, velocity: 0 }
 
-export const scroll = {
-  y: 0,
-  progress: 0,
-  velocity: 0,
+/** 0..1 progress through the home-page journey. */
+export function journeyProgress() {
+  const h = useStore.getState().journeyHeight
+  if (!h) return 0
+  const max = Math.max(h - window.innerHeight, 1)
+  return Math.min(Math.max(scroll.y / max, 0), 1)
 }
 
 if (typeof window !== 'undefined') {
@@ -57,9 +80,7 @@ if (typeof window !== 'undefined') {
     (e) => {
       const now = performance.now()
       const dt = Math.max(now - last, 8)
-      const dx = e.clientX - lx
-      const dy = e.clientY - ly
-      pointer.speed = Math.min(Math.hypot(dx, dy) / dt, 4)
+      pointer.speed = Math.min(Math.hypot(e.clientX - lx, e.clientY - ly) / dt, 4)
       lx = e.clientX
       ly = e.clientY
       last = now

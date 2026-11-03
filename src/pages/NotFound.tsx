@@ -3,7 +3,7 @@ import { TLink } from '../components/TLink'
 export function NotFound() {
   return (
     <section className="page page--404">
-      <p className="label page__kicker">
+      <p className="mono page__kicker">
         <span className="index">404</span> Lost in the void
       </p>
       <h1 className="page__title">

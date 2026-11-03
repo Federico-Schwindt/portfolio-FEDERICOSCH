@@ -30,13 +30,12 @@ export function About() {
   return (
     <section className="page page--about" ref={root}>
       <header className="page__head page__head--about">
-        <p className="label page__kicker">
+        <p className="mono page__kicker">
           <span className="index">02</span> About
         </p>
         <h1 className="page__title">
           <span className="line split-wait">Design.</span>
-          <span className="line split-wait">Code.</span>
-          <span className="line split-wait">Growth.</span>
+          <span className="line split-wait">Code. Growth.</span>
         </h1>
         <p className="about__intro split-wait">{about.intro}</p>
       </header>
@@ -85,7 +84,7 @@ export function About() {
       </div>
 
       <div className="about__timeline">
-        <p className="label page__kicker">
+        <p className="mono page__kicker">
           <span className="index">—</span> Timeline
         </p>
         {about.timeline.map((t) => (

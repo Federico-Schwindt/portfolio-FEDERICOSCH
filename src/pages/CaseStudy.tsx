@@ -43,7 +43,7 @@ export function CaseStudy() {
   return (
     <article className="page case" ref={root}>
       <header className="case__head">
-        <p className="label case__kicker">
+        <p className="mono case__kicker">
           <span className="index">{project.index}</span> {project.category} — {project.year}
         </p>
         <h1 className="case__title split-wait">{project.title}</h1>

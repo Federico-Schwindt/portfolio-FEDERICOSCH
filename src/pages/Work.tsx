@@ -40,7 +40,7 @@ export function Work() {
   return (
     <section className="page page--work" ref={root}>
       <header className="page__head">
-        <p className="label page__kicker">
+        <p className="mono page__kicker">
           <span className="index">({projects.length})</span> Selected work
         </p>
         <h1 className="page__title">

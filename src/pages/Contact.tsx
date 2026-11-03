@@ -52,7 +52,7 @@ export function Contact() {
   return (
     <section className="page page--contact" ref={root}>
       <header className="page__head">
-        <p className="label page__kicker">
+        <p className="mono page__kicker">
           <span className="index">04</span> <i className="dot" /> {site.availability}
         </p>
         <h1 className="page__title">

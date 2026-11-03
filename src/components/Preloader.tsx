@@ -4,20 +4,19 @@ import { gsap } from '../lib/gsap'
 import { useStore } from '../lib/store'
 import { ambient } from '../lib/audio'
 import { site } from '../content'
-import { DRAGON_MODEL } from '../three/config'
 
-const STATUS: [number, string][] = [
-  [0, 'Loading the experience'],
-  [25, 'Waking the dragon'],
-  [50, 'Compiling shaders'],
-  [72, 'Tuning frequencies'],
-  [90, 'Almost there'],
+const CHECKS: [number, string][] = [
+  [0, 'Navigation'],
+  [18, 'Life support'],
+  [36, 'Shaders'],
+  [54, 'Models'],
+  [72, 'Score'],
+  [90, 'Trajectory'],
 ]
 
 export function Preloader() {
   const sceneReady = useStore((s) => s.sceneReady)
-  const characterReady = useStore((s) => s.characterReady)
-  const dragonReady = useStore((s) => s.dragonReady)
+  const modelsReady = useStore((s) => s.modelsReady)
   const lenis = useStore((s) => s.lenis)
   const setEntered = useStore((s) => s.setEntered)
   const setSound = useStore((s) => s.setSound)
@@ -31,7 +30,7 @@ export function Preloader() {
   const [gone, setGone] = useState(false)
   const root = useRef<HTMLDivElement>(null)
 
-  const assets = !home || (characterReady && (!DRAGON_MODEL || dragonReady))
+  const assets = !home || modelsReady >= 2
   const ready = count >= 100 && fonts && ((sceneReady && assets) || fallback)
 
   useEffect(() => {
@@ -40,12 +39,12 @@ export function Preloader() {
 
   useEffect(() => {
     const obj = { v: 0 }
-    const tw = gsap.to(obj, { v: 100, duration: 3, ease: 'power2.inOut', onUpdate: () => setCount(Math.round(obj.v)) })
+    const tw = gsap.to(obj, { v: 100, duration: 3.2, ease: 'power2.inOut', onUpdate: () => setCount(Math.round(obj.v)) })
     let cancelled = false
     void document.fonts.ready.then(() => {
       if (!cancelled) setFonts(true)
     })
-    const t = window.setTimeout(() => setFallback(true), 12000)
+    const t = window.setTimeout(() => setFallback(true), 14000)
     return () => {
       cancelled = true
       tw.kill()
@@ -68,29 +67,33 @@ export function Preloader() {
     const el = root.current!
     gsap
       .timeline({ onComplete: () => setGone(true) })
-      .to(el.querySelector('.preloader__inner'), { yPercent: -12, opacity: 0, duration: 0.55, ease: 'power3.in' })
-      .to(el, { yPercent: -100, duration: 1.05, ease: 'power4.inOut' }, '-=0.25')
+      .to(el.querySelector('.preloader__inner'), { opacity: 0, duration: 0.5, ease: 'power2.in' })
+      .to(el, { opacity: 0, duration: 1.2, ease: 'power2.inOut' }, '-=0.1')
   }
 
   if (gone) return null
 
-  const status = STATUS.reduce((acc, [at, label]) => (count >= at ? label : acc), STATUS[0][1])
-
   return (
     <div className="preloader" ref={root} role="dialog" aria-label="Loading">
       <div className="preloader__inner">
-        <div className="preloader__top label">
+        <div className="preloader__top mono">
           <span>{site.name}</span>
-          <span>Portfolio ©{site.year}</span>
+          <span>Mission · {site.year}</span>
         </div>
+
         <div className="preloader__center">
           {!ready ? (
-            <p className="preloader__status" key={status}>
-              {status}
-            </p>
+            <ul className="preloader__checks mono">
+              {CHECKS.map(([at, label]) => (
+                <li key={label} className={count >= at + 14 ? 'is-ok' : count >= at ? 'is-run' : ''}>
+                  <span>{label}</span>
+                  <i />
+                </li>
+              ))}
+            </ul>
           ) : (
             <div className="preloader__enter">
-              <p className="label">Best with headphones — generative soundtrack</p>
+              <p className="mono">Best with headphones — original score</p>
               <div className="preloader__buttons">
                 <button className="btn" onClick={() => enter(true)} data-cursor="link">
                   Enter with sound
@@ -102,6 +105,7 @@ export function Preloader() {
             </div>
           )}
         </div>
+
         <div className="preloader__bottom">
           <div className="preloader__count" aria-live="polite">
             {count}

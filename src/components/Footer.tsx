@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="footer__main">
-        <p className="label footer__kicker">
+        <p className="mono footer__kicker">
           <i className="dot" /> {site.availability}
         </p>
         <h2 className="footer__title">

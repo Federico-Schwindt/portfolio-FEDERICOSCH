@@ -38,7 +38,7 @@ export function Lab() {
   return (
     <section className="page page--lab" ref={root}>
       <header className="page__head page__head--lab">
-        <p className="label page__kicker">
+        <p className="mono page__kicker">
           <span className="index">03</span> Lab — WebGL experiments
         </p>
         <h1 className="page__title">

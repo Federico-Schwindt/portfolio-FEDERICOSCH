@@ -11,8 +11,7 @@ type State = {
   soundOn: boolean
   menuOpen: boolean
   sceneReady: boolean
-  characterReady: boolean
-  dragonReady: boolean
+  modelsReady: number
   lenis: Lenis | null
   journeyHeight: number
   zoom: ZoomTarget | null
@@ -23,8 +22,7 @@ type State = {
   setSound: (v: boolean) => void
   setMenu: (v: boolean) => void
   setSceneReady: (v: boolean) => void
-  setCharacterReady: (v: boolean) => void
-  setDragonReady: (v: boolean) => void
+  bumpModelsReady: () => void
   setLenis: (l: Lenis | null) => void
   setJourneyHeight: (h: number) => void
   setZoom: (z: ZoomTarget | null) => void
@@ -38,8 +36,7 @@ export const useStore = create<State>((set) => ({
   soundOn: false,
   menuOpen: false,
   sceneReady: false,
-  characterReady: false,
-  dragonReady: false,
+  modelsReady: 0,
   lenis: null,
   journeyHeight: 0,
   zoom: null,
@@ -50,8 +47,7 @@ export const useStore = create<State>((set) => ({
   setSound: (soundOn) => set({ soundOn }),
   setMenu: (menuOpen) => set({ menuOpen }),
   setSceneReady: (sceneReady) => set({ sceneReady }),
-  setCharacterReady: (characterReady) => set({ characterReady }),
-  setDragonReady: (dragonReady) => set({ dragonReady }),
+  bumpModelsReady: () => set((s) => ({ modelsReady: s.modelsReady + 1 })),
   setLenis: (lenis) => set({ lenis }),
   setJourneyHeight: (journeyHeight) => set({ journeyHeight }),
   setZoom: (zoom) => set({ zoom }),

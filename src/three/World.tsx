@@ -1,30 +1,49 @@
-import { Suspense, useEffect, useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, Lightformer } from '@react-three/drei'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import * as THREE from 'three'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Billboard, Environment, Lightformer, PerformanceMonitor, Stars } from '@react-three/drei'
 import { useLocation } from 'react-router'
 import { CameraRig } from './CameraRig'
-import { Character } from './Character'
-import { Dragon } from './Dragon'
-import { Floor } from './Floor'
-import { ServiceObjects } from './ServiceObjects'
-import { Gallery } from './Gallery'
-import { Core } from './Core'
-import { Particles } from './Particles'
+import { Gargantua } from './Gargantua'
+import { Ship } from './Ship'
+import { Tesseract } from './Tesseract'
+import { RedLine } from './RedLine'
+import { Astronaut } from './Astronaut'
+import { Screens } from './Screens'
 import { Effects } from './Effects'
-import { Blob } from './Blob'
 import { LabScene } from './LabScene'
-import { BG, DRAGON_MODEL, RED } from './config'
-import { useStore } from '../lib/store'
+import { ACT_SPLIT, pToA, TESSERACT_ORIGIN } from './journey'
+import { BG } from './config'
+import { journeyProgress, useStore } from '../lib/store'
 import { useIsMobile, useReducedMotion, isLowPower } from '../lib/hooks'
 
-export type SceneMode = 'home' | 'about' | 'contact' | 'lab' | 'ambient'
+export type SceneMode = 'home' | 'ambient' | 'lab'
 
 function modeFor(pathname: string): SceneMode {
   if (pathname === '/') return 'home'
-  if (pathname.startsWith('/about')) return 'about'
-  if (pathname.startsWith('/contact')) return 'contact'
   if (pathname.startsWith('/lab')) return 'lab'
   return 'ambient'
+}
+
+/** Distance fog that is off in space and close in the tesseract. */
+function FogRig({ light, home }: { light: boolean; home: boolean }) {
+  const { scene } = useThree()
+  const fog = useMemo(() => new THREE.Fog(BG, 600, 1400), [])
+  useEffect(() => {
+    scene.fog = fog
+    return () => {
+      scene.fog = null
+    }
+  }, [scene, fog])
+  useFrame((_, delta) => {
+    const act2 = home && journeyProgress() >= ACT_SPLIT
+    const near = act2 ? 10 : 600
+    const far = act2 ? (light ? 70 : 100) : 1400
+    const k = Math.min(delta * 6, 1)
+    fog.near += (near - fog.near) * k
+    fog.far += (far - fog.far) * k
+  })
+  return null
 }
 
 function Driver() {
@@ -39,72 +58,75 @@ function Driver() {
   return null
 }
 
-function Studio() {
-  return (
-    <Environment resolution={128} frames={1}>
-      <Lightformer intensity={2.2} color="#ffffff" position={[0, 5, -3]} rotation={[Math.PI / 2, 0, 0]} scale={[10, 6, 1]} />
-      <Lightformer intensity={1.2} color="#ffffff" position={[-5, 2, 2]} rotation={[0, Math.PI / 2, 0]} scale={[6, 3, 1]} />
-      <Lightformer intensity={2.5} color={RED} position={[5, 1, -2]} rotation={[0, -Math.PI / 2, 0]} scale={[6, 2, 1]} />
-      <Lightformer intensity={0.6} color="#ff8080" position={[0, -2, 4]} rotation={[-Math.PI / 2, 0, 0]} scale={[8, 4, 1]} />
-    </Environment>
-  )
-}
-
-function Lights() {
+/** Toggles the two acts by scroll progress so only one is ever rendered. */
+function Acts({ light }: { light: boolean }) {
+  const [act, setAct] = useState(1)
+  useFrame(() => {
+    const a = journeyProgress() < ACT_SPLIT ? 1 : 2
+    if (a !== act) setAct(a)
+  })
   return (
     <>
-      <ambientLight intensity={0.25} />
-      <spotLight position={[2.5, 5, 3.5]} angle={0.6} penumbra={0.9} intensity={70} color="#fff4ec" distance={24} decay={2} />
-      <pointLight position={[-3.5, 2.2, -2.5]} intensity={40} color={RED} distance={14} decay={2} />
-      <pointLight position={[3.5, 1.2, -1]} intensity={14} color="#ffffff" distance={12} decay={2} />
+      <group visible={act === 1}>
+        <Stars radius={320} depth={80} count={light ? 1800 : 4200} factor={5} saturation={0} fade speed={0.3} />
+        <Gargantua radius={8} detail={light ? 'light' : 'full'} />
+        <ambientLight intensity={0.06} />
+        <directionalLight position={[-30, 14, 60]} intensity={0.3} color="#dfe8ff" />
+        <pointLight position={[0, 0, 0]} intensity={4200} distance={220} decay={2} color="#ff9558" />
+        <Ship visible={act === 1} />
+      </group>
+      <group position={TESSERACT_ORIGIN} visible={act === 2}>
+        <hemisphereLight args={['#ffe9d2', '#1a1410', 1.5]} />
+        <Environment resolution={64} frames={1}>
+          <Lightformer intensity={1.6} color="#fff1dc" position={[0, 6, -4]} rotation={[Math.PI / 2, 0, 0]} scale={[14, 10, 1]} />
+          <Lightformer intensity={0.8} color="#ffffff" position={[-6, 1, 2]} rotation={[0, Math.PI / 2, 0]} scale={[6, 4, 1]} />
+          <Lightformer intensity={0.5} color="#ff6a4a" position={[6, -2, 2]} rotation={[0, -Math.PI / 2, 0]} scale={[6, 3, 1]} />
+        </Environment>
+        <Tesseract visible={act === 2} light={light} />
+        <RedLine visible={act === 2} light={light} />
+        <Astronaut visible={act === 2} />
+        <Screens visible={act === 2} />
+        <ExitLight />
+      </group>
     </>
   )
 }
 
-function HomeScene({ light }: { light: boolean }) {
-  return (
-    <>
-      <Lights />
-      {DRAGON_MODEL && <Dragon light={light} />}
-      <Character position={[-2.1, 0, 0.3]} rotation={0.25} />
-      <Floor reflective={!light} />
-      <ServiceObjects />
-      <Gallery />
-      <Core light={light} />
-      <Particles count={light ? 500 : 1400} box={[40, 20, 90]} center={[0, 6, -35]} />
-    </>
-  )
-}
+const glowMaterial = new THREE.ShaderMaterial({
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  uniforms: { uStrength: { value: 1 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform float uStrength; varying vec2 vUv; void main(){ float d = length(vUv - 0.5) * 2.0; float a = pow(max(1.0 - d, 0.0), 2.6) * uStrength; gl_FragColor = vec4(vec3(1.0, 0.97, 0.9) * a, 1.0); }`,
+})
 
-function AboutScene({ light, mobile }: { light: boolean; mobile: boolean }) {
+/** A soft white glow at the end of the line: the way out. It grows as the astronaut approaches. */
+function ExitLight() {
+  useFrame(() => {
+    const a = pToA(journeyProgress())
+    glowMaterial.uniforms.uStrength.value = 0.7 + Math.max(0, (a - 0.8) / 0.2) * 1.6
+  })
   return (
-    <>
-      <Lights />
-      <Character position={mobile ? [0.9, 0, -3.2] : [3.3, 0, -0.4]} rotation={mobile ? -0.2 : -0.4} />
-      <Floor reflective={!light} />
-      <Particles count={light ? 300 : 700} box={[24, 14, 16]} center={[0, 3, -4]} />
-    </>
-  )
-}
-
-function ContactScene({ light, mobile }: { light: boolean; mobile: boolean }) {
-  return (
-    <>
-      <ambientLight intensity={0.2} />
-      <pointLight position={[3, 3, 3]} intensity={30} color="#ffffff" />
-      <Blob position={mobile ? [0, 1.3, -2] : [4.4, 2.4, -3.5]} scale={mobile ? 1.1 : 1.4} amp={0.42} freq={1.2} detail={light ? 40 : 72} mouse />
-      <Particles count={light ? 300 : 800} box={[24, 14, 16]} center={[0, 2, -4]} />
-    </>
+    <group position={[0, 2.2, -196]}>
+      <Billboard>
+        <mesh material={glowMaterial}>
+          <planeGeometry args={[36, 36]} />
+        </mesh>
+      </Billboard>
+      <pointLight position={[0, 0, 12]} intensity={50} distance={60} decay={2} color="#ffffff" />
+    </group>
   )
 }
 
 function AmbientScene({ light }: { light: boolean }) {
   return (
     <>
-      <ambientLight intensity={0.2} />
-      <pointLight position={[4, 3, -4]} intensity={20} color={RED} />
-      <Blob position={[6.5, 3.2, -9]} scale={1.0} amp={0.35} freq={1.3} detail={light ? 32 : 48} />
-      <Particles count={light ? 250 : 600} box={[26, 14, 16]} center={[0, 2, -5]} />
+      <Stars radius={260} depth={60} count={light ? 1200 : 3000} factor={4} saturation={0} fade speed={0.2} />
+      <group position={[16, 4, -34]} scale={0.9}>
+        <Gargantua radius={5} detail="light" />
+      </group>
+      <ambientLight intensity={0.15} />
     </>
   )
 }
@@ -114,9 +136,9 @@ export function World() {
   const mode = modeFor(pathname)
   const isMobile = useIsMobile()
   const reduced = useReducedMotion()
-  // ?light in the URL forces the lighter scene (handy on weak GPUs and for automated checks)
   const low = useMemo(() => isLowPower() || new URLSearchParams(window.location.search).has('light'), [])
   const light = isMobile || low
+  const [dpr, setDpr] = useState(light ? 1 : 1.5)
   const setZoom = useStore((s) => s.setZoom)
 
   useEffect(() => setZoom(null), [mode, setZoom])
@@ -124,21 +146,23 @@ export function World() {
   return (
     <div className="scene" aria-hidden="true">
       <Canvas
-        dpr={light ? [1, 1.25] : [1, 1.75]}
-        camera={{ fov: 40, position: [0.2, 4.0, 0.4], near: 0.1, far: 140 }}
+        dpr={dpr}
+        camera={{ fov: 42, position: [16, 14, 165], near: 0.1, far: 900 }}
         gl={{ antialias: false, powerPreference: 'high-performance', alpha: false, stencil: false }}
         frameloop={reduced ? 'demand' : 'always'}
         eventPrefix="client"
       >
         <color attach="background" args={[BG]} />
-        <fog attach="fog" args={[BG, mode === 'home' ? 8 : 6, mode === 'home' ? 26 : 24]} />
+        <FogRig light={light} home={mode === 'home'} />
+        <PerformanceMonitor
+          flipflops={3}
+          onDecline={() => setDpr((d) => Math.max(0.75, d - 0.25))}
+          onIncline={() => setDpr((d) => Math.min(light ? 1.25 : 1.75, d + 0.25))}
+        />
         <Suspense fallback={null}>
-          <Studio />
-          {mode === 'home' && <HomeScene light={light} />}
-          {mode === 'about' && <AboutScene light={light} mobile={isMobile} />}
-          {mode === 'contact' && <ContactScene light={light} mobile={isMobile} />}
-          {mode === 'lab' && <LabScene light={light} />}
+          {mode === 'home' && <Acts light={light} />}
           {mode === 'ambient' && <AmbientScene light={light} />}
+          {mode === 'lab' && <LabScene light={light} />}
           {!light && <Effects />}
         </Suspense>
         <CameraRig mode={mode} />

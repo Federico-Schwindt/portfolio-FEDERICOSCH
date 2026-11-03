@@ -37,13 +37,36 @@ export const nav = [
 
 /** Chapters of the home-page journey (used by the nav counter). */
 export const chapters = [
-  { id: 'intro', label: 'Intro' },
-  { id: 'manifesto', label: 'Manifesto' },
+  { id: 'intro', label: 'Gargantua' },
+  { id: 'manifesto', label: 'Approach' },
+  { id: 'dive', label: 'Event horizon' },
+  { id: 'tesseract', label: 'Tesseract' },
   { id: 'services', label: 'Services' },
   { id: 'work', label: 'Work' },
   { id: 'impact', label: 'Impact' },
   { id: 'contact', label: 'Contact' },
 ]
+
+export const journeyCopy = {
+  intro: {
+    kicker: 'Website Development, Design & Marketing',
+    scroll: 'Scroll to begin the descent',
+  },
+  manifesto: {
+    title: 'I build websites that feel like experiences, not documents.',
+    text: 'Strategy, design, engineering and marketing in one pair of hands — so nothing gets lost between the idea and the launch.',
+  },
+  dive: 'Crossing the event horizon',
+  tesseract: {
+    title: 'Every project. One line to follow.',
+    text: 'Welcome to the tesseract: the work, the thinking and the results, laid out along a single red line. Keep scrolling to follow it.',
+  },
+  workIntro: {
+    title: 'Selected work',
+    text: 'Five projects with real numbers. Click a screen to step inside the case study.',
+  },
+  allWork: 'See all work',
+}
 
 export const manifesto = {
   text: 'I build websites that feel like experiences, not documents.',
@@ -203,6 +226,7 @@ export const impact = {
   value: '+551%',
   label: 'Sales growth for Universal Driveshafts, 2024 → 2026',
   text: 'Design, code and marketing pulling in the same direction. One rebuilt storefront turned a parts catalog into the company’s main sales channel.',
+  kicker: 'Impact',
   cta: 'Read the case study',
   slug: 'universal-driveshafts',
 }

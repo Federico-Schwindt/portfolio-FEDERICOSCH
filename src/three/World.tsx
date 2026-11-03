@@ -1,10 +1,11 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Billboard, Environment, Lightformer, PerformanceMonitor, Stars } from '@react-three/drei'
+import { Billboard, Environment, Lightformer, PerformanceMonitor } from '@react-three/drei'
 import { useLocation } from 'react-router'
 import { CameraRig } from './CameraRig'
-import { Gargantua } from './Gargantua'
+import { BlackHole } from './BlackHole'
+import { Particles } from './Particles'
 import { Ship } from './Ship'
 import { Tesseract } from './Tesseract'
 import { RedLine } from './RedLine'
@@ -69,8 +70,7 @@ function Acts({ light }: { light: boolean }) {
   return (
     <>
       <group visible={act === 1}>
-        <Stars radius={320} depth={80} count={light ? 1800 : 4200} factor={5} saturation={0} fade speed={0.3} />
-        <Gargantua radius={8} detail={light ? 'light' : 'full'} />
+        {act === 1 && <BlackHole scale={8} light={light} />}
         <ambientLight intensity={0.06} />
         <directionalLight position={[-30, 14, 60]} intensity={0.3} color="#dfe8ff" />
         <pointLight position={[0, 0, 0]} intensity={4200} distance={220} decay={2} color="#ff9558" />
@@ -88,6 +88,8 @@ function Acts({ light }: { light: boolean }) {
         <Astronaut visible={act === 2} />
         <Screens visible={act === 2} />
         <WallPanels visible={act === 2} />
+        {/* dust drifting through the rooms */}
+        <Particles count={light ? 300 : 900} box={[30, 22, 150]} center={[0, 2, -85]} size={3.5} />
         <ExitLight />
       </group>
     </>
@@ -124,10 +126,7 @@ function ExitLight() {
 function AmbientScene({ light }: { light: boolean }) {
   return (
     <>
-      <Stars radius={260} depth={60} count={light ? 1200 : 3000} factor={4} saturation={0} fade speed={0.2} />
-      <group position={[16, 4, -34]} scale={0.9}>
-        <Gargantua radius={5} detail="light" />
-      </group>
+      <BlackHole scale={2.2} light={light} exposure={0.8} />
       <ambientLight intensity={0.15} />
     </>
   )

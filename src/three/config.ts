@@ -1,6 +1,6 @@
 /** Model paths relative to BASE_URL. null = procedural fallback. */
-export const ASTRONAUT_MODEL: string | null = 'char/astronaut.glb'
-export const SHIP_MODEL: string | null = 'char/ship.glb'
+export const ASTRONAUT_MODEL: string | null = 'char/cooper-v3.glb'
+export const SHIP_MODEL: string | null = 'char/ranger-v2.glb'
 /** Y rotation that makes each model face +Z (its travel direction). */
 export const ASTRONAUT_ROTATION = 0
 export const SHIP_ROTATION = Math.PI / 2

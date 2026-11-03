@@ -2,9 +2,11 @@
 
 A cinematic, scroll-driven 3D portfolio for **Federico Schwindt** (Website Development, Design & Marketing).
 
-**Act 1 — the dive.** A ship falls toward Gargantua: an event horizon, a shearing accretion disk with Doppler beaming and a lensed halo, star field, telemetry HUD, a riser in the score and a white flash at the crossing.
+**Act 1 — the dive.** A ship falls toward Gargantua, a ray-traced Schwarzschild black hole: every pixel's ray is bent through curved spacetime, so the far side of the accretion disk appears above and below the hole and the photon ring wraps the horizon. Doppler beaming, Keplerian shear, telemetry HUD, a riser in the score and a white flash at the crossing.
 
-**Act 2 — the tesseract.** An endless lattice of rooms built from beams of extruded bookshelves with warm light rails. An astronaut glides along a single red line; the portfolio chapters sit along it (approach, services, five project screens you can click to fly into, the +551% impact where the shelves burn red, and contact under the exit light).
+**Act 2 — the tesseract.** An endless lattice of rooms whose walls are bookshelves extruded through time (a procedural shelf texture smeared along every beam, with light strands between the shelves). Cooper glides along a single red line; the chapters are set into the walls like windows in the shelves: approach, services, the four-step process, five project screens you can click to fly into, the track record, the +551% impact where the shelves burn red, the portrait, and contact under the exit light.
+
+**/tesseract/** — a standalone, single-file page: an interactive 4D hypercube rotating through the W plane inside infinite instanced rooms with time-dust, and a second section that descends into the ray-traced Gargantua (OrbitControls, bloom, CDN Three.js).
 
 Plus a Work index, case studies, About, a WebGL Lab and Contact.
 
@@ -17,11 +19,12 @@ Plus a Work index, case studies, About, a WebGL Lab and Contact.
 | Motion | GSAP 3 (ScrollTrigger, SplitText) · Lenis smooth scroll |
 | Audio | Web Audio API — an original, generative organ score ("Event Horizon"); no audio files |
 | Fonts | Archivo (display) · Space Grotesk (body) · Space Mono (HUD) · Instrument Serif (accents), self-hosted |
-| Models | Draco-compressed GLBs in `public/char/`: `astronaut.glb` is “Cooper” by Julien Hondaâ (Sketchfab, CC BY-SA 4.0 — see `public/char/LICENSE.md`), `ship.glb` is generated |
+| Models | Draco-compressed GLBs in `public/char/`: `cooper-v3.glb` is “Cooper” by Julien Hondaâ (Sketchfab, CC BY-SA 4.0 — see `public/char/LICENSE.md`), `ranger-v2.glb` is generated |
 
 ## Performance
 
-- One instanced draw call for the whole tesseract (~25k beams); stripes and rails are computed in the fragment shader, no textures.
+- One instanced draw call for the whole tesseract; the bookshelf texture is generated once on a canvas at runtime (no image files).
+- The black hole is a single full-screen shader pass with a step budget that drops on light devices.
 - Only one act is mounted at a time; chunks of the lattice beyond the fog are never shaded.
 - Adaptive pixel ratio (`PerformanceMonitor`), post-processing at 75% resolution, no shadows.
 - Phones and low-power devices get the light scene: fewer rooms, no post-processing. Force it with `?light`.

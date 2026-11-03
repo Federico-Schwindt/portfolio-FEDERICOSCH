@@ -6,7 +6,7 @@ import { journeyProgress, pointer, useStore } from '../lib/store'
 import type { SceneMode } from './World'
 
 const STATIC: Record<Exclude<SceneMode, 'home'>, { pos: [number, number, number]; look: [number, number, number] }> = {
-  ambient: { pos: [0, 2, 26], look: [4, 1.5, 0] },
+  ambient: { pos: [-6, 3.5, 24], look: [9, 0.5, 0] },
   lab: { pos: [0, 1.0, 7], look: [0, 1.0, 0] },
 }
 

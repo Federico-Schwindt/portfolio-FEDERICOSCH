@@ -17,7 +17,7 @@ function textTexture(lines: { text: string; size: number; color: string; font?: 
   ctx.strokeStyle = 'rgba(244,241,234,0.18)'
   ctx.lineWidth = 2
   ctx.strokeRect(14, 14, w - 28, h - 28)
-  let y = 64
+  let y = 44 + lines[0].size * 0.82
   for (const l of lines) {
     ctx.fillStyle = l.color
     ctx.font = `${l.font ?? '500'} ${l.size}px 'Archivo Variable', 'Space Mono', monospace`

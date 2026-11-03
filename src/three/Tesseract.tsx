@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useFrame } from '@react-three/fiber'
 import { beamFragment, beamVertex } from './shaders/beam'
+import { makeBookshelfTexture } from './books'
 import { ALL_SPOTS, cameraAt, lineCurve, pToA, ROOM, STATIONS } from './journey'
 import { ambient } from '../lib/audio'
 import { journeyProgress } from '../lib/store'
@@ -89,7 +90,7 @@ function build(light: boolean) {
       }
 
   // ── the corridor: shelf strands lining the walls of the rooms around the line ──
-  const N = light ? 7 : 11
+  const N = light ? 6 : 9
   const gap = C / N
   const seen = new Set<string>()
   for (let k = 0; k < zs.length - 1; k++) {
@@ -112,7 +113,7 @@ function build(light: boolean) {
           for (let i = 0; i < N; i++) {
             if (rng() < 0.12) continue
             const y = cy - C / 2 + (i + 0.5) * gap + (rng() - 0.5) * gap * 0.25
-            add({ x, y, z: zc, axis: 2, len: C, t: gap * (0.4 + rng() * 0.28) })
+            add({ x, y, z: zc, axis: 2, len: C, t: gap * (0.5 + rng() * 0.3) })
           }
         }
         // floor and ceiling (y = const): strands stacked in x
@@ -124,7 +125,7 @@ function build(light: boolean) {
           for (let i = 0; i < N; i++) {
             if (rng() < 0.12) continue
             const x = cx - C / 2 + (i + 0.5) * gap + (rng() - 0.5) * gap * 0.25
-            add({ x, y, z: zc, axis: 2, len: C, t: gap * (0.4 + rng() * 0.28) })
+            add({ x, y, z: zc, axis: 2, len: C, t: gap * (0.5 + rng() * 0.3) })
           }
         }
       }
@@ -163,6 +164,7 @@ export function Tesseract({ visible, light }: { visible: boolean; light: boolean
       vertexShader: beamVertex,
       fragmentShader: beamFragment,
       uniforms: {
+        uBooks: { value: makeBookshelfTexture() },
         uCam: { value: new THREE.Vector3() },
         uFogNear: { value: 8 },
         uFogFar: { value: light ? 64 : 96 },

@@ -327,7 +327,7 @@ main .footer {
 
 .preloader__checks li.is-run i {
   border-color: var(--accent);
-  animation: blink 0.6s steps(2) infinite;
+  animation: blinkbg 0.6s steps(2) infinite;
 }
 
 .preloader__checks li.is-ok {
@@ -339,9 +339,15 @@ main .footer {
   border-color: var(--accent);
 }
 
-@keyframes blink {
+@keyframes blinkbg {
   50% {
     background: var(--accent);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
   }
 }
 

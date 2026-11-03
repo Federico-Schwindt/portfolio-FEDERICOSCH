@@ -169,14 +169,14 @@ export function Astronaut({ visible }: { visible: boolean }) {
     lineAt(a, pos.current, dir.current)
     const e = state.clock.elapsedTime
     g.position.copy(pos.current)
-    g.position.y += 0.9 + Math.sin(e * 0.9) * 0.06
-    g.position.x += Math.sin(e * 0.6) * 0.04
+    g.position.y += 0.6 + Math.sin(e * 0.9) * 0.08
+    g.position.x += Math.sin(e * 0.6) * 0.05
     // lookAt takes a world-space target; this group lives inside the offset tesseract group
     look.current.copy(g.position).add(dir.current)
     g.parent?.localToWorld(look.current)
     g.lookAt(look.current)
-    // the swim clip is already prone; add a touch of pitch that grows with scroll speed
-    const target = Math.min(Math.abs(scroll.velocity) * 0.004, 0.2) + 0.12
+    // upright, drifting in zero g: a slight backward lean, tipping forward a little with scroll speed
+    const target = Math.min(Math.abs(scroll.velocity) * 0.004, 0.3) - 0.18
     lean.current += (target - lean.current) * Math.min(delta * 3, 1)
     tilt.current.setFromAxisAngle(axisX, lean.current)
     g.quaternion.multiply(tilt.current)

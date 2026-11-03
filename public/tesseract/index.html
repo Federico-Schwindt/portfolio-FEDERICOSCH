@@ -563,6 +563,7 @@ function stepTransition(now) {
   }
   if (k >= 1 && !T.swapped) {
     T.swapped = true
+    flash.style.opacity = 1
     beamMat.uniforms.uFlow.value = 1
     beamMat.uniforms.uGlow.value = 1
     sceneT.userData.dust.uniforms.uFlow.value = 1
@@ -570,7 +571,8 @@ function stepTransition(now) {
     T.fade = now
   }
   if (T.swapped) {
-    const f = Math.min((now - T.fade) / 1700, 1)
+    T.fadeFrames = (T.fadeFrames || 0) + 1
+    const f = Math.min(Math.max((now - T.fade) / 1700, T.fadeFrames / 70), 1)
     flash.style.opacity = 1 - ease(f)
     if (f >= 1) transition = null
   }

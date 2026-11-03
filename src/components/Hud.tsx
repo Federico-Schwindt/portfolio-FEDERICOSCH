@@ -1,11 +1,23 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from '../lib/gsap'
 import { journeyProgress, useStore } from '../lib/store'
-import { ACT_SPLIT, FLASH, pToA } from '../three/journey'
+import { ACT_SPLIT, aToP, FLASH, pToA, STATIONS } from '../three/journey'
 import { chapters } from '../content'
 import { ambient } from '../lib/audio'
 
-const CHAPTER_AT = [0, 0.12, 0.27, 0.36, 0.42, 0.55, 0.86, 0.94]
+const CHAPTER_AT = [
+  0,
+  0.12,
+  0.27,
+  0.36,
+  aToP(STATIONS.services[0] - 0.012),
+  aToP(STATIONS.process - 0.018),
+  aToP(STATIONS.workIntro - 0.01),
+  aToP(STATIONS.trust - 0.016),
+  aToP(STATIONS.impact - 0.014),
+  aToP(STATIONS.about - 0.016),
+  aToP(STATIONS.contact - 0.01),
+]
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US')
 
@@ -70,7 +82,7 @@ export function Hud() {
         const a = pToA(p)
         if (l1.current) l1.current.textContent = `${(a * 100).toFixed(1)} %`
         if (l2.current) l2.current.textContent = `-Z  ·  ${fmt(166 * a)} m`
-        if (l3.current) l3.current.textContent = a > 0.9 ? 'EXIT AHEAD' : 'ON THE LINE'
+        if (l3.current) l3.current.textContent = a > 0.9 ? 'EXIT AHEAD' : Math.abs(a - STATIONS.impact) < 0.04 ? 'ANOMALY' : 'ON THE LINE'
         const mode = a > 0.86 ? 'end' : 'tesseract'
         if (mode !== lastMode) {
           lastMode = mode
@@ -130,7 +142,7 @@ export function Hud() {
         </div>
         <div className="hud__chapter">
           <span className="hud__v" ref={chapter}>
-            00 / 07
+            00 / 10
           </span>
           <span className="hud__k" ref={chapterName}>
             Gargantua

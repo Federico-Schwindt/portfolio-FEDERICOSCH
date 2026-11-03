@@ -10,6 +10,7 @@ import { Tesseract } from './Tesseract'
 import { RedLine } from './RedLine'
 import { Astronaut } from './Astronaut'
 import { Screens } from './Screens'
+import { WallPanels } from './WallPanels'
 import { Effects } from './Effects'
 import { LabScene } from './LabScene'
 import { ACT_SPLIT, pToA, TESSERACT_ORIGIN } from './journey'
@@ -86,6 +87,7 @@ function Acts({ light }: { light: boolean }) {
         <RedLine visible={act === 2} light={light} />
         <Astronaut visible={act === 2} />
         <Screens visible={act === 2} />
+        <WallPanels visible={act === 2} />
         <ExitLight />
       </group>
     </>

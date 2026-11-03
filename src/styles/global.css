@@ -957,6 +957,55 @@ main .footer {
   transform: translateX(6px);
 }
 
+.ov__steps {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 28px;
+}
+
+.ov__steps li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-stretch: 110%;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: clamp(14px, 1.2vw, 18px);
+}
+
+.ov__facts {
+  display: flex;
+  gap: 36px;
+  margin-top: 24px;
+}
+
+.ov--right .ov__facts {
+  justify-content: flex-end;
+}
+
+.ov__facts li {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ov__facts strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-stretch: 125%;
+  font-size: clamp(28px, 3.4vw, 60px);
+  line-height: 0.95;
+}
+
+.ov__facts li:last-child strong {
+  color: var(--accent);
+}
+
 .ov__stat {
   font-family: var(--font-display);
   font-weight: 700;
@@ -1014,8 +1063,17 @@ main .footer {
 }
 
 .ov__socials a:hover,
-.ov__about:hover {
+.ov__about:hover,
+.ov__credits a:hover,
+.footer__credit a:hover {
   color: var(--accent);
+}
+
+.ov__credits a,
+.footer__credit a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--faint);
 }
 
 /* ───────────────────────── Pages ───────────────────────── */
@@ -1927,6 +1985,15 @@ main .footer {
 
   .ov__stat {
     font-size: clamp(64px, 19vw, 120px);
+  }
+
+  .ov__steps {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .ov__facts {
+    gap: 20px;
   }
 
   .ov__footer {

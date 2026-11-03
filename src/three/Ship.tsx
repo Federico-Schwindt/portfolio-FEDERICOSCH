@@ -99,6 +99,7 @@ export function Ship({ visible }: { visible: boolean }) {
     g.position.copy(pos.current)
     g.position.y += Math.sin(e * 1.3) * 0.05
     look.current.copy(pos.current).add(dir.current)
+    g.parent?.localToWorld(look.current)
     g.lookAt(look.current)
     // bank into the turn
     const targetRoll = -dir.current.x * 0.9 + Math.sin(e * 0.5) * 0.04

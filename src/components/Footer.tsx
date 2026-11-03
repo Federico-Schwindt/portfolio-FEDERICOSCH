@@ -1,4 +1,4 @@
-import { site, socials } from '../content'
+import { credits, site, socials } from '../content'
 import { MagneticButton } from './MagneticButton'
 import { TLink } from './TLink'
 import { useStore } from '../lib/store'
@@ -60,6 +60,17 @@ export function Footer() {
           <span>
             © {site.year} {site.name}
           </span>
+          {credits.map((c) => (
+            <span key={c.href} className="footer__credit">
+              {c.label}:{' '}
+              <a href={c.href} target="_blank" rel="noreferrer" data-cursor="link">
+                {c.text}
+              </a>{' '}
+              <a href={c.licenseHref} target="_blank" rel="noreferrer" data-cursor="link">
+                ({c.license})
+              </a>
+            </span>
+          ))}
         </div>
       </div>
     </footer>

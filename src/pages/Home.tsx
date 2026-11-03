@@ -3,13 +3,13 @@ import { Overlay } from '../components/Overlay'
 import { MagneticButton } from '../components/MagneticButton'
 import { TLink } from '../components/TLink'
 import { Hud } from '../components/Hud'
-import { impact, journeyCopy, projects, services, site, socials } from '../content'
+import { about, credits, impact, journeyCopy, process, projects, services, site, socials } from '../content'
 import { aToP, STATIONS } from '../three/journey'
 import { useStore } from '../lib/store'
 
-const JOURNEY_VH = 1100
+const JOURNEY_VH = 1400
 
-const around = (a: number, before = 0.012, after = 0.036): [number, number] => [aToP(a) - before, aToP(a) + after]
+const around = (a: number, before = 0.012, after = 0.034): [number, number] => [aToP(a) - before, aToP(a) + after]
 
 export function Home() {
   const ref = useRef<HTMLDivElement>(null)
@@ -58,7 +58,7 @@ export function Home() {
         </Overlay>
 
         {/* 03 — Tesseract */}
-        <Overlay range={around(STATIONS.welcome, 0.0, 0.05)} className="ov--welcome" align="center">
+        <Overlay range={around(STATIONS.welcome, 0.0, 0.045)} className="ov--welcome" align="center">
           <p className="mono ov__kicker">
             <span className="index">03</span> Tesseract
           </p>
@@ -68,7 +68,7 @@ export function Home() {
 
         {/* 04 — Services */}
         {services.map((s, i) => (
-          <Overlay key={s.index} range={around(STATIONS.services[i], 0.012, 0.038)} className="ov--service" align={i === 1 ? 'left' : 'right'}>
+          <Overlay key={s.index} range={around(STATIONS.services[i], 0.012, 0.03)} className="ov--service" align={i === 1 ? 'left' : 'right'}>
             <p className="mono ov__kicker">
               <span className="index">04</span> Services — {s.index}
             </p>
@@ -85,10 +85,27 @@ export function Home() {
           </Overlay>
         ))}
 
-        {/* 05 — Work */}
-        <Overlay range={around(STATIONS.workIntro, 0.01, 0.034)} className="ov--workintro" align="center">
+        {/* 05 — Process */}
+        <Overlay range={around(STATIONS.process, 0.018, 0.034)} className="ov--process" align="left">
           <p className="mono ov__kicker">
-            <span className="index">05</span> {journeyCopy.workIntro.title}
+            <span className="index">05</span> Process
+          </p>
+          <h2 className="ov__big">{journeyCopy.process.title}</h2>
+          <p className="ov__text">{journeyCopy.process.text}</p>
+          <ol className="ov__steps">
+            {process.map((p) => (
+              <li key={p.index}>
+                <span className="index">{p.index}</span>
+                <strong>{p.title}</strong>
+              </li>
+            ))}
+          </ol>
+        </Overlay>
+
+        {/* 06 — Work */}
+        <Overlay range={around(STATIONS.workIntro, 0.01, 0.03)} className="ov--workintro" align="center">
+          <p className="mono ov__kicker">
+            <span className="index">06</span> {journeyCopy.workIntro.title}
           </p>
           <h2 className="ov__big">
             Five projects. <em>Real numbers.</em>
@@ -96,7 +113,7 @@ export function Home() {
           <p className="ov__text ov__text--center">{journeyCopy.workIntro.text}</p>
         </Overlay>
         {projects.map((p, i) => (
-          <Overlay key={p.slug} range={around(STATIONS.screens[i], 0.008, 0.036)} className="ov--project" align={i % 2 === 0 ? 'right' : 'left'}>
+          <Overlay key={p.slug} range={around(STATIONS.screens[i], 0.014, 0.028)} className="ov--project" align={i % 2 === 0 ? 'right' : 'left'}>
             <p className="mono ov__kicker">
               <span className="index">{p.index}</span> {p.category} — {p.year}
             </p>
@@ -107,16 +124,33 @@ export function Home() {
             </TLink>
           </Overlay>
         ))}
-        <Overlay range={around(STATIONS.allWork, 0.008, 0.04)} className="ov--allwork" align="center">
+        <Overlay range={around(STATIONS.allWork, 0.008, 0.03)} className="ov--allwork" align="center">
           <TLink to="/work" className="btn btn--lg">
             {journeyCopy.allWork}
           </TLink>
         </Overlay>
 
-        {/* 06 — Impact */}
-        <Overlay range={around(STATIONS.impact, 0.014, 0.06)} className="ov--impact" align="center">
+        {/* 07 — Track record */}
+        <Overlay range={around(STATIONS.trust, 0.016, 0.032)} className="ov--trust" align="right">
           <p className="mono ov__kicker">
-            <span className="index">06</span> {impact.kicker}
+            <span className="index">07</span> Track record
+          </p>
+          <h2 className="ov__big">{journeyCopy.trust.title}</h2>
+          <p className="ov__text">{journeyCopy.trust.text}</p>
+          <ul className="ov__facts">
+            {[about.facts[1], about.facts[0], about.facts[2]].map((f) => (
+              <li key={f.label}>
+                <strong>{f.value}</strong>
+                <span className="mono">{f.label}</span>
+              </li>
+            ))}
+          </ul>
+        </Overlay>
+
+        {/* 08 — Impact */}
+        <Overlay range={around(STATIONS.impact, 0.014, 0.045)} className="ov--impact" align="center">
+          <p className="mono ov__kicker">
+            <span className="index">08</span> {impact.kicker}
           </p>
           <div className="ov__stat">{impact.value}</div>
           <p className="ov__statlabel">{impact.label}</p>
@@ -126,10 +160,22 @@ export function Home() {
           </TLink>
         </Overlay>
 
-        {/* 07 — Contact */}
+        {/* 09 — About */}
+        <Overlay range={around(STATIONS.about, 0.016, 0.034)} className="ov--about" align="left">
+          <p className="mono ov__kicker">
+            <span className="index">09</span> About
+          </p>
+          <h2 className="ov__big">{journeyCopy.aboutTeaser.title}</h2>
+          <p className="ov__text">{about.intro}</p>
+          <TLink to="/about" className="ov__link">
+            {journeyCopy.aboutTeaser.cta} <i>→</i>
+          </TLink>
+        </Overlay>
+
+        {/* 10 — Contact */}
         <Overlay range={[aToP(STATIONS.contact) - 0.01, 1]} className="ov--contact" stay>
           <p className="mono ov__kicker">
-            <span className="index">07</span> <i className="dot" /> {site.availability}
+            <span className="index">10</span> <i className="dot" /> {site.availability}
           </p>
           <h2 className="ov__title">
             <span className="line">Let's work</span>
@@ -151,8 +197,20 @@ export function Home() {
                 </a>
               ))}
             </div>
-            <span>
+            <span className="ov__credits">
               © {site.year} {site.name} · {site.city}
+              {credits.map((c) => (
+                <span key={c.href}>
+                  {' '}
+                  · {c.label}:{' '}
+                  <a href={c.href} target="_blank" rel="noreferrer">
+                    {c.text}
+                  </a>{' '}
+                  <a href={c.licenseHref} target="_blank" rel="noreferrer">
+                    ({c.license})
+                  </a>
+                </span>
+              ))}
             </span>
             <TLink to="/about" className="ov__about">
               About me →

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
-import { ACT_SPLIT, ASTRONAUT_END, LEAD, cameraAt, lineAt, pToA, shipAt, TESSERACT_ORIGIN } from './journey'
+import { ACT_SPLIT, ALL_SPOTS, ASTRONAUT_END, cameraAt, LEAD, lineAt, pToA, shipAt, STATIONS, TESSERACT_ORIGIN } from './journey'
 import { journeyProgress, pointer, useStore } from '../lib/store'
 import type { SceneMode } from './World'
 
@@ -9,6 +9,8 @@ const STATIC: Record<Exclude<SceneMode, 'home'>, { pos: [number, number, number]
   ambient: { pos: [0, 2, 26], look: [4, 1.5, 0] },
   lab: { pos: [0, 1.0, 7], look: [0, 1.0, 0] },
 }
+
+const smooth = (t: number) => t * t * (3 - 2 * t)
 
 export function CameraRig({ mode }: { mode: SceneMode }) {
   const { camera } = useThree()
@@ -22,6 +24,7 @@ export function CameraRig({ mode }: { mode: SceneMode }) {
   const upV = useRef(new THREE.Vector3(0, 1, 0))
   const zPos = useRef(new THREE.Vector3())
   const zLook = useRef(new THREE.Vector3())
+  const spotW = useRef(new THREE.Vector3())
   const lastAct = useRef(0)
   const intro = useRef(0)
   const entered = useStore((s) => s.entered)
@@ -41,10 +44,12 @@ export function CameraRig({ mode }: { mode: SceneMode }) {
     const e = state.clock.elapsedTime
     let snap = false
     let targetRoll = 0
+    let act2 = false
 
     if (mode === 'home') {
       const p = journeyProgress()
       const act = p < ACT_SPLIT ? 1 : 2
+      act2 = act === 2
       if (act !== lastAct.current) {
         snap = true
         lastAct.current = act
@@ -70,7 +75,30 @@ export function CameraRig({ mode }: { mode: SceneMode }) {
         side.current.crossVectors(d0.current, upV.current).normalize()
         cameraAt(a, tPos.current).add(TESSERACT_ORIGIN).addScaledVector(side.current, Math.sin(e * 0.3) * 0.25)
         tLook.current.copy(p0.current).add(TESSERACT_ORIGIN).addScaledVector(d0.current, 4).addScaledVector(upV.current, 0.8)
-        targetRoll = Math.sin(e * 0.25) * 0.01
+
+        // turn to look at whatever is mounted in the wall at this station
+        let best = 0
+        let spot = ALL_SPOTS[0]
+        for (const s of ALL_SPOTS) {
+          // the window is centred a little before the panel so the camera is still behind it when it turns
+          const w = 1 - Math.min(Math.abs(a - (s.a - 0.02)) / 0.032, 1)
+          if (w > best) {
+            best = w
+            spot = s
+          }
+        }
+        if (best > 0) {
+          const k = smooth(best)
+          spotW.current.copy(spot.position).add(TESSERACT_ORIGIN)
+          tLook.current.lerp(spotW.current, k * 0.9)
+          // back away from the wall so the panel is framed; small plaques need more room
+          tPos.current.addScaledVector(spot.normal, k * (spot.radius < 2 ? 2.2 : 1.3))
+          tPos.current.y += k * (spot.position.y + TESSERACT_ORIGIN.y - tPos.current.y) * 0.5
+        }
+
+        // the impact chapter: a slow, unsettling roll as the shelves burn
+        const wImpact = 1 - Math.min(Math.abs(a - STATIONS.impact) / 0.05, 1)
+        targetRoll = Math.sin(e * 0.25) * 0.01 + smooth(wImpact) * Math.sin(e * 0.55) * 0.09
       }
 
       const zoom = useStore.getState().zoom
@@ -89,7 +117,7 @@ export function CameraRig({ mode }: { mode: SceneMode }) {
       tLook.current.set(...s.look)
     }
 
-    tPos.current.x += pointer.x * (mode === 'home' && journeyProgress() >= ACT_SPLIT ? 0.2 : 0.35)
+    tPos.current.x += pointer.x * (act2 ? 0.2 : 0.35)
     tPos.current.y += pointer.y * 0.15
     tLook.current.x += pointer.x * 0.15
 

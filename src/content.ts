@@ -22,6 +22,17 @@ export const site = {
     'I design, build and grow websites that people remember. Strategy, design, code and marketing — one person, one thread.',
 }
 
+/** Third-party assets that require attribution. */
+export const credits = [
+  {
+    label: 'Astronaut model',
+    text: '“Cooper” by Julien Hondaâ',
+    href: 'https://sketchfab.com/3d-models/cooper-4420e8085e2f42c7a2e153df8a984faf',
+    license: 'CC BY-SA 4.0',
+    licenseHref: 'https://creativecommons.org/licenses/by-sa/4.0/',
+  },
+]
+
 export const socials = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/federico-schwindt/' },
   { label: 'GitHub', href: 'https://github.com/Federico-Schwindt' },
@@ -42,8 +53,11 @@ export const chapters = [
   { id: 'dive', label: 'Event horizon' },
   { id: 'tesseract', label: 'Tesseract' },
   { id: 'services', label: 'Services' },
+  { id: 'process', label: 'Process' },
   { id: 'work', label: 'Work' },
+  { id: 'trust', label: 'Track record' },
   { id: 'impact', label: 'Impact' },
+  { id: 'about', label: 'About' },
   { id: 'contact', label: 'Contact' },
 ]
 
@@ -66,6 +80,18 @@ export const journeyCopy = {
     text: 'Five projects with real numbers. Click a screen to step inside the case study.',
   },
   allWork: 'See all work',
+  process: {
+    title: 'Four steps. No surprises.',
+    text: 'Every project runs the same way, from the first call to the first sale.',
+  },
+  trust: {
+    title: 'Numbers, not promises.',
+    text: 'Thirteen projects delivered through Freelancer.com with a perfect rating, every one on time and on budget.',
+  },
+  aboutTeaser: {
+    title: 'The person behind the line.',
+    cta: 'More about me',
+  },
 }
 
 export const manifesto = {
@@ -255,6 +281,29 @@ export const about = {
     { year: '2026', title: '+551% sales', text: 'UDS sales up 551% versus 2024. Started building immersive, 3D-first experiences for new clients.' },
   ],
 }
+
+export const process = [
+  {
+    index: '01',
+    title: 'Discover',
+    text: 'We dig into your business, audience and goals. No assumptions — a clear brief and a plan everyone believes in.',
+  },
+  {
+    index: '02',
+    title: 'Design',
+    text: 'Art direction, wireframes and high-fidelity screens. Motion and 3D are designed in from the start, not sprinkled on top.',
+  },
+  {
+    index: '03',
+    title: 'Build',
+    text: 'Clean, fast, maintainable code. Every interaction is tuned by hand and tested on real devices.',
+  },
+  {
+    index: '04',
+    title: 'Launch & grow',
+    text: 'Deployment, analytics, SEO and campaigns. Launch day is the start of the work, not the end.',
+  },
+]
 
 export const marquee = ['Web Development', 'Web Design', 'E-commerce', 'Branding', '3D & Motion', 'SEO & Growth', 'WordPress', 'React']
 

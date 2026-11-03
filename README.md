@@ -17,7 +17,7 @@ Plus a Work index, case studies, About, a WebGL Lab and Contact.
 | Motion | GSAP 3 (ScrollTrigger, SplitText) · Lenis smooth scroll |
 | Audio | Web Audio API — an original, generative organ score ("Event Horizon"); no audio files |
 | Fonts | Archivo (display) · Space Grotesk (body) · Space Mono (HUD) · Instrument Serif (accents), self-hosted |
-| Models | Draco-compressed GLBs: `public/char/astronaut.glb` (rigged, swim animation), `public/char/ship.glb` |
+| Models | Draco-compressed GLBs in `public/char/`: `astronaut.glb` is “Cooper” by Julien Hondaâ (Sketchfab, CC BY-SA 4.0 — see `public/char/LICENSE.md`), `ship.glb` is generated |
 
 ## Performance
 
@@ -42,7 +42,7 @@ npm run preview    # serve dist/
 - **Images**: `public/work/` (covers 1440×900), `public/case/`, `public/char/portrait.jpg`.
 - **Journey**: `src/three/journey.ts` — the ship's dive curve, the red line, the chapter stations, and the camera path. `src/pages/Home.tsx` maps chapters to progress ranges.
 - **Score**: `src/lib/audio.ts`. To use a real track instead, drop it in `public/audio/` and set `SCORE_FILE` — only with music you hold the rights to publish; a commercial film score cannot be used on a public site.
-- **Models**: replace the GLBs in `public/char/` (keep them Draco-compressed; `src/three/config.ts` has the facing rotations and sizes).
+- **Models**: replace the GLBs in `public/char/` (keep them Draco-compressed; `src/three/config.ts` has the facing rotations and sizes). The astronaut is a CC BY-SA model: keep the credit in `src/content.ts` (`credits`) and the license file if you keep the model.
 
 ## Deploying
 

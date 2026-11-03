@@ -67,6 +67,8 @@ export function journeyProgress() {
   return Math.min(Math.max(scroll.y / max, 0), 1)
 }
 
+if (import.meta.env.DEV && typeof window !== 'undefined') Object.assign(window, { __store: useStore })
+
 if (typeof window !== 'undefined') {
   let lx = 0
   let ly = 0

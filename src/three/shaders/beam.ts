@@ -69,10 +69,13 @@ void main() {
   }
   float uc = u / max(width, 0.001); // -0.5 .. 0.5
 
-  // ── fine stripes: the spines of the books ──
-  float stripes = 26.0;
+  // ── fine stripes: the spines of the books (fewer on thin strands) ──
+  float stripes = mix(7.0, 24.0, smoothstep(0.18, 0.6, width));
   float sid = floor(uc * stripes);
   float f = fract(uc * stripes);
+  // how many screen pixels one stripe covers; below ~1.5 px the stripes dissolve into their average
+  float px = 1.0 / max(fwidth(uc * stripes), 1e-4);
+  float detail = smoothstep(1.2, 3.5, px);
   float h = hash(sid * 7.13 + vSeed * 91.7);
   float h3 = fract(h * 13.7 + floor(along * 1.3) * 0.37);
   vec3 cream = vec3(0.74, 0.64, 0.48);
@@ -83,10 +86,9 @@ void main() {
   vec3 col = h < 0.36 ? brown : h < 0.62 ? tan_ : h < 0.78 ? grey : h < 0.9 ? teal : cream;
   float spine = smoothstep(0.0, 0.14, f) * (1.0 - smoothstep(0.86, 1.0, f));
   col *= (0.45 + 0.55 * spine) * (0.75 + 0.5 * h3);
-  // far away the stripes would alias, so they dissolve into their average tone
   float dist0 = distance(vWorld, uCam);
-  float detail = 1.0 - smoothstep(12.0, 48.0, dist0);
-  col = mix(vec3(0.30, 0.24, 0.17), col, detail);
+  vec3 avg = vec3(0.30, 0.24, 0.17) * (0.75 + 0.25 * fract(vSeed * 7.0));
+  col = mix(avg, col, detail);
 
   // ── light rails: two warm dotted strips along every face ──
   float rail = 1.0 - smoothstep(0.035, 0.06, abs(abs(uc) - 0.27));
@@ -100,7 +102,7 @@ void main() {
   float key = max(dot(N, normalize(vec3(0.3, 1.0, 0.25))), 0.0);
   float shade = 0.14 + 0.42 * facing + 0.3 * key;
   vec3 c = col * shade;
-  if (cap) c = brown * 0.35;
+  if (cap) c = avg * shade * 0.8;
   c += railCol * (cap ? 0.0 : 1.0);
 
   // ── the shelves burn red near the impact chapter ──

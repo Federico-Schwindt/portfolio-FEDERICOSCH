@@ -9,6 +9,8 @@ export const ACT2 = { start: 0.36, end: 1.0 }
 
 /** World offset of the tesseract (far from Gargantua so the two never overlap). */
 export const TESSERACT_ORIGIN = new THREE.Vector3(0, -600, 0)
+/** Size of one tesseract room. */
+export const ROOM = 6
 
 // ─── Act 1: the ship's dive into Gargantua (world coords, hole at origin) ───
 export const shipCurve = new THREE.CatmullRomCurve3(
@@ -44,13 +46,13 @@ export const lineCurve = new THREE.CatmullRomCurve3(
   [
     new THREE.Vector3(0, 0, 8),
     new THREE.Vector3(0, 0.3, -10),
-    new THREE.Vector3(3.2, 1.2, -28),
-    new THREE.Vector3(-2.4, 1.8, -46),
-    new THREE.Vector3(-5.5, 0.6, -64),
-    new THREE.Vector3(1.4, -1.0, -82),
-    new THREE.Vector3(6.5, 1.3, -100),
-    new THREE.Vector3(2.6, 0.2, -118),
-    new THREE.Vector3(-1, -0.3, -136),
+    new THREE.Vector3(1.6, 1.0, -28),
+    new THREE.Vector3(-1.4, 1.4, -46),
+    new THREE.Vector3(-1.8, 0.4, -64),
+    new THREE.Vector3(1.2, -0.6, -82),
+    new THREE.Vector3(1.9, 1.1, -100),
+    new THREE.Vector3(0.4, 0.2, -118),
+    new THREE.Vector3(-1.2, -0.2, -136),
     new THREE.Vector3(0, 0, -152),
     new THREE.Vector3(0, 0, -166),
   ],
@@ -77,11 +79,14 @@ export function lineAt(a: number, outPos: THREE.Vector3, outDir: THREE.Vector3) 
 /** Chapter stations along the line (line parameter a). */
 export const STATIONS = {
   welcome: 0.03,
-  services: [0.11, 0.18, 0.25],
-  workIntro: 0.315,
-  screens: [0.375, 0.445, 0.515, 0.585, 0.655],
-  allWork: 0.725,
-  impact: 0.81,
+  services: [0.09, 0.15, 0.21],
+  process: 0.275,
+  workIntro: 0.33,
+  screens: [0.38, 0.44, 0.5, 0.56, 0.62],
+  allWork: 0.675,
+  trust: 0.72,
+  impact: 0.78,
+  about: 0.85,
   contact: 0.93,
 }
 
@@ -89,6 +94,7 @@ const _p = new THREE.Vector3()
 const _d = new THREE.Vector3()
 const _s = new THREE.Vector3()
 const _up = new THREE.Vector3(0, 1, 0)
+
 /**
  * Nominal camera position (tesseract-local) for a line parameter a: behind and
  * beside the astronaut with a slow lateral and vertical drift. The rig adds
@@ -102,8 +108,8 @@ export function cameraAt(a: number, out: THREE.Vector3) {
   const drift = Math.sin(a * 23.0)
   out
     .copy(_p)
-    .addScaledVector(_up, 2.4 + Math.cos(a * 17.0) * 0.6)
-    .addScaledVector(_s, 1.6 + drift * 1.4)
+    .addScaledVector(_up, 2.2 + Math.cos(a * 17.0) * 0.5)
+    .addScaledVector(_s, 1.2 + drift * 0.9)
   if (a > ASTRONAUT_END - LEAD) {
     const k = Math.min((a - (ASTRONAUT_END - LEAD)) / LEAD, 1)
     out.addScaledVector(_up, k * 0.8)
@@ -112,9 +118,52 @@ export function cameraAt(a: number, out: THREE.Vector3) {
 }
 
 /** Stable side vector for the line at parameter a (perpendicular to the tangent, mostly horizontal). */
-const up = new THREE.Vector3(0, 1, 0)
 export function lineSide(dir: THREE.Vector3, out: THREE.Vector3) {
-  out.crossVectors(dir, up).normalize()
+  out.crossVectors(dir, _up).normalize()
   if (out.lengthSq() < 1e-4) out.set(1, 0, 0)
   return out
 }
+
+// ─── Wall spots: things mounted flush in the room walls, like windows in the bookshelf ───
+export type WallSpot = {
+  a: number
+  position: THREE.Vector3 // tesseract-local
+  normal: THREE.Vector3 // points into the corridor
+  rotationY: number
+  sign: 1 | -1
+  radius: number // keep-out radius for the lattice
+}
+
+/**
+ * A spot on the side wall of the room the line passes through at parameter a.
+ * The wall on the far side of the line is preferred so the astronaut never
+ * flies through it; `prefer` breaks ties so stations alternate sides.
+ */
+export function wallSpot(a: number, prefer: 1 | -1, dy: number, radius: number): WallSpot {
+  const p = new THREE.Vector3()
+  const d = new THREE.Vector3()
+  lineAt(a, p, d)
+  const cx = Math.round(p.x / ROOM) * ROOM
+  const cy = Math.round(p.y / ROOM) * ROOM
+  const off = p.x - cx
+  const sign: 1 | -1 = Math.abs(off) < 0.9 ? prefer : off > 0 ? -1 : 1
+  const x = cx + sign * (ROOM / 2 - 0.16)
+  return {
+    a,
+    position: new THREE.Vector3(x, cy + dy, p.z),
+    normal: new THREE.Vector3(-sign, 0, 0),
+    rotationY: sign > 0 ? -Math.PI / 2 : Math.PI / 2,
+    sign,
+    radius,
+  }
+}
+
+export const SPOTS = {
+  screens: STATIONS.screens.map((a, i) => wallSpot(a, i % 2 === 0 ? -1 : 1, 1.1, 3.3)),
+  process: [-1.6, -0.55, 0.55, 1.6].map((k, i) => wallSpot(STATIONS.process + k * 0.011, i % 2 === 0 ? -1 : 1, 0.9 + (i % 2) * 0.6, 1.5)),
+  trust: [-1, 0, 1].map((k, i) => wallSpot(STATIONS.trust + k * 0.013, i === 1 ? 1 : -1, 1.0, 1.5)),
+  about: wallSpot(STATIONS.about, 1, 1.3, 2.6),
+}
+
+/** Every wall spot, for the lattice keep-out and the camera's "turn to look" moves. */
+export const ALL_SPOTS: WallSpot[] = [...SPOTS.screens, ...SPOTS.process, ...SPOTS.trust, SPOTS.about]

@@ -11,12 +11,11 @@ export function Cursor() {
 
   useEffect(() => {
     if (touch || !dot.current || !ring.current) return
-    const xd = gsap.quickTo(dot.current, 'x', { duration: 0.1, ease: 'power3' })
-    const yd = gsap.quickTo(dot.current, 'y', { duration: 0.1, ease: 'power3' })
-    const xr = gsap.quickTo(ring.current, 'x', { duration: 0.5, ease: 'power3' })
-    const yr = gsap.quickTo(ring.current, 'y', { duration: 0.5, ease: 'power3' })
+    const xd = gsap.quickTo(dot.current, 'x', { duration: 0.08, ease: 'power3' })
+    const yd = gsap.quickTo(dot.current, 'y', { duration: 0.08, ease: 'power3' })
+    const xr = gsap.quickTo(ring.current, 'x', { duration: 0.42, ease: 'power3' })
+    const yr = gsap.quickTo(ring.current, 'y', { duration: 0.42, ease: 'power3' })
     let shown = false
-
     const move = (e: PointerEvent) => {
       if (!shown) {
         shown = true
@@ -29,40 +28,26 @@ export function Cursor() {
       yr(e.clientY)
     }
     const over = (e: PointerEvent) => {
-      const t = (e.target as HTMLElement | null)?.closest<HTMLElement>('a, button, [data-cursor]')
-      const mode = t ? (t.dataset.cursor ?? 'link') : useStore.getState().hoverView ? 'view' : ''
+      const t = (e.target as HTMLElement | null)?.closest<HTMLElement>('a, button, [data-cursor], .dt')
+      const inDesktop = !!(e.target as HTMLElement | null)?.closest('.dt')
+      const mode = inDesktop ? 'os' : t ? (t.dataset.cursor ?? 'link') : ''
       ring.current!.dataset.mode = mode
-      if (label.current) label.current.textContent = t?.dataset.cursorLabel ?? (mode === 'view' ? (t ? 'View' : 'Open') : '')
+      dot.current!.dataset.mode = mode
+      if (label.current) label.current.textContent = mode === 'view' ? 'View' : ''
     }
-    const down = () => ring.current!.classList.add('is-down')
-    const up = () => ring.current!.classList.remove('is-down')
-    const leave = () => gsap.to([dot.current, ring.current], { opacity: 0, duration: 0.3 })
-    const enter = () => gsap.to([dot.current, ring.current], { opacity: 1, duration: 0.3 })
-
     const unsub = useStore.subscribe((s) => {
-      if (!ring.current || !label.current) return
+      if (!ring.current) return
       if (s.hoverView) {
-        ring.current.dataset.mode = 'view'
-        label.current.textContent = 'Open'
-      } else if (ring.current.dataset.mode === 'view' && label.current.textContent === 'Open') {
-        ring.current.dataset.mode = ''
-        label.current.textContent = ''
+        ring.current.dataset.mode = 'os'
+        dot.current!.dataset.mode = 'os'
       }
     })
     window.addEventListener('pointermove', move, { passive: true })
     window.addEventListener('pointerover', over, { passive: true })
-    window.addEventListener('pointerdown', down)
-    window.addEventListener('pointerup', up)
-    document.documentElement.addEventListener('mouseleave', leave)
-    document.documentElement.addEventListener('mouseenter', enter)
     return () => {
       unsub()
       window.removeEventListener('pointermove', move)
       window.removeEventListener('pointerover', over)
-      window.removeEventListener('pointerdown', down)
-      window.removeEventListener('pointerup', up)
-      document.documentElement.removeEventListener('mouseleave', leave)
-      document.documentElement.removeEventListener('mouseenter', enter)
     }
   }, [touch])
 

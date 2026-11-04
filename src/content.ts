@@ -1,7 +1,7 @@
 /**
  * ─────────────────────────────────────────────────────────────
- *  SITE CONTENT — edit everything here.
- *  Items marked TODO are waiting for confirmation.
+ *  SITE CONTENT — edit everything here. Items marked TODO are
+ *  placeholders waiting for confirmation.
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -10,28 +10,16 @@ export const site = {
   firstName: 'Federico',
   lastName: 'Schwindt',
   tagline: 'Website Development, Design & Marketing',
-  role: 'Designer & Developer',
+  role: 'Designer, developer & marketer',
   agency: 'Zyneteq',
   location: 'Argentina',
   city: 'Gualeguaychú, Argentina',
   timeZone: 'America/Argentina/Buenos_Aires',
-  availability: 'Available for new projects',
+  utc: 'GMT-3',
+  availability: 'Open for work',
   email: 'leonel.sch2003@gmail.com',
   year: new Date().getFullYear(),
-  description:
-    'I design, build and grow websites that people remember. Strategy, design, code and marketing — one person, one thread.',
 }
-
-/** Third-party assets that require attribution. */
-export const credits = [
-  {
-    label: 'Astronaut model',
-    text: '“Cooper” by Julien Hondaâ',
-    href: 'https://sketchfab.com/3d-models/cooper-4420e8085e2f42c7a2e153df8a984faf',
-    license: 'CC BY-SA 4.0',
-    licenseHref: 'https://creativecommons.org/licenses/by-sa/4.0/',
-  },
-]
 
 export const socials = [
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/federico-schwindt/' },
@@ -40,97 +28,35 @@ export const socials = [
 ]
 
 export const nav = [
-  { label: 'Work', href: '/work', index: '01' },
-  { label: 'About', href: '/about', index: '02' },
-  { label: 'Lab', href: '/lab', index: '03' },
-  { label: 'Contact', href: '/contact', index: '04' },
+  { label: 'Process', href: '/#process' },
+  { label: 'Work', href: '/work' },
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'About', href: '/about' },
 ]
 
-/** Chapters of the home-page journey (used by the nav counter). */
-export const chapters = [
-  { id: 'intro', label: 'Gargantua' },
-  { id: 'manifesto', label: 'Approach' },
-  { id: 'dive', label: 'Event horizon' },
-  { id: 'tesseract', label: 'Tesseract' },
-  { id: 'services', label: 'Services' },
-  { id: 'process', label: 'Process' },
-  { id: 'work', label: 'Work' },
-  { id: 'trust', label: 'Track record' },
-  { id: 'impact', label: 'Impact' },
-  { id: 'about', label: 'About' },
-  { id: 'contact', label: 'Contact' },
-]
-
-export const journeyCopy = {
-  intro: {
-    kicker: 'Website Development, Design & Marketing',
-    scroll: 'Scroll to begin the descent',
-  },
-  manifesto: {
-    title: 'I build websites that feel like experiences, not documents.',
-    text: 'Strategy, design, engineering and marketing in one pair of hands — so nothing gets lost between the idea and the launch.',
-  },
-  dive: 'Crossing the event horizon',
-  tesseract: {
-    title: 'Every project. One line to follow.',
-    text: 'Welcome to the tesseract: the work, the thinking and the results, laid out along a single red line. Keep scrolling to follow it.',
-  },
-  workIntro: {
-    title: 'Selected work',
-    text: 'Five projects with real numbers. Click a screen to step inside the case study.',
-  },
-  allWork: 'See all work',
-  process: {
-    title: 'Four steps. No surprises.',
-    text: 'Every project runs the same way, from the first call to the first sale.',
-  },
-  trust: {
-    title: 'Numbers, not promises.',
-    text: 'Thirteen projects delivered through Freelancer.com with a perfect rating, every one on time and on budget.',
-  },
-  aboutTeaser: {
-    title: 'The person behind the line.',
-    cta: 'More about me',
-  },
+export const hero = {
+  title: ['I design, build and grow websites for people who', 'care about results'],
+  sub: 'One person, three disciplines. Design that looks like the brand, code that loads fast, marketing that turns visits into sales.',
 }
+
+export const equation = ['Design', '+', 'Code', '+', 'Marketing', '=', '+551%']
 
 export const manifesto = {
-  text: 'I build websites that feel like experiences, not documents.',
-  sub: 'Strategy, design, engineering and marketing in one pair of hands — so nothing gets lost between the idea and the launch.',
-  pillars: ['Design', 'Code', 'Growth'],
+  lead: 'Your website isn’t a brochure.',
+  leadItalic: 'It’s your best salesperson, and it never sleeps.',
+  text: 'Strategy, design, development and campaigns, handled by the same pair of hands. Nothing gets lost in a hand-off, and nothing has to be rebuilt somewhere else later.',
+  line: 'First I understand where your business is →',
+  lineItalic: 'then I build the shortest path from a visit to a sale.',
+  road: 'The road has corners.',
+  roadItalic: 'Each step, a few less.',
 }
 
-export const services = [
-  {
-    index: '01',
-    title: 'Develop­ment',
-    short: 'Development',
-    kicker: 'Built to last',
-    text:
-      'Fast, accessible, production-grade websites and web apps. Custom code, modern frameworks and real-time 3D when the story needs it.',
-    tags: ['React & Next.js', 'TypeScript', 'Three.js / WebGL', 'WordPress & WooCommerce', 'Shopify', 'Performance'],
-  },
-  {
-    index: '02',
-    title: 'Design',
-    short: 'Design',
-    kicker: 'Made to be remembered',
-    text:
-      'Interfaces with a point of view. Art direction, typography and motion systems that make a brand impossible to confuse with anyone else.',
-    tags: ['Art Direction', 'UI / UX', 'Design Systems', 'Motion', 'Branding & Logo', 'Figma'],
-  },
-  {
-    index: '03',
-    title: 'Market­ing',
-    short: 'Marketing',
-    kicker: 'Measured to grow',
-    text:
-      'Beautiful is not enough. I connect design and code to growth: SEO, analytics, landing pages and campaigns that turn attention into revenue.',
-    tags: ['SEO', 'Analytics', 'Landing Pages', 'Paid Campaigns', 'Email', 'Conversion'],
-  },
+export const process = [
+  { index: '01', title: 'Discover', italic: '& Strategy', text: 'Where you are, where you want to go, and what is standing in between. A clear brief before a single pixel.', sides: 4 },
+  { index: '02', title: 'Design', italic: 'Iterations', text: 'Brand, visual system and web design, crafted into something credible and built to last. No templates.', sides: 6 },
+  { index: '03', title: 'Build', italic: '& Launch', text: 'Clean, fast, maintainable code. Every interaction tuned by hand and tested on real devices.', sides: 12 },
+  { index: '04', title: 'Grow', italic: '& Support', text: 'SEO, analytics and campaigns after launch. The process bends to fit you, not the other way around.', sides: 64 },
 ]
-
-export type Stat = { value: string; label: string }
 
 export type Project = {
   slug: string
@@ -138,15 +64,15 @@ export type Project = {
   title: string
   client: string
   category: string
+  tags: string
   year: string
   cover: string
   url?: string
-  color: string
   featured?: boolean
   summary: string
   role: string[]
   stack: string[]
-  stats?: Stat[]
+  stats?: { value: string; label: string }[]
   challenge?: string
   solution?: string
   result?: string
@@ -160,10 +86,10 @@ export const projects: Project[] = [
     title: 'Universal Driveshafts',
     client: 'Universal Driveshafts · Odessa, FL',
     category: 'E-commerce redesign & growth',
+    tags: 'Design, Code, Marketing',
     year: '2024 — 2026',
     cover: 'work/uds.jpg',
     url: 'https://dev.udshafts.com',
-    color: '#ff2b2b',
     featured: true,
     summary:
       'Complete redesign and rebuild of universaldriveshafts.com: a catalog of 6,800+ parts, a vehicle fitment finder, an online driveshaft builder and a wholesale flow. Sales grew 551% from 2024 to 2026.',
@@ -176,7 +102,7 @@ export const projects: Project[] = [
       { value: '43', label: 'Vehicle makes covered' },
     ],
     challenge:
-      'The original WordPress site made it hard to find the right part. Thousands of SKUs, no fitment logic and a checkout that leaked customers — in a category where buyers need the exact part, today.',
+      'The original WordPress site made it hard to find the right part. Thousands of SKUs, no fitment logic and a checkout that leaked customers, in a category where buyers need the exact part, today.',
     solution:
       'A new storefront built around how mechanics actually search: by component series, by vehicle (make → year → model from the real fitment catalog) or by having a shaft built to spec. Same-day shipping, wholesale pricing and three languages on top of a fast, custom codebase.',
     result:
@@ -189,10 +115,10 @@ export const projects: Project[] = [
     title: 'Joya Hijab',
     client: 'Joya · Israel',
     category: 'WooCommerce store',
+    tags: 'Design, WooCommerce',
     year: '2024',
     cover: 'work/joya.jpg',
     url: 'https://joyahijab.com',
-    color: '#d9b36c',
     summary:
       'A right-to-left WooCommerce store for a hijab and modest-fashion brand: editorial photography, clean product grids and a checkout tuned for mobile.',
     role: ['Web design', 'WooCommerce development', 'RTL layout'],
@@ -207,9 +133,9 @@ export const projects: Project[] = [
     title: 'Havat Aliza',
     client: 'Havat Aliza · Israel',
     category: 'Business website',
+    tags: 'Design, WordPress',
     year: '2023', // TODO: confirm year
     cover: 'work/havat-aliza.jpg',
-    color: '#8c6a3f',
     summary:
       'Website for a family-run horse-riding business: home, about, services and booking information, designed to feel warm and trustworthy.',
     role: ['Web design', 'WordPress development', 'Content structure'],
@@ -222,9 +148,9 @@ export const projects: Project[] = [
     title: 'DogStore',
     client: 'DogStore · Israel',
     category: 'WooCommerce store',
+    tags: 'Design, WooCommerce',
     year: '2023', // TODO: confirm year
     cover: 'work/dogstore.jpg',
-    color: '#4a6fff',
     summary:
       'Online store for premium dog food and veterinary supplies (dogstore.co.il): product catalog, categories and a streamlined cart.',
     role: ['Web design', 'WooCommerce development'],
@@ -237,32 +163,86 @@ export const projects: Project[] = [
     title: 'Motion CV Reel',
     client: 'Zyneteq',
     category: 'Motion design',
+    tags: 'Motion, Brand',
     year: '2023',
     cover: 'work/reel.jpg',
-    color: '#ffffff',
-    summary:
-      'A motion-graphics reel explaining services, stack and achievements — website development, design and content creation in sixty seconds.',
+    summary: 'A motion-graphics reel explaining services, stack and achievements, in sixty seconds.',
     role: ['Concept', 'Motion design', 'Edit'],
     stack: ['After Effects', 'Illustrator', 'Premiere'],
     images: [],
   },
 ]
 
-export const impact = {
-  value: '+551%',
-  label: 'Sales growth for Universal Driveshafts, 2024 → 2026',
-  text: 'Design, code and marketing pulling in the same direction. One rebuilt storefront turned a parts catalog into the company’s main sales channel.',
-  kicker: 'Impact',
-  cta: 'Read the case study',
-  slug: 'universal-driveshafts',
+export const workIntro = 'Thoughtful design, careful code, and numbers to show for it.'
+
+// TODO: confirm prices and what each package includes.
+export const packages = [
+  {
+    code: 'FS/PKG.01-L1',
+    short: 'LCH',
+    name: 'Launch',
+    text: 'Your first serious presence: a sharp, credible site built to go live fast and convert from day one.',
+    textItalic: 'launch fast',
+    items: ['1–3 pages', 'Custom visual direction', 'Conversion-focused layout', 'WordPress or custom code'],
+    price: '$1,500',
+    stamp: 'IDEAS ARE NOT RECYCLABLE',
+    stub: 'CREATIVE MATERIAL, DO NOT RECYCLE',
+  },
+  {
+    code: 'FS/PKG.02-G1',
+    short: 'GRW',
+    name: 'Grow',
+    text: 'You already have traction. Now we remove friction: a structured site with a CMS, a brand system and the integrations your sales need.',
+    textItalic: 'remove friction',
+    items: ['5–8 pages + CMS', 'Complete brand identity', 'Integrations & automations', 'SEO setup & analytics'],
+    price: '$3,500',
+    stamp: '100% ORIGINAL AND HUMAN-MADE',
+    stub: '100% ORGANIC AND HUMAN PRODUCED',
+  },
+  {
+    code: 'FS/PKG.03-S1',
+    short: 'SCL',
+    name: 'Scale',
+    text: 'At scale, rough edges cost revenue. A system that keeps growing with you: e-commerce, design system, campaigns.',
+    textItalic: 'cost revenue',
+    items: ['10+ pages + CMS', 'E-commerce & catalog', 'Design system', 'Paid campaigns & reporting'],
+    price: '$7,000',
+    stamp: 'STORED IN DIRECT ACCESS OF CLIENTS',
+    stub: 'STORE IN DIRECT ACCESS OF CLIENTS',
+  },
+]
+
+export const pricingNote = {
+  lead: 'Quality is not a package option.',
+  text: 'Every project is responsive, performance-optimised, cross-browser tested, SEO-ready, accessible and built on a clean architecture, whatever the tier.',
+}
+
+export const xp = {
+  title: 'Old-school commitment.',
+  titleItalic: 'New-school results.',
+  desktopTitle: 'Pricing.html',
+  icons: [
+    { id: 'pricing', label: 'Pricing.html', kind: 'html' },
+    { id: 'projects', label: 'Projects', kind: 'folder' },
+    { id: 'about', label: 'About.txt', kind: 'txt' },
+    { id: 'results', label: 'Results.xls', kind: 'xls' },
+    { id: 'photo', label: 'Federico.png', kind: 'png' },
+    { id: 'contact', label: 'Contact.exe', kind: 'exe' },
+  ],
+}
+
+export const contact = {
+  title: 'Ready to grow?',
+  titleItalic: 'Let’s start with a call.',
+  text: 'Treat it like a first coffee. We get to know each other, I look at what you have, and I tell you honestly what I would do. No pitch deck, no obligations.',
+  cta: "[ LET'S TALK ]",
 }
 
 export const about = {
-  intro:
-    'I’m Federico — a designer, developer and marketer from Argentina, working with clients worldwide through my studio, Zyneteq.',
+  intro: 'I’m Federico, a designer, developer and marketer from Argentina, working with clients worldwide through my studio, Zyneteq.',
   bio: [
     'I started building websites because I was frustrated by how many of them looked the same and converted nobody. Today I work end-to-end: strategy, art direction, front-end and back-end code, and the campaigns that bring people in.',
-    'My favourite projects are the ones where craft meets numbers — a store that doubles its sales, a brand that finally looks like what it sells, an interaction nobody has seen before.',
+    'My favourite projects are the ones where craft meets numbers: a store that multiplies its sales, a brand that finally looks like what it sells, an interaction nobody has seen before.',
   ],
   facts: [
     { value: '13', label: 'Projects completed on Freelancer.com' },
@@ -276,38 +256,10 @@ export const about = {
     { title: 'Marketing', items: ['SEO', 'Google & Meta Ads', 'Analytics', 'Landing pages', 'Email'] },
   ],
   timeline: [
-    { year: '2023', title: 'Founded Zyneteq', text: 'A verified agency on Freelancer.com — 13 projects delivered with a 5.0 rating, 100% on time and on budget.' },
+    { year: '2023', title: 'Founded Zyneteq', text: 'A verified agency on Freelancer.com: 13 projects delivered with a 5.0 rating, 100% on time and on budget.' },
     { year: '2024', title: 'Universal Driveshafts', text: 'Took over the redesign and growth of universaldriveshafts.com: new storefront, fitment catalog and campaigns.' },
-    { year: '2026', title: '+551% sales', text: 'UDS sales up 551% versus 2024. Started building immersive, 3D-first experiences for new clients.' },
+    { year: '2026', title: '+551% sales', text: 'UDS sales up 551% versus 2024. Building immersive, 3D-first experiences for new clients.' },
   ],
 }
 
-export const process = [
-  {
-    index: '01',
-    title: 'Discover',
-    text: 'We dig into your business, audience and goals. No assumptions — a clear brief and a plan everyone believes in.',
-  },
-  {
-    index: '02',
-    title: 'Design',
-    text: 'Art direction, wireframes and high-fidelity screens. Motion and 3D are designed in from the start, not sprinkled on top.',
-  },
-  {
-    index: '03',
-    title: 'Build',
-    text: 'Clean, fast, maintainable code. Every interaction is tuned by hand and tested on real devices.',
-  },
-  {
-    index: '04',
-    title: 'Launch & grow',
-    text: 'Deployment, analytics, SEO and campaigns. Launch day is the start of the work, not the end.',
-  },
-]
-
-export const marquee = ['Web Development', 'Web Design', 'E-commerce', 'Branding', '3D & Motion', 'SEO & Growth', 'WordPress', 'React']
-
-export const tools = [
-  'React', 'Next.js', 'TypeScript', 'Three.js', 'WebGL', 'GSAP', 'Figma', 'WordPress', 'WooCommerce', 'Shopify',
-  'Elementor', 'Flutter', 'Node.js', 'Google Ads', 'Meta Ads', 'Analytics',
-]
+export const tools = ['React', 'Next.js', 'TypeScript', 'Three.js', 'WebGL', 'GSAP', 'Figma', 'WordPress', 'WooCommerce', 'Shopify', 'Elementor', 'Flutter', 'Node.js', 'Google Ads', 'Meta Ads', 'Analytics']

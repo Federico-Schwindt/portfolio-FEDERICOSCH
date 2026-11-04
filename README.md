@@ -1,52 +1,51 @@
-# Federico Schwindt — Portfolio
+# Federico Schwindt — portfolio
 
-A cinematic, scroll-driven 3D portfolio for **Federico Schwindt** (Website Development, Design & Marketing).
+Website development, design & marketing. A red-on-white editorial site whose centrepiece is a scroll-driven retro computer: the section opens on a Windows-XP-style desktop that fills the viewport, then the camera pulls back to reveal a 3D all-in-one PC on a desk whose screen keeps rendering that same desktop, live and clickable.
 
-**Act 1 — the dive.** A ship falls toward Gargantua, a ray-traced Schwarzschild black hole: every pixel's ray is bent through curved spacetime, so the far side of the accretion disk appears above and below the hole and the photon ring wraps the horizon. Doppler beaming, Keplerian shear, telemetry HUD, a riser in the score and a white flash at the crossing.
-
-**Act 2 — the tesseract.** An endless lattice of rooms whose walls are bookshelves extruded through time (a procedural shelf texture smeared along every beam, with light strands between the shelves). Cooper glides along a single red line; the chapters are set into the walls like windows in the shelves: approach, services, the four-step process, five project screens you can click to fly into, the track record, the +551% impact where the shelves burn red, the portrait, and contact under the exit light.
-
-**/tesseract/** — a standalone, single-file page: an interactive 4D hypercube rotating through the W plane inside infinite instanced rooms with time-dust, and a second section that descends into the ray-traced Gargantua (OrbitControls, bloom, CDN Three.js).
-
-Plus a Work index, case studies, About, a WebGL Lab and Contact.
+Live: https://federico-schwindt.github.io/portfolio-FEDERICOSCH/
 
 ## Stack
 
-| Layer | Tech |
+- Vite 8 + React 19 + TypeScript
+- Three.js r187, `@react-three/fiber`, `@react-three/drei` (the computer is built from primitives and lit by a studio environment)
+- GSAP 3 + ScrollTrigger (pinned, scrubbed sections), Lenis smooth scroll
+- `react-router` with lazy pages, `zustand` for the small shared state
+- Fonts: Archivo Variable, Space Mono, Instrument Serif
+
+## Pages
+
+| Route | What it is |
 | --- | --- |
-| App | Vite 8 · React 19 · TypeScript · react-router (lazy-loaded pages) |
-| 3D | Three.js · React Three Fiber · drei · postprocessing (bloom, vignette) |
-| Motion | GSAP 3 (ScrollTrigger, SplitText) · Lenis smooth scroll |
-| Audio | Web Audio API — an original, generative organ score ("Event Horizon"); no audio files |
-| Fonts | Archivo (display) · Space Grotesk (body) · Space Mono (HUD) · Instrument Serif (accents), self-hosted |
-| Models | Draco-compressed GLBs in `public/char/`: `cooper-v3.glb` is “Cooper” by Julien Hondaâ (Sketchfab, CC BY-SA 4.0 — see `public/char/LICENSE.md`), `ranger-v2.glb` is generated |
+| `/` | Hero, the Design + Code + Marketing equation, manifesto, process, selected work, packages, the XP computer, contact |
+| `/work` | All projects |
+| `/work/:slug` | Case study (Universal Driveshafts, Joya Hijab, Havat Aliza, DogStore, Motion CV Reel) |
+| `/about` | Bio, tools, stats |
+| `/contact` | Email, socials, availability |
 
-## Performance
+## The XP section
 
-- One instanced draw call for the whole tesseract; the bookshelf texture is generated once on a canvas at runtime (no image files).
-- The black hole is a single full-screen shader pass with a step budget that drops on light devices.
-- Only one act is mounted at a time; chunks of the lattice beyond the fog are never shaded.
-- Adaptive pixel ratio (`PerformanceMonitor`), post-processing at 75% resolution, no shadows.
-- Phones and low-power devices get the light scene: fewer rooms, no post-processing. Force it with `?light`.
-- Code split into `three`, `motion`, `react` and per-page chunks.
+`src/three/Retro.tsx` renders the machine. The desktop (`src/components/Desktop.tsx`) is real DOM placed on the screen plane with drei's `<Html transform>`, so windows open, drag and close inside the monitor while the monitor itself sits in 3D. Scroll progress (`xpProgress` in `src/lib/store.ts`) drives one camera move: face-on with the screen filling the viewport, pull back to the full machine, then ease to a three-quarter hero angle.
 
-## Getting started
+Two things are easy to break:
+
+- **Hit-testing.** Chromium mis-hit-tests CSS3D content whose layout position in the viewport is fractional, which a GSAP pin or smooth scroll produces. The DOM layer is therefore portalled to `<body>`, kept `position: fixed` at an integer offset and follows the section with a transform (`LayerSync`).
+- **Cropping.** When the desktop fills the viewport the camera fits the shorter axis, so part of the 1280×960 desktop is off-screen. `safeArea()` in `Desktop.tsx` keeps windows and icons inside the visible region on every aspect ratio.
+
+## Content
+
+Everything editable lives in `src/content.ts`: copy, projects, packages and prices, icons on the desktop, socials. Images live in `public/work`, `public/case` and `public/char`.
+
+## Develop
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # type-check + production build to dist/
-npm run preview    # serve dist/
+npm run dev
 ```
 
-## Editing
+```bash
+npm run build && npm run preview
+```
 
-- **Content**: `src/content.ts` (identity, email, socials, nav, journey copy, services, projects with case-study copy, impact, about).
-- **Images**: `public/work/` (covers 1440×900), `public/case/`, `public/char/portrait.jpg`.
-- **Journey**: `src/three/journey.ts` — the ship's dive curve, the red line, the chapter stations, and the camera path. `src/pages/Home.tsx` maps chapters to progress ranges.
-- **Score**: `src/lib/audio.ts`. To use a real track instead, drop it in `public/audio/` and set `SCORE_FILE` — only with music you hold the rights to publish; a commercial film score cannot be used on a public site.
-- **Models**: replace the GLBs in `public/char/` (keep them Draco-compressed; `src/three/config.ts` has the facing rotations and sizes). The astronaut is a CC BY-SA model: keep the credit in `src/content.ts` (`credits`) and the license file if you keep the model.
+## Deploy
 
-## Deploying
-
-`.github/workflows/deploy.yml` builds and publishes to **GitHub Pages** on every push to `main`. Live at `https://federico-schwindt.github.io/portfolio-FEDERICOSCH/`. `public/404.html` makes deep links work. For a custom domain, remove the `BASE_PATH` env from the workflow and add `public/CNAME`.
+Pushing to `main` builds the site and publishes it to GitHub Pages through `.github/workflows/deploy.yml`. The build uses `BASE_PATH=/portfolio-FEDERICOSCH/`; `public/404.html` redirects deep links back into the router.

@@ -1,223 +1,255 @@
-import { useEffect, useRef } from 'react'
-import { Overlay } from '../components/Overlay'
-import { MagneticButton } from '../components/MagneticButton'
+import { lazy, Suspense, useEffect, useRef } from 'react'
+import { contact, equation, hero, manifesto, packages, pricingNote, process, projects, site, workIntro, xp } from '../content'
+import { gsap, ScrollTrigger } from '../lib/gsap'
+import { fadeUp, revealLines } from '../lib/reveal'
+import { useStore, xpProgress } from '../lib/store'
+import { useIsMobile } from '../lib/hooks'
 import { TLink } from '../components/TLink'
-import { Hud } from '../components/Hud'
-import { about, credits, impact, journeyCopy, process, projects, services, site, socials } from '../content'
-import { aToP, STATIONS } from '../three/journey'
-import { useStore } from '../lib/store'
+import { Footer } from '../components/Footer'
+import { Wordmark } from '../components/Wordmark'
+import { Shape } from '../components/Shape'
 
-const JOURNEY_VH = 1400
-
-const around = (a: number, before = 0.012, after = 0.034): [number, number] => [aToP(a) - before, aToP(a) + after]
+const Retro = lazy(() => import('../three/Retro').then((m) => ({ default: m.Retro })))
+const base = import.meta.env.BASE_URL
 
 export function Home() {
-  const ref = useRef<HTMLDivElement>(null)
-  const setJourneyHeight = useStore((s) => s.setJourneyHeight)
-  const hoverView = useStore((s) => s.hoverView)
+  const root = useRef<HTMLDivElement>(null)
+  const entered = useStore((s) => s.entered)
+  const workHover = useStore((s) => s.workHover)
+  const setWorkHover = useStore((s) => s.setWorkHover)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
-    const measure = () => setJourneyHeight(ref.current?.offsetHeight ?? 0)
-    measure()
-    window.addEventListener('resize', measure)
-    return () => {
-      window.removeEventListener('resize', measure)
-      setJourneyHeight(0)
-    }
-  }, [setJourneyHeight])
+    if (!entered) return
+    const el = root.current!
+    const ctx = gsap.context(() => {
+      // hero
+      const splits = [
+        revealLines(el.querySelector<HTMLElement>('.hero__title')!, { immediate: true, delay: 0.3, stagger: 0.1 }),
+        ...Array.from(el.querySelectorAll<HTMLElement>('.rv-lines')).map((p) => revealLines(p, { start: 'top 88%' })),
+      ]
+      fadeUp(el.querySelectorAll('.hero__sub, .hero__meta > *'), { immediate: true, delay: 0.9, stagger: 0.08 })
+      gsap.from(el.querySelectorAll('.eq > *'), { y: 16, opacity: 0, stagger: 0.08, duration: 0.8, scrollTrigger: { trigger: el.querySelector('.eq'), start: 'top 90%', once: true } })
+
+      // manifesto words
+      el.querySelectorAll<HTMLElement>('.rv-fade').forEach((n) => fadeUp(n, { trigger: n, start: 'top 88%' }))
+
+      // process cards: slide up in sequence, shapes draw
+      const cards = gsap.utils.toArray<HTMLElement>('.step', el)
+      gsap.from(cards, { yPercent: 18, opacity: 0, stagger: 0.12, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el.querySelector('.steps'), start: 'top 80%', once: true } })
+      cards.forEach((c, i) => {
+        const path = c.querySelector<SVGPathElement>('.shape path')
+        if (!path) return
+        const len = path.getTotalLength()
+        gsap.fromTo(path, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut', delay: 0.2 + i * 0.15, scrollTrigger: { trigger: c, start: 'top 80%', once: true } })
+      })
+
+      // work list: image follows hover
+      fadeUp(el.querySelectorAll('.wl__row'), { trigger: el.querySelector('.wl')!, start: 'top 85%', stagger: 0.08 })
+
+      // the XP sequence: a pinned section; progress feeds the 3D camera
+      ScrollTrigger.create({
+        trigger: el.querySelector('.xp'),
+        start: 'top top',
+        end: '+=220%',
+        pin: true,
+        scrub: true,
+        onUpdate: (self) => {
+          xpProgress.current = self.progress
+          el.querySelector('.xp')!.classList.toggle('is-out', self.progress > 0.4)
+        },
+      })
+      // packages fly in from the desk before the XP section
+      gsap.from(el.querySelectorAll('.pkg--lg'), { y: 80, rotate: (i: number) => (i - 1) * 3, opacity: 0, stagger: 0.12, duration: 1.1, ease: 'power3.out', scrollTrigger: { trigger: el.querySelector('.pricing'), start: 'top 75%', once: true } })
+
+      ScrollTrigger.refresh()
+      return () => splits.forEach((s) => s.revert())
+    }, el)
+    return () => ctx.revert()
+  }, [entered])
 
   return (
-    <div className={`journey ${hoverView ? 'is-view' : ''}`} ref={ref} style={{ height: `${JOURNEY_VH}vh` }}>
-      <div className="journey__sticky">
-        <Hud />
-
-        {/* 00 — Gargantua */}
-        <Overlay range={[0, 0.1]} className="ov--hero">
-          <p className="mono ov__kicker">{journeyCopy.intro.kicker}</p>
-          <h1 className="ov__title">
-            <span className="line">{site.firstName}</span>
-            <span className="line">{site.lastName}</span>
-          </h1>
-          <p className="ov__sub">
-            <em>{site.role}</em>
-            <span className="mono">{site.location} · working worldwide</span>
-          </p>
-          <p className="ov__scroll mono">
-            <span>{journeyCopy.intro.scroll}</span>
-            <i>↓</i>
-          </p>
-        </Overlay>
-
-        {/* 01 — Approach */}
-        <Overlay range={[0.12, 0.26]} className="ov--manifesto" align="right">
-          <p className="mono ov__kicker">
-            <span className="index">01</span> Approach
-          </p>
-          <h2 className="ov__big">{journeyCopy.manifesto.title}</h2>
-          <p className="ov__text">{journeyCopy.manifesto.text}</p>
-        </Overlay>
-
-        {/* 03 — Tesseract */}
-        <Overlay range={around(STATIONS.welcome, 0.0, 0.045)} className="ov--welcome" align="center">
-          <p className="mono ov__kicker">
-            <span className="index">03</span> Tesseract
-          </p>
-          <h2 className="ov__big">{journeyCopy.tesseract.title}</h2>
-          <p className="ov__text ov__text--center">{journeyCopy.tesseract.text}</p>
-        </Overlay>
-
-        {/* 04 — Services */}
-        {services.map((s, i) => (
-          <Overlay key={s.index} range={around(STATIONS.services[i], 0.012, 0.03)} className="ov--service" align={i === 1 ? 'left' : 'right'}>
-            <p className="mono ov__kicker">
-              <span className="index">04</span> Services — {s.index}
+    <div className="home" ref={root}>
+      {/* ── Hero ── */}
+      <section className="hero">
+        <Wordmark />
+        <div className="hero__grid">
+          <div className="hero__meta">
+            <p className="mono">{site.tagline}</p>
+            <p className="mono hero__open">
+              <i className="dot" /> {site.availability}
             </p>
-            <h2 className="ov__h2">{s.short}</h2>
-            <p className="ov__kick">
-              <em>{s.kicker}</em>
-            </p>
-            <p className="ov__text">{s.text}</p>
-            <ul className="tags">
-              {s.tags.map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ul>
-          </Overlay>
+          </div>
+          <div className="hero__copy">
+            <h1 className="hero__title split-wait">
+              {hero.title[0]} <em>{hero.title[1]}</em>
+            </h1>
+            <p className="hero__sub">{hero.sub}</p>
+          </div>
+        </div>
+        <div className="hero__strip">
+          <img src={base + 'work/uds.jpg'} alt="Universal Driveshafts storefront" />
+          <img src={base + 'work/joya.jpg'} alt="Joya Hijab store" />
+        </div>
+      </section>
+
+      {/* ── Equation ── */}
+      <div className="eq mono">
+        {equation.map((e, i) => (
+          <span key={i} className={e.length > 1 && e !== '+551%' ? 'eq__word' : e === '+551%' ? 'eq__result' : 'eq__op'}>
+            {e}
+          </span>
         ))}
+      </div>
 
-        {/* 05 — Process */}
-        <Overlay range={around(STATIONS.process, 0.018, 0.034)} className="ov--process" align="left">
-          <p className="mono ov__kicker">
-            <span className="index">05</span> Process
+      {/* ── Manifesto ── */}
+      <section className="manifesto">
+        <h2 className="manifesto__lead rv-lines split-wait">
+          {manifesto.lead} <em>{manifesto.leadItalic}</em>
+        </h2>
+        <div className="manifesto__grid">
+          <p className="manifesto__text rv-fade">{manifesto.text}</p>
+          <p className="manifesto__line rv-lines split-wait">
+            {manifesto.line} <em>{manifesto.lineItalic}</em>
           </p>
-          <h2 className="ov__big">{journeyCopy.process.title}</h2>
-          <p className="ov__text">{journeyCopy.process.text}</p>
-          <ol className="ov__steps">
-            {process.map((p) => (
-              <li key={p.index}>
-                <span className="index">{p.index}</span>
-                <strong>{p.title}</strong>
-              </li>
-            ))}
-          </ol>
-        </Overlay>
+        </div>
+        <div className="manifesto__foot">
+          <span className="mono ab">
+            A <i>→</i> B
+          </span>
+          <p className="rv-fade">
+            {manifesto.road} <em>{manifesto.roadItalic}</em>
+          </p>
+          <a href="#process" className="pill" data-cursor="link">
+            <em>My process</em>
+          </a>
+        </div>
+      </section>
 
-        {/* 06 — Work */}
-        <Overlay range={around(STATIONS.workIntro, 0.01, 0.03)} className="ov--workintro" align="center">
-          <p className="mono ov__kicker">
-            <span className="index">06</span> {journeyCopy.workIntro.title}
-          </p>
-          <h2 className="ov__big">
-            Five projects. <em>Real numbers.</em>
+      {/* ── Process ── */}
+      <section className="process" id="process">
+        <div className="steps">
+          {process.map((p, i) => (
+            <article className="step" key={p.index} style={{ ['--i' as string]: i }}>
+              <span className="mono step__num">{p.index}</span>
+              <Shape sides={p.sides} />
+              <div className="step__text">
+                <h3>
+                  {p.title} <em>{p.italic}</em>
+                </h3>
+                <p>{p.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Selected work ── */}
+      <section className="work" id="work">
+        <div className="work__head">
+          <h2>
+            Selected <em>Work</em>
           </h2>
-          <p className="ov__text ov__text--center">{journeyCopy.workIntro.text}</p>
-        </Overlay>
-        {projects.map((p, i) => (
-          <Overlay key={p.slug} range={around(STATIONS.screens[i], 0.014, 0.028)} className="ov--project" align={i % 2 === 0 ? 'right' : 'left'}>
-            <p className="mono ov__kicker">
-              <span className="index">{p.index}</span> {p.category} — {p.year}
-            </p>
-            <h2 className="ov__h2">{p.title}</h2>
-            <p className="ov__text">{p.summary}</p>
-            <TLink to={`/work/${p.slug}`} className="ov__link">
-              Open case study <i>→</i>
-            </TLink>
-          </Overlay>
-        ))}
-        <Overlay range={around(STATIONS.allWork, 0.008, 0.03)} className="ov--allwork" align="center">
-          <TLink to="/work" className="btn btn--lg">
-            {journeyCopy.allWork}
-          </TLink>
-        </Overlay>
-
-        {/* 07 — Track record */}
-        <Overlay range={around(STATIONS.trust, 0.016, 0.032)} className="ov--trust" align="right">
-          <p className="mono ov__kicker">
-            <span className="index">07</span> Track record
-          </p>
-          <h2 className="ov__big">{journeyCopy.trust.title}</h2>
-          <p className="ov__text">{journeyCopy.trust.text}</p>
-          <ul className="ov__facts">
-            {[about.facts[1], about.facts[0], about.facts[2]].map((f) => (
-              <li key={f.label}>
-                <strong>{f.value}</strong>
-                <span className="mono">{f.label}</span>
+          <p>{workIntro}</p>
+        </div>
+        <div className="wl">
+          <ul className="wl__list">
+            {projects.map((p, i) => (
+              <li key={p.slug} className={`wl__row ${workHover === i ? 'is-on' : ''}`} onPointerEnter={() => setWorkHover(i)}>
+                <TLink to={`/work/${p.slug}`} cursor="view">
+                  <span className="mono">{p.index}.</span>
+                  <em>{p.title}</em>
+                  <span className="mono wl__tags">{p.tags}</span>
+                </TLink>
               </li>
             ))}
           </ul>
-        </Overlay>
-
-        {/* 08 — Impact */}
-        <Overlay range={around(STATIONS.impact, 0.014, 0.045)} className="ov--impact" align="center">
-          <p className="mono ov__kicker">
-            <span className="index">08</span> {impact.kicker}
-          </p>
-          <div className="ov__stat">{impact.value}</div>
-          <p className="ov__statlabel">{impact.label}</p>
-          <p className="ov__text ov__text--center">{impact.text}</p>
-          <TLink to={`/work/${impact.slug}`} className="ov__link">
-            {impact.cta} <i>→</i>
-          </TLink>
-        </Overlay>
-
-        {/* 09 — About */}
-        <Overlay range={around(STATIONS.about, 0.016, 0.034)} className="ov--about" align="left">
-          <p className="mono ov__kicker">
-            <span className="index">09</span> About
-          </p>
-          <h2 className="ov__big">{journeyCopy.aboutTeaser.title}</h2>
-          <p className="ov__text">{about.intro}</p>
-          <TLink to="/about" className="ov__link">
-            {journeyCopy.aboutTeaser.cta} <i>→</i>
-          </TLink>
-        </Overlay>
-
-        {/* 10 — Contact */}
-        <Overlay range={[aToP(STATIONS.contact) - 0.01, 1]} className="ov--contact" stay>
-          <p className="mono ov__kicker">
-            <span className="index">10</span> <i className="dot" /> {site.availability}
-          </p>
-          <h2 className="ov__title">
-            <span className="line">Let's work</span>
-            <span className="line">together</span>
-          </h2>
-          <div className="ov__cta">
-            <MagneticButton href={`mailto:${site.email}`} className="btn btn--lg">
-              {site.email}
-            </MagneticButton>
-            <TLink to="/contact" className="btn btn--ghost btn--lg">
-              Contact page
-            </TLink>
+          <div className="wl__media" aria-hidden="true">
+            {projects.map((p, i) => (
+              <img key={p.slug} src={base + p.cover} alt="" className={workHover === i ? 'is-on' : ''} />
+            ))}
           </div>
-          <div className="ov__footer mono">
-            <div className="ov__socials">
-              {socials.map((s) => (
-                <a key={s.label} href={s.href} target="_blank" rel="noreferrer">
-                  {s.label}
-                </a>
-              ))}
-            </div>
-            <span className="ov__credits">
-              © {site.year} {site.name} · {site.city}
-              {credits.map((c) => (
-                <span key={c.href}>
-                  {' '}
-                  · {c.label}:{' '}
-                  <a href={c.href} target="_blank" rel="noreferrer">
-                    {c.text}
-                  </a>{' '}
-                  <a href={c.licenseHref} target="_blank" rel="noreferrer">
-                    ({c.license})
-                  </a>
+        </div>
+        <div className="work__more mono">
+          <TLink to="/work">• • • Explore more • • • Explore more • • • Explore more • • •</TLink>
+        </div>
+      </section>
+
+      {/* ── Pricing ── */}
+      <section className="pricing" id="pricing">
+        <p className="pill pill--static">
+          <em>Packages</em>
+        </p>
+        <div className="pricing__grid">
+          {packages.map((p) => (
+            <article className="pkg pkg--lg" key={p.code}>
+              <div className="pkg__top">
+                <span className="mono pkg__code">
+                  <i className="pkg__qr" /> {p.code}
                 </span>
-              ))}
-            </span>
-            <TLink to="/about" className="ov__about">
-              About me →
-            </TLink>
-          </div>
-        </Overlay>
-      </div>
+                <h3>{p.name}</h3>
+                <p>{p.text}</p>
+                <ul>
+                  {p.items.map((it) => (
+                    <li key={it}>{it}</li>
+                  ))}
+                </ul>
+                <span className="pkg__short">{p.short}</span>
+                <span className="mono pkg__tearlabel">▸▸▸ Tear along line ▸▸▸</span>
+              </div>
+              <div className="pkg__tear" />
+              <div className="pkg__bottom">
+                <div className="pkg__price">
+                  <span className="mono">Price starts at:</span>
+                  <strong className="mono">{p.price}</strong>
+                </div>
+                <div className="pkg__barcode" aria-hidden="true" />
+                <TLink to="/contact" className="pkg__cta" cursor="link">
+                  <em>Schedule a free call</em>
+                </TLink>
+                <span className="mono pkg__stamp">{p.stub}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p className="pricing__note">
+          <em>{pricingNote.lead}</em> {pricingNote.text}
+        </p>
+      </section>
+
+      {/* ── The computer ── */}
+      <section className="xp">
+        <div className="xp__sky" />
+        <div className="xp__scene">
+          <Suspense fallback={null}>
+            <Retro />
+          </Suspense>
+        </div>
+        <div className="xp__copy">
+          <h2>
+            {xp.title} <em>{xp.titleItalic}</em>
+          </h2>
+          <p className="mono">Double-click the icons. The windows drag.</p>
+        </div>
+        {isMobile && <p className="mono xp__hint">Scroll to zoom out</p>}
+      </section>
+
+      {/* ── Contact ── */}
+      <section className="contact" id="contact">
+        <div className="contact__grid">
+          <h2 className="rv-lines split-wait">
+            {contact.title} <em>{contact.titleItalic}</em>
+          </h2>
+          <p className="rv-fade">{contact.text}</p>
+        </div>
+        <div className="contact__line">
+          <TLink to="/contact" className="diamond" cursor="link">
+            <span className="mono">{contact.cta}</span>
+          </TLink>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }

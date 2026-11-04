@@ -4,11 +4,25 @@ import { Footer } from '../components/Footer'
 import { Marquee } from '../components/Marquee'
 import { gsap } from '../lib/gsap'
 import { fadeUp, revealChars, revealLines } from '../lib/reveal'
+import { breadcrumbLd, personLd, useSeo } from '../lib/seo'
 
 const base = import.meta.env.BASE_URL
 
 export function About() {
   const root = useRef<HTMLElement>(null)
+  useSeo({
+    title: 'About Federico Schwindt · Web designer, developer & marketer',
+    description: 'Designer, developer and marketer from Gualeguaychú, Argentina, running the studio Zyneteq. 13 projects delivered on Freelancer.com with a 5.0 rating, 100% on time and on budget.',
+    path: '/about',
+    type: 'profile',
+    jsonLd: [
+      { '@context': 'https://schema.org', '@type': 'ProfilePage', mainEntity: personLd },
+      breadcrumbLd([
+        { name: 'Home', path: '/' },
+        { name: 'About', path: '/about' },
+      ]),
+    ],
+  })
   useEffect(() => {
     const el = root.current!
     const ctx = gsap.context(() => {
@@ -31,7 +45,7 @@ export function About() {
       <header className="page__head">
         <p className="mono page__kicker">About</p>
         <h1 className="page__title">
-          <span className="line split-wait">Design.</span>
+          <span className="line split-wait">Design.</span>{' '}
           <span className="line split-wait">
             <em>Code. Growth.</em>
           </span>

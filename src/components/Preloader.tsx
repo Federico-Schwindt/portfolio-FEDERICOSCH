@@ -16,6 +16,13 @@ export function Preloader() {
   }, [lenis])
 
   useEffect(() => {
+    // prerender snapshots skip the curtain (the script injects a static one)
+    if ((window as unknown as { __PRERENDER__?: boolean }).__PRERENDER__) {
+      setEntered(true)
+      lenis?.start()
+      setGone(true)
+      return
+    }
     const obj = { v: 0 }
     let cancelled = false
     const tw = gsap.to(obj, { v: 100, duration: 1.6, ease: 'power2.inOut', onUpdate: () => setCount(Math.round(obj.v)) })

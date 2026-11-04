@@ -99,8 +99,12 @@ function Pricing() {
             <div className="pkg__tear" />
             <div className="pkg__bottom">
               <div className="pkg__price">
-                <span>Price starts at:</span>
+                <span>Setup:</span>
                 <strong>{p.price}</strong>
+              </div>
+              <div className="pkg__price pkg__price--monthly">
+                <span>Then:</span>
+                <strong>{p.monthly}</strong>
               </div>
               <div className="pkg__barcode" aria-hidden="true" />
               <span className="pkg__stamp">{p.stamp}</span>

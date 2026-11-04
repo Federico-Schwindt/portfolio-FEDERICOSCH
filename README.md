@@ -20,7 +20,8 @@ Live: https://federico-schwindt.github.io/portfolio-FEDERICOSCH/
 | `/work` | All projects |
 | `/work/:slug` | Case study for each of the 13 projects (Universal Driveshafts plus the Freelancer.com portfolio) |
 | `/about` | Bio, tools, stats |
-| `/contact` | Email, socials, availability |
+| `/contact` | Lead form (stored in Neon Postgres), email, socials |
+| `/admin` | Private lead inbox: Neon Auth sign-in, live list via Neon Realtime (noindex, not linked) |
 
 ## The XP section
 
@@ -30,6 +31,51 @@ Two things are easy to break:
 
 - **Hit-testing.** Chromium mis-hit-tests CSS3D content whose layout position in the viewport is fractional, which a GSAP pin or smooth scroll produces. The DOM layer is therefore portalled to `<body>`, kept `position: fixed` at an integer offset and follows the section with a transform (`LayerSync`).
 - **Cropping.** When the desktop fills the viewport the camera fits the shorter axis, so part of the 1280×960 desktop is off-screen. `safeArea()` in `Desktop.tsx` keeps windows and icons inside the visible region on every aspect ratio.
+
+## SEO
+
+- Every route sets its own title, description, canonical URL, Open Graph tags and JSON-LD through `useSeo` (`src/lib/seo.ts`): Person, ProfessionalService with the three packages as Offers, WebSite, FAQPage, Service list, BreadcrumbList, CreativeWork / VideoObject per case study.
+- `npm run build` ends with `scripts/prerender.mjs`, which loads every public route in headless Chromium and writes static HTML to `dist/<route>/index.html`, plus `dist/sitemap.xml`. Crawlers and link previews get real content without running JavaScript; the page boots normally on top.
+- On a GitHub Pages project site, crawlers only read `robots.txt` at the domain root, so submit `https://federico-schwindt.github.io/portfolio-FEDERICOSCH/sitemap.xml` in Google Search Console. A custom domain fixes both.
+
+## Neon (database, API, auth, storage, realtime)
+
+| Piece | Where |
+| --- | --- |
+| Services | `neon.ts` (auth, function `api`, buckets `media` + `briefs`, realtime) |
+| Schema | `db/schema.sql`, applied with `npm run db:migrate` |
+| API | `functions/api` (Hono): `POST /leads`, `POST /leads/:id/brief`, admin `GET/PATCH /leads`, `POST /leads/live` |
+| Browser | `src/lib/api.ts`, `src/components/LeadForm.tsx`, `src/pages/Admin.tsx` |
+
+Set up or redeploy:
+
+```bash
+npm i -g neon@latest && neon login
+```
+
+```bash
+cp .env.example .env.local   # then fill ADMIN_EMAILS / WEB_ORIGINS
+```
+
+```bash
+neon deploy --env .env.local && neon env pull && neon deploy --env .env.local
+```
+
+```bash
+npm run db:migrate
+```
+
+```bash
+neon functions get api        # copy invocation_url
+```
+
+The second deploy uploads the Realtime secret, which only exists after the first one. Then add three repository variables (Settings → Secrets and variables → Actions → Variables) so the Pages build can reach Neon: `VITE_API_URL` (the function URL), `VITE_NEON_AUTH_URL` (`NEON_AUTH_BASE_URL`), `VITE_NEON_REALTIME_URL` (`NEON_REALTIME_URL`). Register the site origin with Neon Auth:
+
+```bash
+neon neon-auth domain add https://federico-schwindt.github.io
+```
+
+Without `VITE_API_URL` the forms fall back to a pre-filled email, so the site never loses a lead. `npm run api:dev` runs the function locally against `.env.local` (`DB_DRIVER=http` uses Neon's HTTPS SQL endpoint where port 5432 is blocked).
 
 ## Content
 

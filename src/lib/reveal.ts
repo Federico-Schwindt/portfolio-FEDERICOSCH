@@ -8,11 +8,19 @@ type Opts = {
   duration?: number
 }
 
+/** True while scripts/prerender.mjs snapshots the page: skip splitting so crawlers get whole words. */
+const PRERENDER = typeof window !== 'undefined' && Boolean((window as unknown as { __PRERENDER__?: boolean }).__PRERENDER__)
+const stub = (el: HTMLElement) => {
+  el.style.visibility = 'visible'
+  return { revert() {} } as unknown as ReturnType<typeof SplitText.create>
+}
+
 const trigger = (el: Element, opts: Opts, start: string) =>
   opts.immediate ? undefined : { trigger: el, start: opts.start ?? start, once: true }
 
 /** Line-by-line masked reveal. Returns the SplitText instance (call .revert() on cleanup). */
 export function revealLines(el: HTMLElement, opts: Opts = {}) {
+  if (PRERENDER) return stub(el)
   return SplitText.create(el, {
     type: 'lines',
     mask: 'lines',
@@ -34,6 +42,7 @@ export function revealLines(el: HTMLElement, opts: Opts = {}) {
 
 /** Character reveal with a subtle rotation, masked per line. */
 export function revealChars(el: HTMLElement, opts: Opts = {}) {
+  if (PRERENDER) return stub(el)
   return SplitText.create(el, {
     type: 'chars,lines',
     mask: 'lines',
@@ -58,6 +67,7 @@ export function fadeUp(
   targets: gsap.TweenTarget,
   opts: Opts & { trigger?: Element; y?: number } = {},
 ) {
+  if (PRERENDER) return gsap.set(targets, { clearProps: 'opacity,transform' })
   const first = opts.trigger ?? (targets instanceof Element ? targets : undefined)
   return gsap.from(targets, {
     y: opts.y ?? 32,

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react'
-import { contact, equation, hero, manifesto, packages, pricingNote, process, projects, site, workIntro, xp } from '../content'
+import { audit, contact, equation, faq, hero, manifesto, packages, pricingNote, process, projects, services, site, workIntro, xp } from '../content'
 import { gsap, ScrollTrigger } from '../lib/gsap'
 import { fadeUp, revealLines } from '../lib/reveal'
 import { useStore, xpProgress } from '../lib/store'
@@ -8,6 +8,8 @@ import { TLink } from '../components/TLink'
 import { Footer } from '../components/Footer'
 import { Wordmark } from '../components/Wordmark'
 import { Shape } from '../components/Shape'
+import { LeadForm } from '../components/LeadForm'
+import { orgLd, personLd, SITE_URL, useSeo, websiteLd } from '../lib/seo'
 
 const Retro = lazy(() => import('../three/Retro').then((m) => ({ default: m.Retro })))
 const base = import.meta.env.BASE_URL
@@ -19,6 +21,32 @@ export function Home() {
   const featured = projects.filter((p) => p.featured)
   const setWorkHover = useStore((s) => s.setWorkHover)
   const isMobile = useIsMobile()
+  useSeo({
+    title: 'Federico Schwindt · Web Designer & Developer · Websites from $300',
+    description:
+      'Freelance web designer, developer and marketer. Business websites, WooCommerce & Shopify stores, car dealer sites, SEO and Google Ads. From $300 + $50/month. 13 projects, 5.0 rating, +551% sales for Universal Driveshafts.',
+    path: '/',
+    jsonLd: [
+      websiteLd,
+      personLd,
+      orgLd(packages),
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Web design services',
+        itemListElement: services.map((sv, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: { '@type': 'Service', name: sv.title, description: sv.text, provider: { '@id': `${SITE_URL}/#org` }, areaServed: 'Worldwide' },
+        })),
+      },
+    ],
+  })
 
   useEffect(() => {
     if (!entered) return
@@ -76,7 +104,9 @@ export function Home() {
         <Wordmark />
         <div className="hero__grid">
           <div className="hero__meta">
-            <p className="mono">{site.tagline}</p>
+            <p className="mono">
+              {site.name} · {site.tagline}
+            </p>
             <p className="mono hero__open">
               <i className="dot" /> {site.availability}
             </p>
@@ -176,6 +206,32 @@ export function Home() {
         </div>
       </section>
 
+      {/* ── Services ── */}
+      <section className="services" id="services" aria-labelledby="services-title">
+        <div className="work__head">
+          <h2 id="services-title" className="rv-lines split-wait">
+            What I <em>build</em>
+          </h2>
+          <p className="rv-fade">Websites, stores and campaigns for businesses that want more enquiries, not just a nicer homepage.</p>
+        </div>
+        <div className="services__grid">
+          {services.map((sv, i) => (
+            <article className="service" key={sv.slug} id={sv.slug}>
+              <span className="mono service__num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>
+                {sv.title} <em>{sv.italic}</em>
+              </h3>
+              <p>{sv.text}</p>
+              <ul className="mono service__tags">
+                {sv.tags.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
       {/* ── Pricing ── */}
       <section className="pricing" id="pricing">
         <p className="pill pill--static">
@@ -201,11 +257,15 @@ export function Home() {
               <div className="pkg__tear" />
               <div className="pkg__bottom">
                 <div className="pkg__price">
-                  <span className="mono">Price starts at:</span>
+                  <span className="mono">Setup:</span>
                   <strong className="mono">{p.price}</strong>
                 </div>
+                <div className="pkg__price pkg__price--monthly">
+                  <span className="mono">Then:</span>
+                  <strong className="mono">{p.monthly}</strong>
+                </div>
                 <div className="pkg__barcode" aria-hidden="true" />
-                <TLink to="/contact" className="pkg__cta" cursor="link">
+                <TLink to={`/contact?package=${p.name.toLowerCase()}`} className="pkg__cta" cursor="link">
                   <em>Schedule a free call</em>
                 </TLink>
                 <span className="mono pkg__stamp">{p.stub}</span>
@@ -216,6 +276,27 @@ export function Home() {
         <p className="pricing__note">
           <em>{pricingNote.lead}</em> {pricingNote.text}
         </p>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="faq" id="faq" aria-labelledby="faq-title">
+        <div className="work__head">
+          <h2 id="faq-title" className="rv-lines split-wait">
+            Questions, <em>answered</em>
+          </h2>
+          <p className="rv-fade">Straight answers about prices, timelines and how the monthly plan works.</p>
+        </div>
+        <div className="faq__list">
+          {faq.map((f) => (
+            <details className="faq__item" key={f.q}>
+              <summary>
+                <h3>{f.q}</h3>
+                <span className="faq__icon" aria-hidden="true" />
+              </summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       {/* ── The computer ── */}
@@ -233,6 +314,25 @@ export function Home() {
           <p className="mono">Double-click the icons. The windows drag.</p>
         </div>
         {isMobile && <p className="mono xp__hint">Scroll to zoom out</p>}
+      </section>
+
+      {/* ── Free audit (lead magnet) ── */}
+      <section className="audit" id="audit" aria-labelledby="audit-title">
+        <div className="audit__copy">
+          <p className="pill pill--static">
+            <em>{audit.kicker}</em>
+          </p>
+          <h2 id="audit-title" className="rv-lines split-wait">
+            {audit.title} <em>{audit.titleItalic}</em>
+          </h2>
+          <p className="rv-fade">{audit.text}</p>
+          <ul className="mono audit__points">
+            {audit.points.map((pt) => (
+              <li key={pt}>{pt}</li>
+            ))}
+          </ul>
+        </div>
+        <LeadForm variant="audit" compact />
       </section>
 
       {/* ── Contact ── */}

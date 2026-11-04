@@ -14,6 +14,7 @@ const Work = lazy(() => import('./pages/Work').then((m) => ({ default: m.Work })
 const CaseStudy = lazy(() => import('./pages/CaseStudy').then((m) => ({ default: m.CaseStudy })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
 const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })))
+const Admin = lazy(() => import('./pages/Admin').then((m) => ({ default: m.Admin })))
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
 
 function RouteEffects() {
@@ -53,6 +54,7 @@ export function App() {
               <Route path="/work/:slug" element={<CaseStudy />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

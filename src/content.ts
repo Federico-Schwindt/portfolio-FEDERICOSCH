@@ -77,6 +77,10 @@ export type Project = {
   solution?: string
   result?: string
   images: string[]
+  /** self-initiated concept, not client work (labelled as such everywhere) */
+  concept?: boolean
+  /** looping, muted film shown on the case study (and as the cover on hover) */
+  video?: string
 }
 
 export const projects: Project[] = [
@@ -314,11 +318,186 @@ export const projects: Project[] = [
     stack: ['After Effects', 'Illustrator', 'Premiere'],
     images: [],
   },
+  // ── Concepts: self-initiated pieces made to explore an industry before pitching it ──
+  {
+    slug: 'velocity-motors-concept',
+    index: 'C1',
+    title: 'Velocity Motors',
+    client: 'Self-initiated concept',
+    category: 'Car dealer website & launch spot',
+    tags: 'Concept, Web design, Motion',
+    year: '2026',
+    cover: 'work/velocity.jpg',
+    concept: true,
+    video: 'media/velocity.mp4',
+    summary:
+      'A concept website and five-second launch spot for a premium car dealership: inventory search above the fold, financing and trade-in one click away, and a film that sells the showroom before the first visit.',
+    role: ['Art direction', 'Web design', 'Motion (AI-assisted)'],
+    stack: ['Figma', 'Higgsfield (Kling 3.0)', 'GPT Image', 'WordPress-ready layout'],
+    challenge: 'Dealer websites look alike: a slider, a phone number and a list of cars. The concept asks how a dealer can feel premium while still putting the search box first.',
+    solution:
+      'A dark, high-contrast layout where the search (make, model, price) is the hero, trust signals sit directly under it, and a short cinematic spot with red light streaks gives the brand a recognisable motion signature for ads and social.',
+    images: ['case/velocity-1.jpg', 'case/velocity-film.jpg'],
+  },
+  {
+    slug: 'atelier-norte-concept',
+    index: 'C2',
+    title: 'Atelier Norte',
+    client: 'Self-initiated concept',
+    category: 'Architecture studio website & film',
+    tags: 'Concept, Web design, Motion',
+    year: '2026',
+    cover: 'work/atelier.jpg',
+    concept: true,
+    video: 'media/atelier.mp4',
+    summary:
+      'A concept website for an architecture studio: a Swiss editorial grid, a serif headline, a project index instead of a carousel, and a slow film of light moving through a concrete interior.',
+    role: ['Art direction', 'Web design', 'Motion (AI-assisted)'],
+    stack: ['Figma', 'Higgsfield (Kling 3.0)', 'GPT Image', 'Custom code'],
+    challenge: 'Architects sell restraint. The site has to step back and let the work speak while still being easy to navigate on a phone.',
+    solution: 'Generous whitespace, one strong photograph per project, a text index for fast scanning and a looping film on the home page that shows space and light the way a still image cannot.',
+    images: ['case/atelier-1.jpg', 'case/atelier-film.jpg'],
+  },
+  {
+    slug: 'brasa-coffee-concept',
+    index: 'C3',
+    title: 'Brasa Coffee',
+    client: 'Self-initiated concept',
+    category: 'E-commerce & product motion',
+    tags: 'Concept, E-commerce, Motion',
+    year: '2026',
+    cover: 'work/brasa.jpg',
+    concept: true,
+    video: 'media/brasa.mp4',
+    summary:
+      'A concept online store for a small-batch coffee roaster, with a matching product film: warm palette, three hero products with prices on the first screen, subscriptions one click away.',
+    role: ['Art direction', 'E-commerce design', 'Product motion (AI-assisted)'],
+    stack: ['Figma', 'Higgsfield (Kling 3.0)', 'GPT Image', 'Shopify / WooCommerce-ready'],
+    challenge: 'Coffee shoppers buy on smell and story, neither of which travels through a screen.',
+    solution: 'Show the product and the price immediately, keep the copy short and sensory, and use a slow-motion product film (beans falling, steam rising) as the hero and as ad creative.',
+    images: ['case/brasa-1.jpg', 'case/brasa-film.jpg'],
+  },
+  {
+    slug: 'nova-dental-concept',
+    index: 'C4',
+    title: 'Nova Dental',
+    client: 'Self-initiated concept',
+    category: 'Clinic website with online booking',
+    tags: 'Concept, Web design',
+    year: '2026',
+    cover: 'work/nova.jpg',
+    concept: true,
+    summary:
+      'A concept website for a dental clinic built around one action: booking an appointment. A three-step booking widget (treatment, date, confirm) sits on the home page, on tablet and phone alike.',
+    role: ['UX', 'Web design'],
+    stack: ['Figma', 'GPT Image', 'WordPress + booking plugin'],
+    challenge: 'Patients are anxious and busy. Every extra click between landing on the site and booking is a lost appointment.',
+    solution: 'A calm teal and white palette, friendly photography, and a booking flow that is visible without scrolling and finishes in three steps.',
+    images: ['case/nova-1.jpg'],
+  },
+  {
+    slug: 'motion-ident-concept',
+    index: 'C5',
+    title: 'Motion Ident',
+    client: 'Self-initiated concept',
+    category: 'Brand motion graphics',
+    tags: 'Concept, Motion',
+    year: '2026',
+    cover: 'work/motion-loop.jpg',
+    concept: true,
+    video: 'media/motion-loop.mp4',
+    summary: 'A five-second brand ident: red geometric shapes glide and snap into an emblem, the kind of motion signature that opens a reel, a product video or an ad.',
+    role: ['Motion direction (AI-assisted)'],
+    stack: ['Higgsfield (Kling 3.0)', 'After Effects'],
+    images: ['case/motion-loop-film.jpg'],
+  },
 ]
 
 export const workIntro = 'Thoughtful design, careful code, and numbers to show for it.'
 
-// TODO: confirm prices and what each package includes.
+/** What I build: keyword-rich, one card per service (also feeds the Services JSON-LD). */
+export const services = [
+  {
+    slug: 'business-websites',
+    title: 'Business websites',
+    italic: 'that bring in calls',
+    text: 'Fast, custom-designed websites for small and medium businesses: clinics, studios, consultants, restaurants. Built on WordPress or custom code, ready for Google from day one.',
+    tags: ['WordPress', 'Custom code', 'Copywriting'],
+  },
+  {
+    slug: 'ecommerce',
+    title: 'E-commerce stores',
+    italic: 'that sell',
+    text: 'WooCommerce and Shopify stores with clean product pages, fast checkout, payments and shipping set up, and analytics that tell you what sells. Right-to-left and multi-language stores included.',
+    tags: ['WooCommerce', 'Shopify', 'Payments'],
+  },
+  {
+    slug: 'car-dealer-websites',
+    title: 'Car dealer & inventory sites',
+    italic: 'buyers can search',
+    text: 'Filterable vehicle inventory, a page per car with gallery and specs, finance and trade-in enquiries, WhatsApp and call buttons. The same playbook works for real estate and rentals.',
+    tags: ['Inventory', 'Filters', 'Lead forms'],
+  },
+  {
+    slug: 'landing-pages',
+    title: 'Landing pages',
+    italic: 'for your ads',
+    text: 'One page, one goal. Landing pages for Google and Meta campaigns with a clear offer, social proof and a form that lands straight in your inbox.',
+    tags: ['Conversion', 'A/B tests', 'Forms'],
+  },
+  {
+    slug: 'seo-ads',
+    title: 'SEO & Google Ads',
+    italic: 'so people find you',
+    text: 'Technical SEO, local SEO, Google Business Profile, keyword research and Google Ads management. Monthly reports in plain language, not vanity metrics.',
+    tags: ['SEO', 'Google Ads', 'Analytics'],
+  },
+  {
+    slug: 'motion-content',
+    title: 'Motion & content',
+    italic: 'that stops the scroll',
+    text: 'Motion graphics, product videos and social content for launches and ads, produced with a mix of classic motion design and AI tools.',
+    tags: ['Motion', 'Video', 'Social'],
+  },
+]
+
+/** Free website audit: the main lead magnet. */
+export const audit = {
+  kicker: 'Free website audit',
+  title: 'Is your website',
+  titleItalic: 'losing you clients?',
+  text: 'Send me your URL. Within 48 hours you get a short, honest review: what slows it down, what Google sees, and the three changes that would bring you more enquiries. Free, no strings attached.',
+  points: ['Speed & Core Web Vitals', 'SEO & Google visibility', 'Conversion: forms, calls, WhatsApp'],
+}
+
+export const faq = [
+  {
+    q: 'How much does a website cost?',
+    a: 'Packages start at $300 setup plus $50/month (Launch), $500 plus $80/month (Grow) and $750 plus $100/month (Scale). The monthly plan covers hosting, maintenance, security updates and small changes, so you never pay for a rebuild because the site was left to rot.',
+  },
+  {
+    q: 'How long does it take?',
+    a: 'A Launch site usually goes live in one to two weeks. Grow and Scale projects take two to six weeks depending on content, integrations and the size of the catalogue.',
+  },
+  {
+    q: 'What is included in the monthly plan?',
+    a: 'Hosting, SSL, backups, plugin and security updates, uptime monitoring, and a set amount of small content changes every month. Higher plans add SEO and reporting.',
+  },
+  {
+    q: 'Do you work with clients outside Argentina?',
+    a: 'Yes. Most of my clients are in the United States, Israel, Australia and Europe. I work remotely in English and Spanish, with calls in your time zone.',
+  },
+  {
+    q: 'Can you redesign my existing website?',
+    a: 'Yes. Redesigns are often the best return: Universal Driveshafts grew sales by 551% after its rebuild. I keep your URLs and rankings safe during the move.',
+  },
+  {
+    q: 'WordPress, Shopify or custom code?',
+    a: 'Whatever fits the business. WordPress and WooCommerce for most business sites and stores, Shopify when you want the simplest store to run, and custom code (React, Node) when performance or a unique experience matters.',
+  },
+]
+
+// Setup price, then a monthly fee (hosting, maintenance, updates).
 export const packages = [
   {
     code: 'FS/PKG.01-L1',
@@ -327,7 +506,8 @@ export const packages = [
     text: 'Your first serious presence: a sharp, credible site built to go live fast and convert from day one.',
     textItalic: 'launch fast',
     items: ['1–3 pages', 'Custom visual direction', 'Conversion-focused layout', 'WordPress or custom code'],
-    price: '$1,500',
+    price: '$300',
+    monthly: '$50/month',
     stamp: 'IDEAS ARE NOT RECYCLABLE',
     stub: 'CREATIVE MATERIAL, DO NOT RECYCLE',
   },
@@ -338,7 +518,8 @@ export const packages = [
     text: 'You already have traction. Now we remove friction: a structured site with a CMS, a brand system and the integrations your sales need.',
     textItalic: 'remove friction',
     items: ['5–8 pages + CMS', 'Complete brand identity', 'Integrations & automations', 'SEO setup & analytics'],
-    price: '$3,500',
+    price: '$500',
+    monthly: '$80/month',
     stamp: '100% ORIGINAL AND HUMAN-MADE',
     stub: '100% ORGANIC AND HUMAN PRODUCED',
   },
@@ -349,7 +530,8 @@ export const packages = [
     text: 'At scale, rough edges cost revenue. A system that keeps growing with you: e-commerce, design system, campaigns.',
     textItalic: 'cost revenue',
     items: ['10+ pages + CMS', 'E-commerce & catalog', 'Design system', 'Paid campaigns & reporting'],
-    price: '$7,000',
+    price: '$750',
+    monthly: '$100/month',
     stamp: 'STORED IN DIRECT ACCESS OF CLIENTS',
     stub: 'STORE IN DIRECT ACCESS OF CLIENTS',
   },

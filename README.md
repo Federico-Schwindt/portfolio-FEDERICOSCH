@@ -18,7 +18,7 @@ Live: https://federico-schwindt.github.io/portfolio-FEDERICOSCH/
 | --- | --- |
 | `/` | Hero, the Design + Code + Marketing equation, manifesto, process, selected work, packages, the XP computer, contact |
 | `/work` | All projects |
-| `/work/:slug` | Case study (Universal Driveshafts, Joya Hijab, Havat Aliza, DogStore, Motion CV Reel) |
+| `/work/:slug` | Case study for each of the 13 projects (Universal Driveshafts plus the Freelancer.com portfolio) |
 | `/about` | Bio, tools, stats |
 | `/contact` | Email, socials, availability |
 

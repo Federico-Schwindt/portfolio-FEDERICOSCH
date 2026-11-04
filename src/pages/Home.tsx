@@ -16,6 +16,7 @@ export function Home() {
   const root = useRef<HTMLDivElement>(null)
   const entered = useStore((s) => s.entered)
   const workHover = useStore((s) => s.workHover)
+  const featured = projects.filter((p) => p.featured)
   const setWorkHover = useStore((s) => s.setWorkHover)
   const isMobile = useIsMobile()
 
@@ -154,7 +155,7 @@ export function Home() {
         </div>
         <div className="wl">
           <ul className="wl__list">
-            {projects.map((p, i) => (
+            {featured.map((p, i) => (
               <li key={p.slug} className={`wl__row ${workHover === i ? 'is-on' : ''}`} onPointerEnter={() => setWorkHover(i)}>
                 <TLink to={`/work/${p.slug}`} cursor="view">
                   <span className="mono">{p.index}.</span>
@@ -165,7 +166,7 @@ export function Home() {
             ))}
           </ul>
           <div className="wl__media" aria-hidden="true">
-            {projects.map((p, i) => (
+            {featured.map((p, i) => (
               <img key={p.slug} src={base + p.cover} alt="" className={workHover === i ? 'is-on' : ''} />
             ))}
           </div>

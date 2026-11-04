@@ -485,7 +485,7 @@ export const faq = [
   },
   {
     q: 'Do you work with clients outside Argentina?',
-    a: 'Yes. Most of my clients are in the United States, Israel, Australia and Europe. I work remotely in English and Spanish, with calls in your time zone.',
+    a: 'Yes. My clients so far are in the United States, Israel, Australia and India. I work remotely in English and Spanish, with calls in your time zone.',
   },
   {
     q: 'Can you redesign my existing website?',

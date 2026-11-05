@@ -9,9 +9,15 @@ import type { Project } from '../content'
 
 const base = import.meta.env.BASE_URL
 
-function Card({ p, i }: { p: Project; i: number }) {
+/** Slug of a non-featured card that would sit alone in the last row of the two-column grid. */
+const orphanOf = (list: Project[]) => {
+  const regular = list.filter((p) => !p.featured)
+  return regular.length % 2 ? regular[regular.length - 1].slug : null
+}
+
+function Card({ p, i, wide = false }: { p: Project; i: number; wide?: boolean }) {
   return (
-    <TLink to={`/work/${p.slug}`} className={`wcard ${p.featured ? 'wcard--featured' : ''} ${p.concept ? 'wcard--concept' : ''}`} cursor="view">
+    <TLink to={`/work/${p.slug}`} className={`wcard ${p.featured || wide ? 'wcard--featured' : ''} ${p.concept ? 'wcard--concept' : ''}`} cursor="view">
       <div className="wcard__media">
         {p.video ? (
           <video src={base + p.video} poster={base + p.cover} muted loop playsInline autoPlay preload="metadata" aria-label={`${p.title}: ${p.category}`} />
@@ -39,6 +45,8 @@ export function Work() {
   const root = useRef<HTMLElement>(null)
   const client = projects.filter((p) => !p.concept)
   const concepts = projects.filter((p) => p.concept)
+  const clientOrphan = orphanOf(client)
+  const conceptOrphan = orphanOf(concepts)
   useSeo({
     title: 'Work · Websites, online stores & motion | Federico Schwindt',
     description: `${client.length} client projects (e-commerce, car dealer, spa, architecture and more) plus concept pieces in web design and motion. See the case studies and results.`,
@@ -83,7 +91,7 @@ export function Work() {
       </header>
       <div className="wgrid">
         {client.map((p, i) => (
-          <Card p={p} i={i} key={p.slug} />
+          <Card p={p} i={i} key={p.slug} wide={p.slug === clientOrphan} />
         ))}
       </div>
       <header className="page__head page__head--sub">
@@ -97,7 +105,7 @@ export function Work() {
       </header>
       <div className="wgrid wgrid--concepts">
         {concepts.map((p, i) => (
-          <Card p={p} i={i + client.length} key={p.slug} />
+          <Card p={p} i={i + client.length} key={p.slug} wide={p.slug === conceptOrphan} />
         ))}
       </div>
       <Footer />

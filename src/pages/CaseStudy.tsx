@@ -4,6 +4,8 @@ import { projects } from '../content'
 import { TLink } from '../components/TLink'
 import { Footer } from '../components/Footer'
 import { NotFound } from './NotFound'
+import { CasePerf } from '../components/CasePerf'
+import { CaseFeatures } from '../components/CaseFeatures'
 import { gsap, ScrollTrigger } from '../lib/gsap'
 import { fadeUp, revealChars, revealLines } from '../lib/reveal'
 import { breadcrumbLd, canonicalFor, SITE_URL, useSeo } from '../lib/seo'
@@ -59,6 +61,7 @@ export function CaseStudy() {
       fadeUp(el.querySelectorAll('.case__kicker, .case__meta > *'), { immediate: true, delay: 0.55, stagger: 0.06 })
       gsap.fromTo(el.querySelector('.case__cover img, .case__cover video'), { scale: 1.12, yPercent: -5 }, { scale: 1, yPercent: 5, ease: 'none', scrollTrigger: { trigger: el.querySelector('.case__cover'), start: 'top bottom', end: 'bottom top', scrub: true } })
       el.querySelectorAll<HTMLElement>('.case__stat').forEach((s) => fadeUp(s, { trigger: s, y: 40 }))
+      el.querySelectorAll<HTMLElement>('.cfeat__row, .cperf__rings, .cperf__tablewrap').forEach((r) => fadeUp(r, { trigger: r, y: 50, start: 'top 90%' }))
       el.querySelectorAll<HTMLElement>('.case__img').forEach((img) => {
         fadeUp(img, { trigger: img, y: 60, start: 'top 92%' })
         gsap.fromTo(img.querySelector('img'), { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: img, start: 'top bottom', end: 'bottom top', scrub: true } })
@@ -98,11 +101,16 @@ export function CaseStudy() {
             <div>
               <span className="mono">Live</span>
               <a href={project.url} target="_blank" rel="noreferrer" data-cursor="link">
-                {project.url.replace(/^https?:\/\//, '')} ↗
+                {project.url.replace(/^https?:\/\//, '').replace(/\/$/, '')} ↗
               </a>
             </div>
           )}
         </div>
+        {project.url && (
+          <a className="case__live" href={project.url} target="_blank" rel="noreferrer" data-cursor="link">
+            {project.concept ? 'Open the live concept' : 'Visit the live site'} <span aria-hidden="true">↗</span>
+          </a>
+        )}
       </header>
 
       <div className="case__cover">
@@ -140,6 +148,8 @@ export function CaseStudy() {
             <p className="case__p split-wait">{project.solution}</p>
           </section>
         )}
+        {project.features && <CaseFeatures items={project.features} title={project.title} />}
+        {project.performance && <CasePerf perf={project.performance} />}
         {project.result && (
           <section className="case__section">
             <h2 className="case__h mono">Result</h2>
@@ -156,6 +166,15 @@ export function CaseStudy() {
           </div>
         )}
       </div>
+
+      {project.url && (
+        <a className="case__liveband" href={project.url} target="_blank" rel="noreferrer" data-cursor="link">
+          <span className="mono">{project.concept ? 'Explore the concept' : 'See it live'}</span>
+          <span className="case__liveband-t">
+            {project.url.replace(/^https?:\/\//, '').replace(/\/$/, '')} <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+      )}
 
       <TLink to={`/work/${next.slug}`} className="case__next" cursor="view">
         <span className="mono">Next project</span>

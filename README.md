@@ -18,7 +18,7 @@ Live: https://federico-schwindt.github.io/portfolio-FEDERICOSCH/
 | --- | --- |
 | `/` | Hero, the Design + Code + Marketing equation, manifesto, process, selected work, packages, the XP computer, contact |
 | `/work` | All projects |
-| `/work/:slug` | Case study for each of the 13 projects (Universal Driveshafts plus the Freelancer.com portfolio) |
+| `/work/:slug` | Case study for every project: client work (Universal Driveshafts plus the Freelancer.com portfolio) and concepts |
 | `/about` | Bio, tools, stats |
 | `/contact` | Lead form (stored in Neon Postgres), email, socials |
 | `/admin` | Private lead inbox: Neon Auth sign-in, live list via Neon Realtime (noindex, not linked) |

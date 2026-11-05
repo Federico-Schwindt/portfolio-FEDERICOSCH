@@ -1,0 +1,54 @@
+---
+/**
+ * Lead form. Posts to the Neon Function (src/lib/api.ts) and stores the lead in Postgres;
+ * when the API is not configured or unreachable it falls back to a pre-filled email.
+ */
+import Icon from './Icon.astro'
+import { apiConfigured } from '../lib/api'
+import { site } from '../data/content'
+interface Props { variant?: 'contact' | 'audit'; id?: string }
+const { variant = 'contact', id = `lead-${variant}` } = Astro.props
+const PACKAGES = [
+  ['', 'Not sure yet'],
+  ['launch', 'Launch · $300 + $50/mo'],
+  ['grow', 'Grow · $500 + $80/mo'],
+  ['scale', 'Scale · $750 + $100/mo'],
+]
+const BUDGETS = ['', 'Under $500', '$500 – $1,500', '$1,500 – $5,000', '$5,000+']
+const audit = variant === 'audit'
+---
+<form class="form" data-lead={variant} data-email={site.email} id={id} novalidate>
+  <div class="form__row">
+    <label class="field"><span>Name</span><input class="input" name="name" placeholder="Your name" autocomplete="name" required /></label>
+    <label class="field"><span>Email</span><input class="input" type="email" name="email" placeholder="you@company.com" autocomplete="email" required /></label>
+  </div>
+  {audit ? (
+    <label class="field"><span>Your website</span><input class="input" type="url" name="website" placeholder="https://yourbusiness.com" inputmode="url" required /></label>
+  ) : (
+    <>
+      <div class="form__row">
+        <label class="field"><span>Company (optional)</span><input class="input" name="company" placeholder="Business name" autocomplete="organization" /></label>
+        <label class="field"><span>Current website (optional)</span><input class="input" type="url" name="website" placeholder="https://" inputmode="url" /></label>
+      </div>
+      <div class="form__row">
+        <label class="field"><span>Package</span><select class="input" name="package">{PACKAGES.map(([v, l]) => <option value={v}>{l}</option>)}</select></label>
+        <label class="field"><span>Budget</span><select class="input" name="budget">{BUDGETS.map((b) => <option value={b}>{b || 'Prefer not to say'}</option>)}</select></label>
+      </div>
+    </>
+  )}
+  <label class="field">
+    <span>{audit ? 'Anything I should know? (optional)' : 'Project'}</span>
+    <textarea class="input" name="message" rows={audit ? 3 : 6} placeholder={audit ? 'Goals, competitors, what is not working…' : 'What are we building, by when, and what does success look like?'} required={!audit}></textarea>
+  </label>
+  {!audit && apiConfigured && (
+    <label class="field form__file"><span>Brief or logo (optional, max 10 MB)</span><input type="file" name="brief" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.svg,.zip,.txt" /></label>
+  )}
+  <label class="form__hp" aria-hidden="true">Company URL<input name="company_url" tabindex="-1" autocomplete="off" /></label>
+  <div>
+    <button type="submit" class="btn" data-label={audit ? 'Get my free audit' : 'Send message'}>
+      <span>{audit ? 'Get my free audit' : 'Send message'}</span> <Icon name="arrow" />
+    </button>
+  </div>
+  <p class="form__error" role="alert" hidden data-error></p>
+  <p class="form__fine">{apiConfigured ? 'Goes straight to my inbox. No newsletter, no spam.' : 'Opens your email app with the message pre-filled.'}</p>
+</form>

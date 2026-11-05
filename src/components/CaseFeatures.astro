@@ -1,0 +1,33 @@
+---
+import type { Project } from '../data/content'
+import { url } from '../lib/site'
+type Feature = NonNullable<Project['features']>[number]
+interface Props { items: Feature[]; title: string }
+const { items, title } = Astro.props
+---
+<section class="cfeat wrap sec--sm" aria-labelledby="cfeat-title">
+  <h2 class="tag tag--accent" id="cfeat-title">What I built</h2>
+  <div class="cfeat__list">
+    {items.map((f, i) => (
+      <article class:list={['cfeat__row', { 'cfeat__row--rev': i % 2 }]}>
+        {f.image && <div class="cfeat__img" data-rv><img src={url(f.image)} alt={`${title}: ${f.title}`} loading="lazy" decoding="async" width="1440" height="900" /></div>}
+        <div class="cfeat__text" data-rv style="--d:120">
+          <span class="cfeat__n">{String(i + 1).padStart(2, '0')}</span>
+          <h3 class="h3">{f.title}</h3>
+          <p class="prose">{f.text}</p>
+          {f.stat && <p class="chip chip--red">{f.stat}</p>}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+<style>
+  .cfeat__list { display: grid; gap: clamp(48px, 7vw, 110px); margin-top: clamp(28px, 3vw, 48px); }
+  .cfeat__row { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); align-items: center; }
+  .cfeat__row--rev .cfeat__img { order: 2; }
+  .cfeat__img { background: var(--paper-2); overflow: hidden; }
+  .cfeat__img img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .cfeat__text { display: grid; gap: 14px; justify-items: start; }
+  .cfeat__n { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); }
+  @media (max-width: 860px) { .cfeat__row { grid-template-columns: minmax(0, 1fr); } .cfeat__row--rev .cfeat__img { order: 0; } }
+</style>

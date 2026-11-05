@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro'
+import Admin from '../components/admin/Admin'
+---
+<Base title="Admin · Leads" description="Private lead inbox." path="/admin" noindex nav="paper" footer={false}>
+  <div class="t-paper adm" data-theme="paper">
+    <div class="wrap"><Admin client:only="react" /></div>
+  </div>
+</Base>
+
+<style is:global>
+  .adm { min-height: 100svh; padding-top: calc(var(--nav-h) + 48px); padding-bottom: 80px; }
+  .adm .page__head { margin-bottom: 36px; display: grid; gap: 14px; }
+  .adm .page__kicker, .adm .mono { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.04em; }
+  .adm .page__kicker { color: var(--red-ink); text-transform: uppercase; }
+  .adm .page__title { font-size: clamp(3rem, 8vw, 7rem); font-weight: 800; letter-spacing: -0.065em; line-height: 0.85; }
+  .adm .page__title em { font-style: normal; color: var(--red); }
+  .adm .lead { display: grid; gap: 14px; max-width: 520px; }
+  .adm .lead label { display: grid; gap: 6px; }
+  .adm .lead input { min-height: 52px; padding: 12px 14px; border: 0; box-shadow: inset 0 0 0 1px var(--line); }
+  .adm .lead input:focus { outline: none; box-shadow: inset 0 0 0 2px var(--red); }
+  .adm .pill { display: inline-flex; align-items: center; height: 48px; padding: 0 20px; background: var(--red); color: var(--ink); font-weight: 600; justify-self: start; }
+  .adm .pill em { font-style: normal; }
+  .adm .lead__error { color: var(--red-ink); }
+  .adm .admin__switch { text-decoration: underline; justify-self: start; }
+  .adm .admin__bar { display: flex; flex-wrap: wrap; gap: 18px; padding: 14px 0; border-bottom: 2px solid var(--ink); }
+  .adm .admin__live--connected, .adm .admin__live--open { color: var(--red-ink); }
+  .adm .admin__list { list-style: none; padding: 0; }
+  .adm .admin__lead { border-bottom: 1px solid var(--line); }
+  .adm .admin__leadhead { width: 100%; display: grid; grid-template-columns: 170px 1fr 1fr 160px 100px; gap: 12px; align-items: center; padding: 16px 0; text-align: left; }
+  .adm .admin__leadhead:hover strong { color: var(--red-ink); }
+  .adm .admin__status { text-transform: uppercase; }
+  .adm .admin__status--new { color: var(--red-ink); }
+  .adm .admin__leadbody { display: grid; gap: 10px; padding: 0 0 20px; }
+  .adm .admin__leadbody .mono { color: var(--muted); margin-right: 8px; }
+  .adm .admin__msg { white-space: pre-wrap; padding: 14px; background: var(--paper-2); }
+  .adm .admin__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .adm .admin__chip { height: 34px; padding: 0 12px; box-shadow: inset 0 0 0 1px var(--line); text-transform: uppercase; }
+  .adm .admin__chip.is-on { background: var(--ink); color: var(--paper); }
+  @media (max-width: 760px) { .adm .admin__leadhead { grid-template-columns: 1fr; gap: 4px; } }
+</style>

@@ -1,0 +1,15 @@
+---
+/** Brand mark: a red square with a blocky FS, plus the name. */
+interface Props { name?: boolean; class?: string }
+const { name = true, class: cls } = Astro.props
+---
+<span class:list={['logo', cls]}>
+  <svg class="logo__mark" viewBox="0 0 30 30" aria-hidden="true">
+    <rect width="30" height="30" fill="#ff2a1a" />
+    <g fill="#0b0b0b">
+      <rect x="6.5" y="7" width="3.5" height="16" /><rect x="6.5" y="7" width="7.5" height="3.5" /><rect x="6.5" y="12.5" width="6" height="3.5" />
+      <rect x="16" y="7" width="8" height="3.5" /><rect x="16" y="7" width="3.5" height="9" /><rect x="16" y="12.5" width="8" height="3.5" /><rect x="20.5" y="12.5" width="3.5" height="10.5" /><rect x="16" y="19.5" width="8" height="3.5" />
+    </g>
+  </svg>
+  {name && <span>Federico Schwindt</span>}
+</span>

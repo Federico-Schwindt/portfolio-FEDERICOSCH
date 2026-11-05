@@ -1,0 +1,152 @@
+---
+import Base from '../../layouts/Base.astro'
+import Icon from '../../components/Icon.astro'
+import CaseFeatures from '../../components/CaseFeatures.astro'
+import CasePerf from '../../components/CasePerf.astro'
+import { projects, type Project } from '../../data/content'
+import { abs, breadcrumbLd, hostOf, numberOf, projectLd, thumbOf, url } from '../../lib/site'
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { p } }))
+}
+const { p } = Astro.props as { p: Project }
+const i = projects.indexOf(p)
+const next = projects[(i + 1) % projects.length]
+const description = p.summary.length > 158 ? p.summary.slice(0, 155).replace(/\s+\S*$/, '') + '…' : p.summary
+const affiliation = p.client.includes('not affiliated') ? p.client.replace(/^.*?·\s*not/, 'Not').replace(/\.?$/, '.') : ''
+const gallery = p.images.filter((im) => !p.features?.some((f) => f.image === im))
+---
+<Base
+  title={`${p.title} · ${p.category}${p.concept ? ' (concept)' : ''} | Federico Schwindt`}
+  description={description}
+  path={`/work/${p.slug}`}
+  image={abs(p.cover)}
+  type="article"
+  jsonLd={[breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Work', path: '/work' }, { name: p.title, path: `/work/${p.slug}` }]), projectLd(p)]}
+>
+  <section class="chead t-ink" data-theme="ink">
+    <div class="wrap">
+      <nav class="crumbs tag" aria-label="Breadcrumb"><a href={url('/work/')}>Work</a><span>/</span><span>{numberOf(p)}</span></nav>
+      <div class="chead__tags" data-rv>
+        <span class="chip chip--red">{p.category}</span>
+        <span class="chip">{p.year}</span>
+        {p.concept && <span class="chip">Concept</span>}
+      </div>
+      <h1 class="h1 chead__title" data-lines><span class="ln"><span style="--i:0">{p.title}</span></span></h1>
+      <div class="chead__grid">
+        <p class="lede" data-rv style="--d:200">{p.summary}</p>
+        <dl class="chead__meta" data-rv style="--d:300">
+          <div><dt class="tag">Client</dt><dd>{p.client}</dd></div>
+          <div><dt class="tag">Role</dt><dd>{p.role.join(' · ')}</dd></div>
+          <div><dt class="tag">Stack</dt><dd>{p.stack.join(' · ')}</dd></div>
+          {p.url && <div><dt class="tag">Live</dt><dd><a class="link" href={p.url} target="_blank" rel="noopener">{hostOf(p.url)} ↗</a></dd></div>}
+        </dl>
+      </div>
+      {p.url && <a class="btn chead__cta" href={p.url} target="_blank" rel="noopener" data-rv style="--d:400">{p.concept ? 'Open the live concept' : 'Visit the live site'} <Icon name="arrow" /></a>}
+    </div>
+    <div class="wrap chead__media" data-rv style="--d:300">
+      {p.video
+        ? <video data-autoplay muted loop playsinline preload="none" poster={url(p.cover)} data-src={url(p.video)} width="1440" height="900" aria-label={`${p.title} film`}></video>
+        : <img src={url(p.cover)} alt={`${p.title}: ${p.category}`} width="1440" height="900" fetchpriority="high" />}
+    </div>
+  </section>
+
+  {p.stats && (
+    <section class="t-paper sec--sm" data-theme="paper" aria-label="Key numbers">
+      <dl class="wrap cstats">
+        {p.stats.map((s, k) => <div data-rv style={`--d:${k * 80}`}><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
+      </dl>
+    </section>
+  )}
+
+  {(p.challenge || p.solution) && (
+    <section class="t-paper sec--sm" data-theme="paper" aria-label="Challenge and solution">
+      <div class="wrap cbody">
+        {p.challenge && <div data-rv><h2 class="tag tag--accent">The challenge</h2><p class="say">{p.challenge}</p></div>}
+        {p.solution && <div data-rv style="--d:100"><h2 class="tag tag--accent">The solution</h2><p class="prose cbody__p">{p.solution}</p></div>}
+      </div>
+    </section>
+  )}
+
+  {p.features && <div class="t-paper" data-theme="paper"><CaseFeatures items={p.features} title={p.title} /></div>}
+  {p.performance && <div class="t-paper" data-theme="paper"><CasePerf perf={p.performance} /></div>}
+
+  {p.result && (
+    <section class="t-ink sec--sm" data-theme="ink" aria-labelledby="result-title">
+      <div class="wrap cresult">
+        <h2 class="tag tag--accent" id="result-title">The result</h2>
+        <p class="say" data-rv>{p.result}</p>
+      </div>
+    </section>
+  )}
+
+  {gallery.length > 0 && (
+    <section class="t-paper sec--sm" data-theme="paper" aria-label="Gallery">
+      <div class="wrap cgal">
+        {gallery.map((im, k) => <figure data-rv style={`--d:${(k % 2) * 100}`}><img src={url(im)} alt={`${p.title}, screen ${k + 1}`} width="1440" height="900" loading="lazy" decoding="async" /></figure>)}
+      </div>
+      {p.concept && <p class="wrap cnote tag">Self-initiated concept, built to show what is possible.{affiliation && ` ${affiliation}`}</p>}
+    </section>
+  )}
+
+  <section class="t-ink cnext" data-theme="ink" aria-label="Next project">
+    <a class="wrap cnext__in" href={url(`/work/${next.slug}/`)}>
+      <span class="tag">Next project · {numberOf(next)}</span>
+      <span class="cnext__t">{next.title}</span>
+      <span class="cnext__img"><img src={url(thumbOf(next))} alt="" width="720" height="450" loading="lazy" decoding="async" /></span>
+      <span class="cnext__arrow"><Icon name="arrow" size={48} /></span>
+    </a>
+  </section>
+</Base>
+
+<style>
+  .chead { padding-top: calc(var(--nav-h) + clamp(40px, 6vw, 96px)); }
+  .crumbs { display: flex; gap: 10px; color: var(--muted); margin-bottom: 26px; }
+  .crumbs a:hover { color: var(--red); }
+  .chead__tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chead__tags .chip { color: var(--paper); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3); white-space: normal; height: auto; min-height: 26px; padding-block: 5px; }
+  .chead__tags .chip--red { color: var(--ink); box-shadow: none; }
+  .chead__title { margin-top: 22px; max-width: 14ch; }
+  .chead__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); margin-top: clamp(28px, 3vw, 48px); padding-top: 28px; border-top: 1px solid var(--line); }
+  .chead__meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 28px; }
+  .chead__meta dt { color: var(--red); margin-bottom: 6px; }
+  .chead__meta dd { font-size: 0.95rem; color: rgba(255, 255, 255, 0.84); overflow-wrap: anywhere; }
+  .chead__cta { margin-top: 32px; }
+  .chead__media { margin-top: clamp(40px, 5vw, 72px); padding-bottom: 0; }
+  .chead__media img, .chead__media video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--ink-2); }
+  .cstats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
+  .cstats div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; padding: 24px 20px 0 0; }
+  .cstats div + div { padding-left: 20px; border-left: 1px solid var(--line); }
+  .cstats dd { font-size: clamp(2.6rem, 5.4vw, 5rem); font-weight: 800; letter-spacing: -0.065em; line-height: 0.9; color: var(--red); }
+  .cstats dt { color: var(--muted); font-size: 0.95rem; }
+  .cbody { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 6vw, 110px); }
+  .cbody .tag { margin-bottom: 18px; }
+  .cbody__p { font-size: 1.12rem; color: var(--fg); opacity: 0.84; }
+  .cresult .say { margin-top: 18px; max-width: 40ch; font-size: clamp(1.5rem, 2.6vw, 2.6rem); }
+  .cgal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 24px); }
+  .cgal figure:first-child:nth-last-child(odd) { grid-column: span 2; }
+  .cgal img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: var(--paper-2); }
+  .cnote { margin-top: 28px; color: var(--muted); }
+  .cnext__in { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 12px 28px; padding-block: clamp(56px, 8vw, 120px); }
+  .cnext__in .tag { grid-column: 1 / -1; color: var(--red); }
+  .cnext__t { font-size: clamp(2.6rem, 8vw, 8.4rem); font-weight: 800; letter-spacing: -0.065em; line-height: 0.88; transition: color 0.4s; }
+  .cnext__img { width: clamp(140px, 18vw, 300px); aspect-ratio: 16 / 10; overflow: hidden; }
+  .cnext__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease); }
+  .cnext__arrow { width: clamp(64px, 7vw, 110px); aspect-ratio: 1; border-radius: 50%; background: var(--red); color: var(--ink); display: grid; place-items: center; transition: transform 0.6s var(--ease); }
+  .cnext__in:hover .cnext__t { color: var(--red); }
+  .cnext__in:hover .cnext__img img { transform: scale(1.08); }
+  .cnext__in:hover .cnext__arrow { transform: rotate(45deg); }
+  @media (max-width: 860px) {
+    .chead__grid, .cbody { grid-template-columns: minmax(0, 1fr); }
+    .cstats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cstats div + div:nth-child(3) { padding-left: 0; border-left: 0; }
+    .cstats div { padding-bottom: 20px; }
+    .cnext__in { grid-template-columns: minmax(0, 1fr) auto; }
+    .cnext__img { display: none; }
+  }
+  @media (max-width: 520px) {
+    .chead__meta { grid-template-columns: minmax(0, 1fr); }
+    .cgal { grid-template-columns: minmax(0, 1fr); }
+    .cgal figure:first-child:nth-last-child(odd) { grid-column: auto; }
+  }
+</style>

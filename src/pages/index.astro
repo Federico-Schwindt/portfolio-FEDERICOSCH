@@ -1,0 +1,408 @@
+---
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import Lines from '../components/Lines.astro'
+import Marquee from '../components/Marquee.astro'
+import WorkIndex from '../components/WorkIndex.astro'
+import ProjectCard from '../components/ProjectCard.astro'
+import LeadForm from '../components/LeadForm.astro'
+import { audit, contact, faq, hero, marquee, packages, pricingNote, process, projects, proof, series, services, site, socials } from '../data/content'
+import { bySlug, orgLd, personLd, SITE_URL, thumbOf, url, websiteLd } from '../lib/site'
+
+const linkedin = socials.find((s) => s.label === 'LinkedIn')!.href
+const reel = ['la-virginia-concept', 'advancing-eco-agriculture-concept', 'velocity-motors-concept', 'brasa-coffee-concept', 'atelier-norte-concept'].map((s) => bySlug(s)!)
+const days = series.days.map((d) => ({ ...d, p: bySlug(d.slug)! }))
+const nextDay = String(days[0].day + 1).padStart(2, '0')
+const recommended = 'Grow'
+---
+<Base
+  title="Federico Schwindt · Web Designer & Developer · Websites from $300"
+  description="Freelance web designer, developer and marketer. Business websites, WooCommerce & Shopify stores, car dealer sites, SEO and Google Ads. From $300 + $50/month. 13 projects, 5.0 rating, +551% sales for Universal Driveshafts."
+  path="/"
+  jsonLd={[
+    websiteLd,
+    personLd,
+    orgLd,
+    { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Web design services',
+      itemListElement: services.map((sv, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Service', name: sv.title, description: sv.text, provider: { '@id': `${SITE_URL}/#org` }, areaServed: 'Worldwide' } })),
+    },
+  ]}
+>
+  <!-- ================= HERO ================= -->
+  <section class="hero t-ink" data-theme="ink">
+    <div class="wrap hero__top">
+      <p class="tag">{site.name} — {hero.kicker}</p>
+      <p class="tag hero__where"><span>{site.city}</span> <span data-clock>--:--</span> {site.utc}</p>
+    </div>
+
+    <div class="hero__lens" data-lens>
+      <h1 class="xl hero__title" data-lines>
+        <span class="ln"><span style="--i:0">{hero.lines[0]}</span></span>
+        <span class="ln"><span style="--i:1">{hero.lines[1].replace(/sell\.$/, '')}<span class="red">sell.</span></span></span>
+      </h1>
+      <p class="xl hero__title hero__title--lens" data-lines aria-hidden="true">
+        <span class="ln"><span style="--i:0">{hero.lines[0]}</span></span>
+        <span class="ln"><span style="--i:1">{hero.lines[1].replace(/sell\.$/, '')}<span class="hero__inv">sell.</span></span></span>
+      </p>
+      <span class="hero__ring" aria-hidden="true"></span>
+    </div>
+
+    <div class="wrap hero__bot">
+      <div class="hero__copy">
+        <p class="lede" data-rv style="--d:350">{hero.sub}</p>
+        <div class="hero__cta" data-rv style="--d:450">
+          <a class="btn" href={url('/contact/')}>Start a project <Icon name="arrow" /></a>
+          <a class="btn btn--ghost" href={url('/work/')}>See the work</a>
+        </div>
+      </div>
+      <div class="reel" data-reel data-rv style="--d:550">
+        <div class="reel__media">
+          {reel.map((p, i) => (
+            <div class:list={['reel__item', { on: i === 0 }]} data-reel-item data-href={url(`/work/${p.slug}/`)} data-cap={`<b>${p.title}</b> ${p.category}`}>
+              {i === 0 && <img src={url(thumbOf(p))} alt="" width="720" height="450" fetchpriority="low" />}
+              <video muted playsinline loop preload="none" data-poster={i === 0 ? undefined : url(thumbOf(p))} data-src={url(p.video!.replace('media/', 'media/reel/'))} width="720" height="450" aria-hidden="true"></video>
+            </div>
+          ))}
+          <span class="reel__live tag"><i class="dot"></i> Reel</span>
+        </div>
+        <a class="reel__cap" data-reel-cap href={url(`/work/${reel[0].slug}/`)}><b>{reel[0].title}</b> {reel[0].category}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BAND ================= -->
+  <section class="band t-red" data-theme="red" aria-label="What I do">
+    <Marquee items={marquee} dur={28} />
+  </section>
+
+  <!-- ================= PROOF ================= -->
+  <section class="proof sec t-paper" data-theme="paper" aria-labelledby="proof-title">
+    <div class="wrap">
+      <p class="tag tag--accent" data-rv>(01) Proof, not promises</p>
+      <h2 class="proof__num" id="proof-title" data-rv>
+        <span class="sr-only">{proof.prefix}{proof.value}{proof.suffix} sales growth</span>
+        <span aria-hidden="true">{proof.prefix}<span data-count={proof.value}>{proof.value}</span><span class="red">{proof.suffix}</span></span>
+      </h2>
+      <div class="proof__row">
+        <p class="h3" data-rv>{proof.label}</p>
+        <a class="link" href={url(`/work/${proof.slug}/`)} data-rv style="--d:100">Read the case study <Icon name="arrow-r" size={18} /></a>
+      </div>
+      <dl class="proof__facts">
+        {proof.facts.map((f, i) => (
+          <div data-rv style={`--d:${i * 90}`}><dt>{f.label}</dt><dd>{f.value}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================= WORK ================= -->
+  <section class="sec t-paper work" id="work" data-theme="paper" aria-labelledby="work-title">
+    <div class="wrap">
+      <div class="shead">
+        <div>
+          <span class="tag">(02) Work</span>
+          <Lines class="h1" text={`Selected work<sup class="count">${String(projects.length).padStart(2, '0')}</sup>`} />
+        </div>
+        <p class="lede" data-rv>Stores, brand sites and launches. Client work and self-initiated redesigns live in one list, because they come from the same hands.</p>
+      </div>
+      <h2 class="sr-only" id="work-title">Selected work</h2>
+      <WorkIndex items={projects} />
+      <div class="work__more" data-rv><a class="btn btn--ink" href={url('/work/')}>Browse all projects <Icon name="arrow" /></a></div>
+    </div>
+  </section>
+
+  <!-- ================= SERIES ================= -->
+  <section class="sec t-ink series" data-theme="ink" aria-labelledby="series-title">
+    <div class="wrap">
+      <div class="shead">
+        <div>
+          <span class="tag">(03) Live series</span>
+          <Lines class="h1" text={`${series.title.replace(' a Day', '')}|*a day.*`} />
+          <h2 class="sr-only" id="series-title">{series.title}</h2>
+        </div>
+        <div data-rv>
+          <p class="lede">{series.text}</p>
+          <a class="link series__li" href={linkedin} target="_blank" rel="noopener">Follow it on LinkedIn ↗</a>
+        </div>
+      </div>
+      <div class="series__grid">
+        {days.map((d, i) => (
+          <div data-rv style={`--d:${i * 100}`}><ProjectCard p={d.p} badge={`Day ${String(d.day).padStart(2, '0')}`} /></div>
+        ))}
+        <a class="series__next" href={linkedin} target="_blank" rel="noopener" data-rv style="--d:200">
+          <span class="tag">Day {nextDay}</span>
+          <span class="series__q">Who’s next?</span>
+          <span class="prose">Suggest a company that deserves a better website.</span>
+          <Icon name="arrow" size={40} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section class="sec t-paper" id="services" data-theme="paper" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="shead">
+        <div>
+          <span class="tag">(04) Services</span>
+          <Lines class="h1" text="What I build|*for you.*" />
+          <h2 class="sr-only" id="services-title">Services</h2>
+        </div>
+        <p class="lede" data-rv>Strategy, design, code and campaigns from the same pair of hands, so nothing gets lost and nothing has to be rebuilt later.</p>
+      </div>
+      <div class="svc">
+        {services.map((s, i) => (
+          <article class="svc__item" data-rv style={`--d:${(i % 3) * 80}`}>
+            <span class="svc__n tag">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="h3">{s.title} <span class="svc__it">{s.italic}</span></h3>
+            <p class="prose">{s.text}</p>
+            <ul class="svc__tags">{s.tags.map((t) => <li class="chip">{t}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROCESS ================= -->
+  <section class="sec t-ink" id="process" data-theme="ink" aria-labelledby="process-title">
+    <div class="wrap">
+      <div class="shead">
+        <div>
+          <span class="tag">(05) Process</span>
+          <Lines class="h1" text="Four steps.|*No surprises.*" />
+          <h2 class="sr-only" id="process-title">Process</h2>
+        </div>
+        <p class="lede" data-rv>First I understand where your business is, then I build the shortest path from a visit to a sale.</p>
+      </div>
+      <ol class="steps">
+        {process.map((p, i) => (
+          <li class="step" data-rv style={`--d:${i * 100}`}>
+            <span class="step__n" aria-hidden="true">{p.index}</span>
+            <h3 class="h3">{p.title} <span class="red">{p.italic}</span></h3>
+            <p class="prose">{p.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= PRICING ================= -->
+  <section class="sec t-paper" id="pricing" data-theme="paper" aria-labelledby="pricing-title">
+    <div class="wrap">
+      <div class="shead">
+        <div>
+          <span class="tag">(06) Pricing</span>
+          <Lines class="h1" text="Clear prices.|*Real results.*" />
+          <h2 class="sr-only" id="pricing-title">Pricing</h2>
+        </div>
+        <p class="lede" data-rv>A one-time setup, then a monthly plan that covers hosting, maintenance, security updates and small changes.</p>
+      </div>
+      <div class="plans">
+        {packages.map((p, i) => (
+          <article class:list={['plan', { 'plan--hi t-ink': p.name === recommended }]} data-rv style={`--d:${i * 90}`}>
+            <div class="plan__head">
+              <h3 class="h3">{p.name}</h3>
+              {p.name === recommended && <span class="chip chip--red">Recommended</span>}
+            </div>
+            <p class="plan__price"><span>{p.price}</span><small>setup</small></p>
+            <p class="plan__month">+ {p.monthly.replace('/month', ' / month')}</p>
+            <p class="prose">{p.text}</p>
+            <ul class="plan__list">{p.items.map((it) => <li>{it}</li>)}</ul>
+            <a class:list={['btn', { 'btn--ghost': p.name !== recommended }]} href={url(`/contact/?package=${p.name.toLowerCase()}`)}>Choose {p.name} <Icon name="arrow" /></a>
+          </article>
+        ))}
+      </div>
+      <p class="plans__note" data-rv><strong>{pricingNote.lead}</strong> {pricingNote.text}</p>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="sec--sm t-paper faq" id="faq" data-theme="paper" aria-labelledby="faq-title">
+    <div class="wrap faq__grid">
+      <div>
+        <span class="tag tag--accent">(07) FAQ</span>
+        <h2 class="h2" id="faq-title" style="margin-top:18px">Questions,<br />answered.</h2>
+      </div>
+      <div class="faq__list">
+        {faq.map((f) => (
+          <details data-rv>
+            <summary><span>{f.q}</span><i aria-hidden="true"></i></summary>
+            <p class="prose">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= AUDIT ================= -->
+  <section class="sec t-red audit" id="audit" data-theme="red" aria-labelledby="audit-title">
+    <div class="wrap audit__grid">
+      <div>
+        <span class="tag">(08) {audit.kicker}</span>
+        <h2 class="h1" id="audit-title" style="margin-top:18px">{audit.title} {audit.titleItalic}</h2>
+        <p class="lede" style="margin-top:24px">{audit.text}</p>
+        <ul class="audit__pts">{audit.points.map((p) => <li>{p}</li>)}</ul>
+      </div>
+      <div class="audit__card t-ink"><LeadForm variant="audit" /></div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="sec t-ink talk" data-theme="ink" aria-labelledby="talk-title">
+    <div class="wrap">
+      <p class="tag tag--accent">(09) {contact.title}</p>
+      <a class="talk__big" href={url('/contact/')} id="talk-title">
+        <span class="xl">Let’s talk</span>
+        <span class="talk__arrow"><Icon name="arrow" size={64} /></span>
+      </a>
+      <p class="lede">{contact.text}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero { min-height: 100svh; display: flex; flex-direction: column; padding-top: calc(var(--nav-h) + 20px); padding-bottom: clamp(24px, 3vw, 40px); overflow: hidden; }
+  .hero__top { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); }
+  .hero__where span:first-child { margin-right: 8px; }
+  .hero__lens { position: relative; margin-top: auto; padding: clamp(28px, 4vw, 56px) var(--gutter) 0; cursor: crosshair; --mx: 50%; --my: 50%; --r: 0px; }
+  .hero__title { white-space: nowrap; font-size: clamp(3.4rem, 18vw, 21rem); letter-spacing: -0.045em; line-height: 0.8; }
+  .hero__title .ln > span { padding-right: 0.04em; }
+  .hero__title--lens { position: absolute; inset: clamp(28px, 4vw, 56px) var(--gutter) 0; color: var(--red); pointer-events: none; -webkit-mask-image: radial-gradient(circle var(--r) at var(--mx) var(--my), #000 98%, transparent 100%); mask-image: radial-gradient(circle var(--r) at var(--mx) var(--my), #000 98%, transparent 100%); }
+  .hero__inv { color: var(--paper); }
+  .hero__ring { position: absolute; left: var(--mx); top: var(--my); width: calc(var(--r) * 2); height: calc(var(--r) * 2); border: 1px solid rgba(255, 42, 26, 0.5); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+  .hero__bot { display: flex; justify-content: space-between; align-items: flex-end; gap: clamp(24px, 4vw, 64px); margin-top: clamp(28px, 4vw, 56px); }
+  .hero__copy .lede { max-width: 40ch; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .reel { width: clamp(260px, 30vw, 460px); flex: none; }
+  .reel__media { position: relative; aspect-ratio: 16 / 10; background: var(--ink-2); overflow: hidden; }
+  .reel__item { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s var(--ease); }
+  .reel__item.on { opacity: 1; }
+  .reel__item img, .reel__item video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .reel__live { position: absolute; left: 10px; top: 10px; display: inline-flex; gap: 8px; align-items: center; padding: 5px 9px; background: rgba(11, 11, 11, 0.7); color: var(--paper); }
+  .reel__cap { display: block; margin-top: 12px; font-size: 0.9rem; color: var(--muted); }
+  .reel__cap :global(b) { color: var(--paper); font-weight: 600; margin-right: 6px; }
+  .reel__cap:hover :global(b) { color: var(--red); }
+
+  /* Proof */
+  .proof__num { font-size: clamp(6.5rem, 30vw, 34rem); font-weight: 800; letter-spacing: -0.075em; line-height: 0.78; margin: clamp(18px, 2vw, 32px) 0 0 -0.05em; font-variant-numeric: tabular-nums; }
+  .proof__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 24px; margin-top: clamp(28px, 3vw, 48px); padding-top: 28px; border-top: 2px solid var(--ink); }
+  .proof__row .h3 { max-width: 30ch; }
+  .proof__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: clamp(40px, 5vw, 80px); border-top: 1px solid var(--line); }
+  .proof__facts div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; padding: 24px 24px 0 0; }
+  .proof__facts div + div { padding-left: 24px; border-left: 1px solid var(--line); }
+  .proof__facts dd { font-size: clamp(2.4rem, 5vw, 4.4rem); font-weight: 700; letter-spacing: -0.06em; line-height: 1; }
+  .proof__facts dt { color: var(--muted); max-width: 30ch; }
+
+  /* Work */
+  .work__more { margin-top: 40px; }
+
+  /* Series */
+  .series__li { margin-top: 18px; color: var(--paper); }
+  .series__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 0.62fr); gap: clamp(16px, 2vw, 28px); align-items: start; }
+  .series__next { display: flex; flex-direction: column; gap: 14px; justify-content: space-between; aspect-ratio: 10 / 10.6; padding: 24px; box-shadow: inset 0 0 0 1px var(--line); transition: background-color 0.4s, color 0.4s; }
+  .series__next .tag { color: var(--red); }
+  .series__q { font-size: clamp(2rem, 3.4vw, 3.2rem); font-weight: 700; letter-spacing: -0.06em; line-height: 0.95; margin-top: auto; }
+  .series__next svg { color: var(--red); transition: transform 0.5s var(--ease); }
+  .series__next:hover { background: var(--red); color: var(--ink); }
+  .series__next:hover .tag, .series__next:hover svg { color: var(--ink); }
+  .series__next:hover .prose { color: rgba(11, 11, 11, 0.75); }
+  .series__next:hover svg { transform: rotate(45deg); }
+
+  /* Services */
+  .svc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .svc__item { position: relative; display: flex; flex-direction: column; gap: 16px; padding: clamp(24px, 2.6vw, 40px); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); min-height: 360px; transition: background-color 0.4s, color 0.4s; }
+  .svc__item:hover { background: var(--ink); color: var(--paper); }
+  .svc__item:hover .prose { color: rgba(255, 255, 255, 0.7); }
+  .svc__item:hover .chip { color: rgba(255, 255, 255, 0.75); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25); }
+  .svc__n { color: var(--red-ink); }
+  .svc__item:hover .svc__n { color: var(--red); }
+  .svc__it { color: var(--muted); }
+  .svc__item:hover .svc__it { color: var(--red); }
+  .svc__tags { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+
+  /* Process */
+  .steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .step { background: var(--bg); padding: clamp(22px, 2.4vw, 36px); display: flex; flex-direction: column; gap: 14px; }
+  .step__n { font-size: clamp(4.5rem, 8vw, 8rem); font-weight: 800; letter-spacing: -0.07em; line-height: 0.8; color: transparent; -webkit-text-stroke: 1.5px var(--paper); margin-bottom: clamp(28px, 5vw, 80px); transition: color 0.4s, -webkit-text-stroke-color 0.4s; }
+  .step:hover .step__n { color: var(--red); -webkit-text-stroke-color: var(--red); }
+
+  /* Pricing */
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.6vw, 24px); align-items: stretch; }
+  .plan { display: flex; flex-direction: column; gap: 14px; padding: clamp(24px, 2.6vw, 40px); box-shadow: inset 0 0 0 1px var(--line); }
+  .plan--hi { box-shadow: none; transform: translateY(-14px); }
+  .plan__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .plan__price { display: flex; align-items: baseline; gap: 10px; margin-top: 12px; }
+  .plan__price span { font-size: clamp(3.4rem, 6vw, 5.6rem); font-weight: 800; letter-spacing: -0.07em; line-height: 0.85; }
+  .plan__price small { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-transform: uppercase; }
+  .plan__month { font-weight: 600; color: var(--accent); }
+  .plan__list { list-style: none; padding: 0; margin: 8px 0 18px; display: grid; }
+  .plan__list li { padding: 11px 0; border-top: 1px solid var(--line); display: flex; gap: 12px; align-items: center; }
+  .plan__list li::before { content: ''; width: 8px; height: 8px; background: var(--red); flex: none; }
+  .plan .btn { margin-top: auto; justify-content: space-between; }
+  .plans__note { margin-top: 28px; color: var(--muted); max-width: 80ch; }
+  .plans__note strong { color: var(--fg); }
+
+  /* FAQ */
+  .faq { border-top: 1px solid var(--line); }
+  .faq__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 80px); }
+  .faq__list { border-top: 2px solid var(--ink); }
+  details { border-bottom: 1px solid var(--line); }
+  summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 22px 0; font-size: clamp(1.1rem, 1.6vw, 1.4rem); font-weight: 600; letter-spacing: -0.025em; }
+  summary::-webkit-details-marker { display: none; }
+  summary i { position: relative; width: 20px; height: 20px; flex: none; }
+  summary i::before, summary i::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: currentColor; transition: transform 0.4s var(--ease); }
+  summary i::after { transform: rotate(90deg); }
+  details[open] summary i::after { transform: rotate(0); }
+  details[open] summary { color: var(--red-ink); }
+  details p { padding-bottom: 24px; }
+
+  /* Audit */
+  .audit__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+  .audit .h1 { font-size: clamp(3rem, 7vw, 7.6rem); }
+  .audit__pts { list-style: none; padding: 0; margin-top: 28px; display: grid; gap: 10px; font-weight: 600; }
+  .audit__pts li { display: flex; gap: 12px; align-items: center; }
+  .audit__pts li::before { content: ''; width: 18px; height: 2px; background: var(--ink); }
+  .audit__card { padding: clamp(24px, 3vw, 44px); }
+
+  /* Contact */
+  .talk__big { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin: clamp(20px, 3vw, 40px) 0 clamp(24px, 3vw, 40px); padding-bottom: clamp(20px, 3vw, 40px); border-bottom: 2px solid var(--line); transition: color 0.4s; }
+  .talk__big .xl { font-size: clamp(4rem, 16vw, 17rem); }
+  .talk__arrow { width: clamp(64px, 10vw, 150px); aspect-ratio: 1; border-radius: 50%; background: var(--red); color: var(--ink); display: grid; place-items: center; flex: none; transition: transform 0.6s var(--ease); }
+  .talk__arrow :global(svg) { width: 45%; height: 45%; }
+  .talk__big:hover { color: var(--red); }
+  .talk__big:hover .talk__arrow { transform: rotate(45deg) scale(1.06); }
+
+  @media (max-width: 1100px) {
+    .svc { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .series__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .series__next { grid-column: span 2; aspect-ratio: auto; min-height: 220px; }
+  }
+  @media (max-width: 860px) {
+    .hero__lens { margin-top: clamp(40px, 12vh, 120px); }
+    .hero__bot { flex-direction: column; align-items: stretch; }
+    .reel { width: 100%; }
+    .hero__where span:first-child { display: none; }
+    .plans, .faq__grid, .audit__grid { grid-template-columns: minmax(0, 1fr); }
+    .plan--hi { transform: none; }
+    .proof__facts { grid-template-columns: minmax(0, 1fr); }
+    .proof__facts div + div { padding-left: 0; border-left: 0; }
+    .proof__facts div { padding: 20px 0; border-bottom: 1px solid var(--line); }
+    .proof__row { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .svc, .steps, .series__grid { grid-template-columns: minmax(0, 1fr); }
+    .series__next { grid-column: auto; }
+    .svc__item, .step { min-height: 0; }
+    .hero__top .tag:first-child { max-width: 22ch; }
+  }
+</style>
+
+<script>
+  import '../scripts/lead'
+</script>

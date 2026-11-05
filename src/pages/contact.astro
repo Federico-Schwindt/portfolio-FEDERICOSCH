@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro'
+import Lines from '../components/Lines.astro'
+import LeadForm from '../components/LeadForm.astro'
+import { contact, site, socials } from '../data/content'
+import { breadcrumbLd, personLd } from '../lib/site'
+---
+<Base
+  title="Contact · Hire a web designer & developer | Federico Schwindt"
+  description={`Tell me about your project: websites, online stores, SEO and ads. Packages from $300 + $50/month. Based in ${site.city}, working worldwide in English and Spanish.`}
+  path="/contact"
+  jsonLd={[personLd, breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Contact', path: '/contact' }])]}
+>
+  <section class="phead t-ink" data-theme="ink">
+    <div class="wrap">
+      <p class="tag"><i class="dot"></i> {site.availability}</p>
+      <Lines as="h1" class="xl" text="Let’s|*talk.*" />
+    </div>
+  </section>
+  <section class="t-ink sec--sm" data-theme="ink" style="padding-top:0" aria-label="Contact form">
+    <div class="wrap ct">
+      <div data-rv>
+        <p class="lede ct__intro">{contact.text}</p>
+        <LeadForm variant="contact" />
+      </div>
+      <aside class="ct__aside" data-rv style="--d:150">
+        <div>
+          <span class="tag">Email</span>
+          <a class="ct__mail" href={`mailto:${site.email}`}>{site.email}</a>
+          <button class="link ct__copy" type="button" data-copy={site.email}>Copy address</button>
+        </div>
+        <div>
+          <span class="tag">Elsewhere</span>
+          {socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}
+        </div>
+        <div>
+          <span class="tag">Location</span>
+          <p>{site.city}</p>
+          <p><span data-clock>--:--</span> {site.utc} · English & Spanish</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import '../scripts/lead'
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.copy!)
+        b.textContent = 'Copied ✓'
+        setTimeout(() => (b.textContent = 'Copy address'), 1800)
+      } catch {
+        /* clipboard blocked: the address is right above */
+      }
+    }),
+  )
+</script>
+
+<style>
+  .ct { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.6fr); gap: clamp(32px, 6vw, 110px); align-items: start; }
+  .ct__intro { margin-bottom: 36px; }
+  .ct__aside { display: grid; gap: 36px; padding-top: 24px; border-top: 2px solid var(--paper); }
+  .ct__aside > div { display: grid; gap: 8px; justify-items: start; }
+  .ct__aside .tag { color: var(--red); }
+  .ct__aside a, .ct__aside p { color: rgba(255, 255, 255, 0.84); }
+  .ct__aside a:hover { color: var(--paper); }
+  .ct__mail { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.02em; word-break: break-all; }
+  .ct__copy { font-size: 0.9rem; }
+  @media (max-width: 860px) { .ct { grid-template-columns: minmax(0, 1fr); } }
+</style>

@@ -1,20 +1,12 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "strict": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": true,
-    "useDefineForClassFields": true,
+    "jsxImportSource": "react",
+    "types": ["node"],
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "types": ["vite/client", "node"]
+    "noUnusedParameters": true
   },
-  "include": ["src", "functions", "neon.ts", "vite.config.ts"]
+  "include": [".astro/types.d.ts", "src", "functions", "neon.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -1,0 +1,107 @@
+---
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import Lines from '../components/Lines.astro'
+import Marquee from '../components/Marquee.astro'
+import { about, site, socials, tools } from '../data/content'
+import { breadcrumbLd, canonicalFor, personLd, url } from '../lib/site'
+---
+<Base
+  title="About Federico Schwindt · Web designer, developer & marketer"
+  description="Designer, developer and marketer from Gualeguaychú, Argentina, running the studio Zyneteq. 13 projects delivered on Freelancer.com with a 5.0 rating, 100% on time and on budget."
+  path="/about"
+  type="profile"
+  nav="paper"
+  jsonLd={[{ '@context': 'https://schema.org', '@type': 'ProfilePage', url: canonicalFor('/about'), mainEntity: personLd }, breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])]}
+>
+  <section class="phead t-paper" data-theme="paper">
+    <div class="wrap">
+      <p class="tag"><i class="dot"></i> About</p>
+      <Lines as="h1" class="xl" text="Design.|Code.|*Growth.*" />
+    </div>
+  </section>
+
+  <section class="t-paper sec--sm" data-theme="paper" style="padding-top:0" aria-label="Bio">
+    <div class="wrap ab">
+      <figure class="ab__photo" data-rv>
+        <span class="ab__img"><img src={url('/char/portrait.jpg')} alt={`Portrait of ${site.name}`} width="1200" height="1600" fetchpriority="high" /></span>
+        <figcaption class="tag">{site.name} · {site.city}</figcaption>
+      </figure>
+      <div class="ab__text">
+        <p class="h3" data-rv>{about.intro}</p>
+        <div class="prose ab__bio" data-rv style="--d:100">{about.bio.map((p) => <p>{p}</p>)}</div>
+        <div class="ab__links" data-rv style="--d:200">
+          {socials.map((s) => <a class="btn btn--ghost btn--sm" href={s.href} target="_blank" rel="noopener">{s.label} <Icon name="arrow" /></a>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="t-ink sec--sm" data-theme="ink" aria-label="Numbers">
+    <dl class="wrap ab__facts">
+      {about.facts.map((f, i) => <div data-rv style={`--d:${i * 80}`}><dt>{f.label}</dt><dd>{f.value}</dd></div>)}
+    </dl>
+  </section>
+
+  <section class="t-paper sec--sm" data-theme="paper" aria-labelledby="skills-title">
+    <div class="wrap">
+      <h2 class="tag tag--accent" id="skills-title">Disciplines</h2>
+      <div class="ab__skills">
+        {about.skills.map((s, i) => (
+          <div data-rv style={`--d:${i * 90}`}>
+            <h3 class="h3">{s.title}</h3>
+            <ul>{s.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="t-paper sec--sm" data-theme="paper" aria-labelledby="tl-title" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="tag tag--accent" id="tl-title">Timeline</h2>
+      <ol class="ab__tl">
+        {about.timeline.map((t, i) => (
+          <li data-rv style={`--d:${i * 90}`}>
+            <span class="ab__year">{t.year}</span>
+            <h3 class="h3">{t.title}</h3>
+            <p class="prose">{t.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="band t-red" data-theme="red" aria-label="Tools"><Marquee items={tools} dur={45} /></section>
+</Base>
+
+<style>
+  .ab { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(28px, 6vw, 110px); align-items: start; }
+  .ab__img { position: relative; display: block; margin-right: 18px; }
+  .ab__img::before { content: ''; position: absolute; inset: 18px -18px -18px 18px; background: var(--red); z-index: 0; }
+  .ab__photo img { position: relative; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; filter: grayscale(1) contrast(1.08); }
+  .ab__photo figcaption { margin-top: 34px; color: var(--muted); }
+  .ab__text { display: grid; gap: 28px; padding-top: 8px; }
+  .ab__text .h3 { font-size: clamp(1.8rem, 3.2vw, 3.2rem); }
+  .ab__bio { font-size: 1.1rem; }
+  .ab__links { display: flex; flex-wrap: wrap; gap: 10px; }
+  .ab__facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ab__facts div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 12px; padding: 0 20px; border-left: 1px solid var(--line); }
+  .ab__facts div:first-child { border-left: 0; padding-left: 0; }
+  .ab__facts dd { font-size: clamp(3rem, 6vw, 6rem); font-weight: 800; letter-spacing: -0.07em; line-height: 0.85; }
+  .ab__facts div:last-child dd { color: var(--red); }
+  .ab__facts dt { color: var(--muted); }
+  .ab__skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); margin-top: 24px; }
+  .ab__skills > div { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .ab__skills ul { list-style: none; padding: 0; margin-top: 16px; }
+  .ab__skills li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .ab__tl { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); margin-top: 24px; }
+  .ab__tl li { display: grid; gap: 12px; align-content: start; }
+  .ab__year { font-size: clamp(3rem, 6vw, 5.6rem); font-weight: 800; letter-spacing: -0.07em; line-height: 0.85; color: var(--red); }
+  @media (max-width: 860px) {
+    .ab, .ab__skills, .ab__tl { grid-template-columns: minmax(0, 1fr); }
+    .ab__photo { max-width: 420px; }
+    .ab__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 0; }
+    .ab__facts div:nth-child(3) { border-left: 0; padding-left: 0; }
+  }
+</style>

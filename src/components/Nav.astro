@@ -1,0 +1,36 @@
+---
+import Logo from './Logo.astro'
+import Icon from './Icon.astro'
+import { nav, site, socials } from '../data/content'
+import { url } from '../lib/site'
+interface Props { on?: 'ink' | 'paper' | 'red' }
+const { on = 'ink' } = Astro.props
+const here = Astro.url.pathname
+const current = (href: string) => !href.includes('#') && href !== '/' && here.startsWith(url(href))
+---
+<header class="nav" data-nav data-on={on}>
+  <div class="nav__bg"></div>
+  <div class="wrap nav__in">
+    <a href={url('/')} aria-label={`${site.name}, home`}><Logo /></a>
+    <nav class="nav__links" aria-label="Main">
+      {nav.map((n) => <a href={url(n.href)} aria-current={current(n.href) ? 'page' : undefined}>{n.label}</a>)}
+    </nav>
+    <div class="nav__right">
+      <span class="nav__avail tag"><i class="dot"></i>{site.availability}</span>
+      <a class="btn btn--sm" href={url('/contact/')}>Start a project <Icon name="arrow" /></a>
+      <button class="nav__menu" type="button" data-menu-open aria-label="Open menu" aria-controls="menu" aria-expanded="false"><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="menu" id="menu" data-menu inert>
+  <button class="menu__close" type="button" data-menu-close aria-label="Close menu">×</button>
+  <nav aria-label="Mobile">
+    <a href={url('/')}><span>00</span>Home</a>
+    {nav.map((n, i) => <a href={url(n.href)}><span>{String(i + 1).padStart(2, '0')}</span>{n.label}</a>)}
+    <a href={url('/contact/')}><span>{String(nav.length + 1).padStart(2, '0')}</span>Contact</a>
+  </nav>
+  <div class="menu__foot">
+    <a href={`mailto:${site.email}`}>{site.email}</a>
+    <span>{socials.map((s, i) => <>{i > 0 && ' · '}<a href={s.href} target="_blank" rel="noopener">{s.label}</a></>)}</span>
+  </div>
+</div>

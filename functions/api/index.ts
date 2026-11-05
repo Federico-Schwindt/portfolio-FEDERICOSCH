@@ -24,7 +24,7 @@ import { createRealtime, rawSql } from '@neon/realtime/server'
 import { query } from './db.ts'
 
 // ── config ────────────────────────────────────────────────────────────────────
-const DEFAULT_ORIGINS = ['https://federico-schwindt.github.io', 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://127.0.0.1:4173']
+const DEFAULT_ORIGINS = ['https://federico-schwindt.github.io', 'http://localhost:4321', 'http://127.0.0.1:4321', 'http://localhost:5173', 'http://127.0.0.1:4173']
 const ORIGINS = (process.env.WEB_ORIGINS ?? '')
   .split(',')
   .map((s) => s.trim())

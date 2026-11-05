@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro'
+import type { Project } from '../data/content'
+import { numberOf, thumbOf, url } from '../lib/site'
+interface Props { p: Project; eager?: boolean; badge?: string; sizes?: string; level?: 2 | 3 }
+const { p, eager = false, badge, sizes = '(min-width: 760px) 50vw, 100vw', level = 3 } = Astro.props
+const H = `h${level}`
+---
+<a class="pcard" href={url(`/work/${p.slug}/`)} data-card>
+  <div class="pcard__media">
+    <span class="pcard__badge">
+      {badge && <span class="chip chip--red">{badge}</span>}
+      {p.concept && <span class="chip">Concept</span>}
+    </span>
+    <img src={url(p.cover)} srcset={`${url(thumbOf(p))} 720w, ${url(p.cover)} 1440w`} sizes={sizes} alt={`${p.title}: ${p.category}`} width="1440" height="900" loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} decoding="async" />
+    {p.video && <video muted loop playsinline preload="none" data-src={url(p.video)} aria-hidden="true"></video>}
+    <span class="pcard__view"><Icon name="arrow-r" /></span>
+  </div>
+  <div class="pcard__meta">
+    <div>
+      <H class="pcard__t">{p.title}</H>
+      <p class="pcard__c">{p.category}</p>
+    </div>
+    <span class="pcard__n">{numberOf(p)} / {p.year.slice(0, 4)}</span>
+  </div>
+</a>

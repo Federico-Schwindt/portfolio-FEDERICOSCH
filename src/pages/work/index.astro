@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro'
+import Lines from '../../components/Lines.astro'
+import ProjectCard from '../../components/ProjectCard.astro'
+import { projects, workIntro, type Kind } from '../../data/content'
+import { breadcrumbLd, canonicalFor, SITE_URL } from '../../lib/site'
+
+const kinds: Kind[] = ['Website', 'E-commerce', 'Motion']
+const n = (k: Kind) => projects.filter((p) => p.kinds.includes(k)).length
+const label: Record<Kind, string> = { Website: 'Websites', 'E-commerce': 'E-commerce', Motion: 'Motion' }
+---
+<Base
+  title="Work · Websites, online stores & motion | Federico Schwindt"
+  description={`${projects.length} projects in one list: e-commerce, car dealer, spa, architecture, tea & coffee and more, from client work to public redesigns. See the case studies and results.`}
+  path="/work"
+  nav="paper"
+  jsonLd={[
+    breadcrumbLd([{ name: 'Home', path: '/' }, { name: 'Work', path: '/work' }]),
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Work',
+      url: canonicalFor('/work'),
+      hasPart: projects.map((p) => ({ '@type': 'CreativeWork', name: p.title, url: canonicalFor(`/work/${p.slug}`), image: `${SITE_URL}/${p.cover}` })),
+    },
+  ]}
+>
+  <section class="phead t-paper" data-theme="paper">
+    <div class="wrap">
+      <p class="tag"><i class="dot"></i> {projects.length} projects</p>
+      <Lines as="h1" class="xl" text="Work" />
+      <div class="whead">
+        <p class="lede" data-rv style="--d:200">{workIntro} Client work and self-initiated redesigns, side by side.</p>
+        <div class="seg" role="group" aria-label="Filter projects" data-filters data-rv style="--d:300">
+          <button type="button" data-filter="all" aria-pressed="true">All<sup>{projects.length}</sup></button>
+          {kinds.map((k) => <button type="button" data-filter={k} aria-pressed="false">{label[k]}<sup>{n(k)}</sup></button>)}
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="sec--sm t-paper" data-theme="paper" style="padding-top:0" aria-label="Projects">
+    <div class="wrap wgrid">
+      {projects.map((p, i) => (
+        <div class:list={['wgrid__item', { 'wgrid__item--wide': i === 0 }]} data-kinds={p.kinds.join(',')} data-rv style={`--d:${(i % 2) * 100}; view-transition-name: w-${p.slug}`}>
+          <ProjectCard p={p} eager={i === 0} level={2} sizes={i === 0 ? '(min-width: 760px) 92vw, 100vw' : '(min-width: 760px) 46vw, 100vw'} />
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .whead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-top: clamp(28px, 3vw, 48px); padding-top: 24px; border-top: 2px solid var(--ink); }
+  .wgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(40px, 4vw, 72px) clamp(16px, 2vw, 32px); }
+  .wgrid__item--wide { grid-column: span 2; }
+  .wgrid__item--wide :global(.pcard__media) { aspect-ratio: 21 / 9; }
+  @media (max-width: 760px) {
+    .wgrid { grid-template-columns: minmax(0, 1fr); }
+    .wgrid__item--wide { grid-column: auto; }
+    .wgrid__item--wide :global(.pcard__media) { aspect-ratio: 16 / 10; }
+  }
+</style>

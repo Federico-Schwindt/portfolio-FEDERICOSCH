@@ -1,0 +1,74 @@
+---
+import '@fontsource-variable/geist'
+import '@fontsource-variable/geist-mono'
+import geistWoff2 from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url'
+import '../styles/global.css'
+import Nav from '../components/Nav.astro'
+import Footer from '../components/Footer.astro'
+import { site } from '../data/content'
+import { canonicalFor, DEFAULT_IMAGE, url } from '../lib/site'
+
+interface Props {
+  title: string
+  description: string
+  /** route path, e.g. "/work/joya-hijab" */
+  path: string
+  image?: string
+  type?: 'website' | 'article' | 'profile'
+  noindex?: boolean
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
+  /** theme of the first section, so the nav starts with the right colors */
+  nav?: 'ink' | 'paper' | 'red'
+  footer?: boolean
+}
+const { title, description, path, image = DEFAULT_IMAGE, type = 'website', noindex = false, jsonLd, nav = 'ink', footer = true } = Astro.props
+const canonical = canonicalFor(path)
+const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0b0b0b" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('/sitemap.xml')} />
+    <link rel="preload" href={geistWoff2} as="font" type="font/woff2" crossorigin />
+    {ld.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+    <script is:inline>document.documentElement.classList.add('js')</script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Nav on={nav} />
+    <main id="main"><slot /></main>
+    {footer && <Footer />}
+    <script is:inline>
+      // What is already on screen is shown before first paint, so the largest paint never waits for JS
+      (function () {
+        var h = innerHeight
+        document.querySelectorAll('[data-rv],[data-lines]').forEach(function (el) {
+          var r = el.getBoundingClientRect()
+          if (r.top < h && r.bottom > 0) el.classList.add('in')
+        })
+        setTimeout(function () { document.querySelectorAll('[data-rv],[data-lines]').forEach(function (el) { el.classList.add('in') }) }, 5000)
+      })()
+    </script>
+    <script>
+      import '../scripts/app'
+    </script>
+  </body>
+</html>

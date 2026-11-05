@@ -1,0 +1,9 @@
+---
+/** Line-by-line reveal rendered on the server. Separate lines with "|", wrap red words in *stars*. */
+interface Props { text: string; as?: string; class?: string; d?: number }
+const { text, as: Tag = 'h2', class: cls, d = 0 } = Astro.props
+const lines = text.split('|').map((l) => l.trim().replace(/\*(.+?)\*/g, '<span class="red">$1</span>'))
+---
+<Tag class={cls} data-lines style={`--d:${d}`}>
+  {lines.map((l, i) => <span class="ln"><span style={`--i:${i}`} set:html={l} /></span>)}
+</Tag>

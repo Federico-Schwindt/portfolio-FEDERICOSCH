@@ -1,42 +1,41 @@
 # Federico Schwindt — portfolio
 
-Website development, design & marketing. A red-on-white editorial site whose centrepiece is a scroll-driven retro computer: the section opens on a Windows-XP-style desktop that fills the viewport, then the camera pulls back to reveal a 3D all-in-one PC on a desk whose screen keeps rendering that same desktop, live and clickable.
+Website development, design & marketing. Black, white and one red: a static Astro site built to load fast and make the work the loudest thing on the page.
 
 Live: https://federico-schwindt.github.io/portfolio-FEDERICOSCH/
 
+## Brand
+
+- **Colors:** ink `#0b0b0b`, paper `#ffffff`, red `#ff2a1a`. Small red text on white uses `#d9140b` so it passes WCAG AA; red fills carry black text.
+- **Type:** Geist Variable for everything, Geist Mono for labels. Display sizes are heavy, uppercase and tightly tracked.
+- **Mark:** a red square with a blocky “FS” (`src/components/Logo.astro`, `public/favicon.svg`).
+- **Signature moments:** the red lens that inverts the hero headline under the cursor (it drifts on its own on touch screens), the red band, one big proof number, and a work list whose preview follows the cursor.
+
 ## Stack
 
-- Vite 8 + React 19 + TypeScript
-- Three.js r187, `@react-three/fiber`, `@react-three/drei` (the computer is built from primitives and lit by a studio environment)
-- GSAP 3 + ScrollTrigger (pinned, scrubbed sections), Lenis smooth scroll
-- `react-router` with lazy pages, `zustand` for the small shared state
-- Fonts: Archivo Variable, Space Mono, Instrument Serif
+- [Astro](https://astro.build) 7, static output, no CSS framework
+- Vanilla TypeScript for interactions (`src/scripts/app.ts`): reveals, counters, lens, previews, filters, tabs. Native cross-document View Transitions between pages.
+- React only for the private `/admin` island (Neon Auth + Realtime)
+- Neon for the lead API, database, auth, storage and realtime (see below)
 
 ## Pages
 
 | Route | What it is |
 | --- | --- |
-| `/` | Hero, the Design + Code + Marketing equation, manifesto, process, selected work, packages, the XP computer, contact |
-| `/work` | All projects |
-| `/work/:slug` | Case study for every project: client work (Universal Driveshafts plus the Freelancer.com portfolio) and concepts |
-| `/about` | Bio, tools, stats |
-| `/contact` | Lead form (stored in Neon Postgres), email, socials |
-| `/admin` | Private lead inbox: Neon Auth sign-in, live list via Neon Realtime (noindex, not linked) |
+| `/` | Hero with the lens and a reel of project films, proof, the full project list, the Redesign a Day series, services, process, pricing, FAQ, free audit form, contact |
+| `/work/` | Every project in one grid, filterable by Websites, E-commerce and Motion |
+| `/work/:slug/` | Case study: summary, key numbers, challenge and solution, “What I built”, Lighthouse results, result, gallery, next project |
+| `/about/` | Bio, numbers, disciplines, timeline, tools |
+| `/contact/` | Lead form (stored in Neon Postgres, falls back to email), email, socials |
+| `/admin/` | Private lead inbox: Neon Auth sign-in, live list via Neon Realtime (noindex, not linked) |
 
-## The XP section
-
-`src/three/Retro.tsx` renders the machine. The desktop (`src/components/Desktop.tsx`) is real DOM placed on the screen plane with drei's `<Html transform>`, so windows open, drag and close inside the monitor while the monitor itself sits in 3D. Scroll progress (`xpProgress` in `src/lib/store.ts`) drives one camera move: face-on with the screen filling the viewport, pull back to the full machine, then ease to a three-quarter hero angle.
-
-Two things are easy to break:
-
-- **Hit-testing.** Chromium mis-hit-tests CSS3D content whose layout position in the viewport is fractional, which a GSAP pin or smooth scroll produces. The DOM layer is therefore portalled to `<body>`, kept `position: fixed` at an integer offset and follows the section with a transform (`LayerSync`).
-- **Cropping.** When the desktop fills the viewport the camera fits the shorter axis, so part of the 1280×960 desktop is off-screen. `safeArea()` in `Desktop.tsx` keeps windows and icons inside the visible region on every aspect ratio.
+Client work and self-initiated concepts share one list and one numbering. Concepts keep a small “Concept” tag and a not-affiliated note on their case study.
 
 ## SEO
 
-- Every route sets its own title, description, canonical URL, Open Graph tags and JSON-LD through `useSeo` (`src/lib/seo.ts`): Person, ProfessionalService with the three packages as Offers, WebSite, FAQPage, Service list, BreadcrumbList, CreativeWork / VideoObject per case study.
-- `npm run build` ends with `scripts/prerender.mjs`, which loads every public route in headless Chromium and writes static HTML to `dist/<route>/index.html`, plus `dist/sitemap.xml`. Crawlers and link previews get real content without running JavaScript; the page boots normally on top.
-- On a GitHub Pages project site, crawlers only read `robots.txt` at the domain root, so submit `https://federico-schwindt.github.io/portfolio-FEDERICOSCH/sitemap.xml` in Google Search Console. A custom domain fixes both.
+Every page is static HTML with its own title, description, canonical URL, Open Graph tags and JSON-LD (Person, ProfessionalService with the three packages as Offers, WebSite, FAQPage, Service list, BreadcrumbList, CreativeWork / VideoObject per case study), set in `src/layouts/Base.astro` and `src/lib/site.ts`. `sitemap.xml` is generated at build time. `npm run og` renders `public/og.jpg`.
+
+On a GitHub Pages project site, crawlers only read `robots.txt` at the domain root, so submit `https://federico-schwindt.github.io/portfolio-FEDERICOSCH/sitemap.xml` in Google Search Console. A custom domain fixes both.
 
 ## Neon (database, API, auth, storage, realtime)
 
@@ -45,7 +44,7 @@ Two things are easy to break:
 | Services | `neon.ts` (auth, function `api`, buckets `media` + `briefs`, realtime) |
 | Schema | `db/schema.sql`, applied with `npm run db:migrate` |
 | API | `functions/api` (Hono): `POST /leads`, `POST /leads/:id/brief`, admin `GET/PATCH /leads`, `POST /leads/live` |
-| Browser | `src/lib/api.ts`, `src/components/LeadForm.tsx`, `src/pages/Admin.tsx` |
+| Browser | `src/lib/api.ts`, `src/components/LeadForm.astro` + `src/scripts/lead.ts`, `src/components/admin/Admin.tsx` |
 
 Set up or redeploy:
 
@@ -79,7 +78,7 @@ Without `VITE_API_URL` the forms fall back to a pre-filled email, so the site ne
 
 ## Content
 
-Everything editable lives in `src/content.ts`: copy, projects, packages and prices, icons on the desktop, socials. Images live in `public/work`, `public/case` and `public/char`.
+Everything editable lives in `src/data/content.ts`: copy, projects (in display order), the series, services, packages and prices, FAQ, socials. Images live in `public/work` (covers, plus 720px versions in `public/work/sm`), `public/case`, `public/media` and `public/char`.
 
 ## Develop
 
@@ -94,4 +93,4 @@ npm run build && npm run preview
 
 ## Deploy
 
-Pushing to `main` builds the site and publishes it to GitHub Pages through `.github/workflows/deploy.yml`. The build uses `BASE_PATH=/portfolio-FEDERICOSCH/`; `public/404.html` redirects deep links back into the router.
+Pushing to `main` builds the site and publishes it to GitHub Pages through `.github/workflows/deploy.yml`. The build sets `BASE_PATH=/portfolio-FEDERICOSCH/` and `SITE_URL`; Astro writes a folder per route, so deep links work without a redirect page.

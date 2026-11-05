@@ -18,14 +18,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm ci
-      # Chromium for scripts/prerender.mjs (static HTML for every route + sitemap.xml)
-      - run: npx playwright install --with-deps chromium
       - name: Build
         run: npm run build
         env:
@@ -33,11 +31,12 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           SITE_URL: https://federico-schwindt.github.io/portfolio-FEDERICOSCH
           # Neon (repo Settings → Secrets and variables → Actions → Variables). Empty = forms fall back to email.
+          # Astro inlines VITE_* at build time (see astro.config.mjs).
           VITE_API_URL: ${{ vars.VITE_API_URL }}
           VITE_NEON_AUTH_URL: ${{ vars.VITE_NEON_AUTH_URL }}
           VITE_NEON_REALTIME_URL: ${{ vars.VITE_NEON_REALTIME_URL }}
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
   deploy:

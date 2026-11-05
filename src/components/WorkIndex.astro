@@ -1,0 +1,27 @@
+---
+/** The one project list: big rows, a preview that follows the cursor (desktop). */
+import Icon from './Icon.astro'
+import type { Project } from '../data/content'
+import { numberOf, thumbOf, url } from '../lib/site'
+interface Props { items: Project[] }
+const { items } = Astro.props
+---
+<ul class="windex" data-windex>
+  {items.map((p, i) => (
+    <li data-rv style={`--d:${Math.min(i, 6) * 50}`}>
+      <a class="wrow" href={url(`/work/${p.slug}/`)} data-peek={i}>
+        <span class="wrow__n">{numberOf(p)}</span>
+        <span class="wrow__t">{p.title}{p.concept && <span class="chip">Concept</span>}</span>
+        <span class="wrow__c">{p.concept && <span class="wrow__ct" hidden>Concept · </span>}{p.category}</span>
+        <span class="wrow__y">{p.year.slice(0, 4)} <Icon name="arrow" /></span>
+      </a>
+    </li>
+  ))}
+</ul>
+<div class="peek" data-peek-box aria-hidden="true">
+  {items.map((p) => (
+    p.video
+      ? <video muted loop playsinline preload="none" data-poster={url(thumbOf(p))} data-src={url(p.video)} width="420" height="262"></video>
+      : <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src={url(thumbOf(p))} alt="" width="420" height="262" decoding="async" />
+  ))}
+</div>

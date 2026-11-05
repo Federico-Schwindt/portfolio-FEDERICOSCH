@@ -320,8 +320,38 @@ export const projects: Project[] = [
   },
   // ── Concepts: self-initiated pieces made to explore an industry before pitching it ──
   {
-    slug: 'velocity-motors-concept',
+    slug: 'advancing-eco-agriculture-concept',
     index: 'C1',
+    title: 'Advancing Eco Agriculture',
+    client: 'Self-initiated concept · not affiliated with AEA',
+    category: 'Regenerative-agriculture website & storefront',
+    tags: 'Concept, Web design, Code, E-commerce, Motion',
+    year: '2026',
+    cover: 'work/aea.jpg',
+    url: 'https://federico-schwindt.github.io/Advancing-Eco-Agriculture-Website/',
+    concept: true,
+    video: 'media/aea.mp4',
+    summary:
+      'An unsolicited redesign of advancingecoag.com, built as a working site rather than a mockup: a scroll-driven dive from the crop canopy into the root zone, an interactive Plant Health Pyramid, and a storefront running on the real catalog (42 products, 191 sizes and prices) that can hand carts to the brand’s existing WooCommerce checkout.',
+    role: ['Concept & strategy', 'Art direction', 'UX / UI design', 'Front-end development', 'Motion (AI-assisted)'],
+    stack: ['Astro', 'TypeScript', 'GSAP + ScrollTrigger', 'Lenis', 'WooCommerce Store API', 'Higgsfield (FLUX 3 Video)', 'GPT Image', 'GitHub Pages'],
+    stats: [
+      { value: '95', label: 'Lighthouse performance (mobile)' },
+      { value: '100', label: 'Lighthouse accessibility' },
+      { value: '191', label: 'Real sizes & prices, synced from WooCommerce' },
+      { value: '62', label: 'Pre-rendered pages' },
+    ],
+    challenge:
+      'AEA’s science is remarkable (plant immunity, sap analysis, soil biology) but hard to feel through a screen, and the store has to respect state-by-state fertilizer rules. Could a regenerative-agriculture brand’s website feel as alive as the soil it talks about, and still load fast for growers on rural connections?',
+    solution:
+      'Story before catalog. The homepage scrubs a film from the crop canopy down into the roots as you scroll, with a live depth gauge and chapters on exudates, microbes and fungal networks. The Plant Health Pyramid becomes interactive, with mineral “periodic table” tiles. The shop uses the real catalog with per-size pricing, a state selector that swaps in state-registered formulations, a slide-out cart and a demo checkout; one setting hands the cart to the existing WooCommerce checkout through shareable checkout links, so no store migration is needed.',
+    result:
+      'A static Astro build with 62 pre-rendered pages, about 8.5 KB of global JavaScript and video that only loads after first paint: 95 Lighthouse performance and 97–100 accessibility on mobile. Built as a working proposal for the AEA team, with a first-visit disclaimer making clear it is an unofficial concept.',
+    images: ['case/aea-1.jpg', 'case/aea-2.jpg', 'case/aea-3.jpg', 'case/aea-4.jpg'],
+  },
+  {
+    slug: 'velocity-motors-concept',
+    index: 'C2',
     title: 'Velocity Motors',
     client: 'Self-initiated concept',
     category: 'Car dealer website & launch spot',
@@ -341,7 +371,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'atelier-norte-concept',
-    index: 'C2',
+    index: 'C3',
     title: 'Atelier Norte',
     client: 'Self-initiated concept',
     category: 'Architecture studio website & film',
@@ -360,7 +390,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'brasa-coffee-concept',
-    index: 'C3',
+    index: 'C4',
     title: 'Brasa Coffee',
     client: 'Self-initiated concept',
     category: 'E-commerce & product motion',
@@ -379,7 +409,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'nova-dental-concept',
-    index: 'C4',
+    index: 'C5',
     title: 'Nova Dental',
     client: 'Self-initiated concept',
     category: 'Clinic website with online booking',
@@ -397,7 +427,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'motion-ident-concept',
-    index: 'C5',
+    index: 'C6',
     title: 'Motion Ident',
     client: 'Self-initiated concept',
     category: 'Brand motion graphics',

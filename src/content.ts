@@ -293,8 +293,82 @@ export const projects: Project[] = [
     images: ['case/aea-1.jpg', 'case/aea-2.jpg', 'case/aea-3.jpg', 'case/aea-4.jpg'],
   },
   {
-    slug: 'velocity-motors-concept',
+    slug: 'la-virginia-concept',
     index: 'C2',
+    title: 'La Virginia',
+    client: 'Self-initiated concept · not affiliated with Cafés La Virginia S.A.',
+    category: 'Tea & coffee brand website with wholesale ordering',
+    tags: 'Concept, Web design, Code, B2B, Motion',
+    year: '2026',
+    cover: 'work/lavirginia.jpg',
+    url: 'https://federico-schwindt.github.io/La-Virginia-Redesign/',
+    featured: true,
+    concept: true,
+    video: 'media/lavirginia.mp4',
+    summary:
+      'An unsolicited, Spanish-language redesign of the tea and coffee brand of La Virginia, a Rosario company founded in 1915. A modern-classic site built on the real catalog (62 products with their sensory notes), a wholesale order request instead of a shop, and a pitch page with measured before-and-after results.',
+    role: ['Research & concept', 'Art direction', 'UX / UI design', 'Front-end development', 'Motion (AI-assisted)'],
+    stack: ['Astro', 'TypeScript', 'Motion', 'View Transitions API', 'WooCommerce Store API', 'sharp', 'Higgsfield (Kling 3.0)', 'GPT Image', 'GitHub Pages'],
+    stats: [
+      { value: '95', label: 'Lighthouse mobile performance (was 30)' },
+      { value: '3.6×', label: 'Faster main content on a phone' },
+      { value: '62', label: 'Real products with sensory notes' },
+      { value: '32 KB', label: 'JavaScript (was 1.5 MB)' },
+    ],
+    challenge:
+      'La Virginia has been on Argentine tables for more than a century, but its website shows no prices and gives shops and distributors no clear way to order. On a phone, the main content took about 8 seconds to appear. How do you keep the character of a 1915 brand and still make the site fast, clear and commercially useful?',
+    solution:
+      'A modern-classic system drawn from the brand itself: the Virginia blue, the logo’s gold kept for actions, the arched windows of Rosario’s classical facades as the frame for every image, and Fraunces paired with Hanken Grotesk. Five short AI-generated films were rendered on the exact brand blue so they blend into the page. Because there are no public prices, the cart became a wholesale request (company, tax ID, trade, province). The catalog syncs from the existing WooCommerce store, including each product’s color, flavor, aroma and intensity, so the team would not need to migrate anything.',
+    result:
+      'A static Astro build with 72 pages: 95 Lighthouse performance and 100 accessibility on mobile for the homepage (the current site scores 30 and 91), and 100/100 on a product page. The homepage downloads 862 KB instead of 3 MB, in 26 requests instead of 150. A Spanish pitch page presents it to the La Virginia team with a before-and-after slider, the measurements and an implementation plan.',
+    features: [
+      {
+        title: 'The real catalog, by line',
+        text: 'Tea, herbal blends and coffee, synced from the brand’s WooCommerce store with optimized images. A sticky filter bar switches lines with native View Transitions, and search works as you type.',
+        image: 'case/lv-catalog.jpg',
+        stat: '62 products · 15 lines',
+      },
+      {
+        title: 'Sensory spec sheet',
+        text: 'Color, flavor, aroma and an intensity meter for every product that publishes them, plus pack sizes and claims. The product card morphs into its detail page as you click.',
+        image: 'case/lv-spec.jpg',
+        stat: 'Color · flavor · aroma · intensity',
+      },
+      {
+        title: 'Wholesale order request',
+        text: 'Grocers, cafés and distributors add products by pack size, then send one request with their company name, tax ID, trade and province. It would land in the sales team’s inbox or CRM.',
+        image: 'case/lv-b2b.jpg',
+        stat: 'Built for shops, not checkouts',
+      },
+      {
+        title: 'A pitch that shows the difference',
+        text: 'A Spanish proposal page with a draggable before-and-after, Lighthouse results counting from the current site’s value to the new one, the design rationale and a no-migration implementation plan.',
+        image: 'case/lv-pitch.jpg',
+        stat: '3.6× faster main content',
+      },
+      {
+        title: 'Phone first',
+        text: 'Product and action on the first screen, thumb-sized controls and films that only load when they scroll into view. Every page passes Lighthouse accessibility at 100.',
+        image: 'case/lv-mobile.jpg',
+        stat: '32 KB of JavaScript',
+      },
+    ],
+    performance: {
+      measured: '2026-11-05',
+      tool: 'Lighthouse 12.8.2, the engine behind Google PageSpeed Insights (lab test, mobile)',
+      before: { label: 'Current site', url: 'https://www.lavirginia.com.ar' },
+      after: { label: 'Redesign', url: 'https://federico-schwindt.github.io/La-Virginia-Redesign/' },
+      note: 'Mobile simulates a mid-range phone on a slow 4G connection. SEO is not compared because the concept blocks indexing on purpose.',
+      runs: [
+        { device: 'Homepage', before: { perf: 30, a11y: 91, bp: 57, fcp: 6074, lcp: 8251, tbt: 1599, cls: 0, si: 12279, bytes: 3173143, reqs: 150, js: 1545128 }, after: { perf: 95, a11y: 100, bp: 100, fcp: 1455, lcp: 2280, tbt: 0, cls: 0, si: 4754, bytes: 882395, reqs: 26, js: 32513 } },
+        { device: 'Product page', before: { perf: 35, a11y: 83, bp: 57, fcp: 6076, lcp: 8208, tbt: 1194, cls: 0.0, si: 7040, bytes: 2622791, reqs: 157, js: 1552859 }, after: { perf: 100, a11y: 100, bp: 100, fcp: 1132, lcp: 1680, tbt: 0, cls: 0, si: 2300, bytes: 351295, reqs: 15, js: 31951 } },
+      ],
+    },
+    images: ['case/lv-1.jpg', 'case/lv-2.jpg', 'case/lv-3.jpg', 'case/lv-4.jpg'],
+  },
+  {
+    slug: 'velocity-motors-concept',
+    index: 'C3',
     title: 'Velocity Motors',
     client: 'Self-initiated concept',
     category: 'Car dealer website & launch spot',
@@ -314,7 +388,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'atelier-norte-concept',
-    index: 'C3',
+    index: 'C4',
     title: 'Atelier Norte',
     client: 'Self-initiated concept',
     category: 'Architecture studio website & film',
@@ -333,7 +407,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'brasa-coffee-concept',
-    index: 'C4',
+    index: 'C5',
     title: 'Brasa Coffee',
     client: 'Self-initiated concept',
     category: 'E-commerce & product motion',
@@ -352,7 +426,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'nova-dental-concept',
-    index: 'C5',
+    index: 'C6',
     title: 'Nova Dental',
     client: 'Self-initiated concept',
     category: 'Clinic website with online booking',
@@ -370,7 +444,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'motion-ident-concept',
-    index: 'C6',
+    index: 'C7',
     title: 'Motion Ident',
     client: 'Self-initiated concept',
     category: 'Brand motion graphics',

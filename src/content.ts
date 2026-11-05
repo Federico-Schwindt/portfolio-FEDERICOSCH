@@ -192,42 +192,8 @@ export const projects: Project[] = [
     images: ['case/joya-1.jpg', 'case/joya-2.jpg'],
   },
   {
-    slug: 'havat-aliza',
-    index: '06',
-    title: 'Havat Aliza',
-    client: 'Havat Aliza · Israel',
-    category: 'Business website',
-    tags: 'Design, WordPress',
-    year: '2024', // TODO: confirm year
-    cover: 'work/havat-aliza.jpg',
-    summary:
-      'Website for a family-run horse-riding ranch: home, riding tours, horse boarding, a photo gallery and contact, designed to feel as warm and welcoming as the place.',
-    role: ['Web design', 'WordPress development', 'Content structure'],
-    stack: ['WordPress', 'Elementor', 'RTL / Hebrew', 'Responsive'],
-    challenge: 'Show a family business the way it feels in person: open landscapes, horses and people, with the practical information (tours, boarding, how to get there) easy to find.',
-    solution: 'A photography-led home page, dedicated pages for riding tours and boarding with clear pricing blocks, a large gallery, and a contact page with map and directions, all in Hebrew.',
-    images: ['case/havat-aliza-1.jpg', 'case/havat-aliza-2.jpg', 'case/havat-aliza-3.jpg', 'case/havat-aliza-4.jpg'],
-  },
-  {
-    slug: 'dogstore',
-    index: '07',
-    title: 'DogStore',
-    client: 'DogStore · Israel',
-    category: 'WooCommerce store',
-    tags: 'Design, WooCommerce',
-    year: '2024', // TODO: confirm year
-    cover: 'work/dogstore.jpg',
-    summary:
-      'Online store for premium dog food and veterinary supplies (dogstore.co.il): product catalogue, categories, promotions and a streamlined cart, in Hebrew.',
-    role: ['Web design', 'WooCommerce development'],
-    stack: ['WordPress', 'WooCommerce', 'Payments', 'RTL / Hebrew'],
-    challenge: 'Pet owners reorder the same products often. The store had to make finding and re-buying a specific food or supplement fast, on a phone, in Hebrew.',
-    solution: 'A home page built around best-sellers and promotions, clear category navigation, product pages with the information owners look for, and a short, secure checkout.',
-    images: ['case/dogstore-1.jpg', 'case/dogstore-2.jpg'],
-  },
-  {
     slug: 'sure-thing-car-subscription',
-    index: '08',
+    index: '06',
     title: 'Sure Thing Car Subscription',
     client: 'Sure Thing · Sydney, Australia',
     category: 'Car rental website',
@@ -242,7 +208,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'bebes-click',
-    index: '09',
+    index: '07',
     title: 'Bebés Click',
     client: 'Bebés Click',
     category: 'Blog, neo-brutalism',

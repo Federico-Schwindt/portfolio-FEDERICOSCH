@@ -29,21 +29,8 @@ const fonts = `
 `
 const grain = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:absolute;inset:0;opacity:.16;mix-blend-mode:overlay"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>`
 
-const covers = [
-  {
-    file: 'havat-aliza.jpg', word: 'HAVAT ALIZA', sub: 'Horse riding · family business · Israel', c1: '#1a120a', c2: '#8c6a3f', c3: '#e8d3b0', ink: '#f8efe2',
-    art: `<div style="position:absolute;left:-20%;bottom:-60%;width:120%;aspect-ratio:1;border-radius:50%;border:140px solid #8c6a3f;opacity:.75"></div>
-          <div style="position:absolute;right:10%;top:12%;width:26%;aspect-ratio:1;border-radius:50%;background:#e8d3b0;opacity:.9"></div>`,
-  },
-  {
-    file: 'dogstore.jpg', word: 'DOGSTORE', sub: 'Premium dog food & vet supplies · WooCommerce', c1: '#0a1030', c2: '#4a6fff', c3: '#dfe6ff', ink: '#f2f5ff',
-    art: `<div style="position:absolute;right:12%;top:16%;width:30%;aspect-ratio:1;display:grid;grid-template-columns:1fr 1fr;gap:6%;transform:rotate(-18deg)">
-            ${[0, 1, 2, 3].map((i) => `<div style="width:60%;aspect-ratio:1;border-radius:50%;background:#dfe6ff;justify-self:${i % 2 ? 'start' : 'end'};align-self:${i < 2 ? 'end' : 'start'}"></div>`).join('')}
-          </div>
-          <div style="position:absolute;right:16%;top:40%;width:24%;aspect-ratio:1.2;border-radius:50% 50% 45% 45%;background:#dfe6ff;transform:rotate(-18deg)"></div>
-          <div style="position:absolute;inset:0;background:radial-gradient(circle at 20% 90%,#4a6fff55,transparent 50%)"></div>`,
-  },
-]
+// Placeholder covers for projects without screenshots: { file, word, sub, c1, c2, c3, ink, art }
+const covers = []
 
 function cover({ word, sub, c1, c2, c3, ink, art }) {
   return `<!doctype html><html><head><style>${fonts}

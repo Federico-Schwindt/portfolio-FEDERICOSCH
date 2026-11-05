@@ -43,12 +43,6 @@ const covers = [
           <div style="position:absolute;right:16%;top:40%;width:24%;aspect-ratio:1.2;border-radius:50% 50% 45% 45%;background:#dfe6ff;transform:rotate(-18deg)"></div>
           <div style="position:absolute;inset:0;background:radial-gradient(circle at 20% 90%,#4a6fff55,transparent 50%)"></div>`,
   },
-  {
-    file: 'reel.jpg', word: 'MOTION REEL', sub: 'Services · stack · achievements in 60 seconds', c1: '#070707', c2: '#ff2b2b', c3: '#2a0a0a', ink: '#ffffff',
-    art: `<div style="position:absolute;left:0;right:0;top:8%;height:12%;background:repeating-linear-gradient(90deg,#1a1a1a 0 60px,#0d0d0d 60px 80px);border-top:3px solid #222;border-bottom:3px solid #222"></div>
-          <div style="position:absolute;left:0;right:0;bottom:30%;height:12%;background:repeating-linear-gradient(90deg,#1a1a1a 0 60px,#0d0d0d 60px 80px);border-top:3px solid #222;border-bottom:3px solid #222"></div>
-          <div style="position:absolute;right:10%;top:28%;width:0;height:0;border-left:170px solid #ff2b2b;border-top:110px solid transparent;border-bottom:110px solid transparent;filter:drop-shadow(0 0 60px #ff2b2b88)"></div>`,
-  },
 ]
 
 function cover({ word, sub, c1, c2, c3, ink, art }) {

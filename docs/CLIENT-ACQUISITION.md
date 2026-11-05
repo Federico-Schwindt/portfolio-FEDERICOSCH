@@ -24,7 +24,7 @@ The website now captures leads (free audit, contact form, pricing buttons) into 
 
 Your case studies already prove these niches, so pitch them by name:
 
-- **Car dealers and rental companies:** Certified Retail Cars, Sure Thing, Velocity Motors concept.
+- **Car dealers and rental companies:** Certified Retail Cars, Velocity Motors concept.
 - **Clinics, spas and wellness:** Mirage TLV, Nova Dental concept.
 - **Architecture, construction and interior finishing:** Minrat Projects, Atelier Norte concept.
 - **Online stores (WooCommerce/Shopify):** Universal Driveshafts (+551%), Joya Hijab.

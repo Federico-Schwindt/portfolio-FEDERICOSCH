@@ -81,6 +81,32 @@ export type Project = {
   concept?: boolean
   /** looping, muted film shown on the case study (and as the cover on hover) */
   video?: string
+  /** Lighthouse lab measurements shown as score rings + Core Web Vitals table */
+  performance?: {
+    measured: string
+    tool: string
+    note?: string
+    before?: { label: string; url?: string }
+    after: { label: string; url?: string }
+    runs: { device: string; before?: LighthouseRun; after: LighthouseRun }[]
+  }
+  /** “What I built”: alternating image / text rows */
+  features?: { title: string; text: string; image?: string; stat?: string }[]
+}
+
+/** One Lighthouse run: category scores (0–100) and lab metrics (ms, bytes, counts) */
+export type LighthouseRun = {
+  perf: number
+  a11y: number
+  bp: number
+  fcp: number
+  lcp: number
+  tbt: number
+  cls: number
+  si: number
+  bytes: number
+  reqs: number
+  js: number
 }
 
 export const projects: Project[] = [
@@ -96,21 +122,64 @@ export const projects: Project[] = [
     url: 'https://dev.udshafts.com',
     featured: true,
     summary:
-      'Complete redesign and rebuild of universaldriveshafts.com: a catalog of 6,800+ parts, a vehicle fitment finder, an online driveshaft builder and a wholesale flow. Sales grew 551% from 2024 to 2026.',
+      'Complete redesign and rebuild of universaldriveshafts.com: a catalog of 7,500+ parts, a vehicle fitment finder, an online driveshaft builder and a wholesale flow. Sales grew 551% from 2024 to 2026.',
     role: ['Strategy', 'UX / UI design', 'Front-end & back-end', 'SEO & campaigns'],
     stack: ['Custom storefront', 'Fitment catalog', 'Cart & checkout', 'Multi-language', 'SEO', 'Google Ads', 'Analytics'],
     stats: [
       { value: '+551%', label: 'Sales growth, 2024 → 2026' },
-      { value: '6,821', label: 'Parts on the shelf' },
+      { value: '7,541', label: 'Parts across 44 categories' },
       { value: '4,433', label: 'Driveshafts in the vehicle finder' },
-      { value: '43', label: 'Vehicle makes covered' },
+      { value: '99', label: 'Lighthouse mobile performance (was 65)' },
     ],
     challenge:
       'The original WordPress site made it hard to find the right part. Thousands of SKUs, no fitment logic and a checkout that leaked customers, in a category where buyers need the exact part, today.',
     solution:
       'A new storefront built around how mechanics actually search: by component series, by vehicle (make → year → model from the real fitment catalog) or by having a shaft built to spec. Same-day shipping, wholesale pricing and three languages on top of a fast, custom codebase.',
     result:
-      'Sales up 551% between 2024 and 2026, with a catalog of 6,821 parts and 4,433 complete driveshafts searchable across 43 makes. The site is now the company’s primary sales channel.',
+      'Sales up 551% between 2024 and 2026, with a catalog of 7,541 parts across 44 categories and 4,433 complete driveshafts searchable across 43 makes. The new build scores 99 on Lighthouse mobile performance and 100 on accessibility, ships 14 KB of JavaScript instead of 1.2 MB, and has zero layout shift. The site is now the company’s primary sales channel.',
+    features: [
+      {
+        title: 'Find the driveshaft by vehicle',
+        text: 'Make, year and model, straight from the fitment catalog, so only real combinations show up. Every result carries its exact part number, price and stock, across 4,433 complete driveshafts and 43 makes.',
+        image: 'case/uds-vehicle.jpg',
+        stat: '4,433 driveshafts · 43 makes',
+      },
+      {
+        title: 'Online driveshaft builder',
+        text: 'Pick duty, series and yokes, enter six measurements and watch the price update live. One piece or two, steel or aluminum, then the shop builds and balances it to spec.',
+        image: 'case/uds-builder.jpg',
+        stat: 'Live pricing as you spec it',
+      },
+      {
+        title: 'Driveshaft designer',
+        text: 'Draw the shaft, dimension it and print the sheet, or send it to the shop with the measurements attached. Free, no account needed.',
+        image: 'case/uds-designer.jpg',
+        stat: 'Print-ready spec sheets',
+      },
+      {
+        title: 'Quick order & wholesale',
+        text: 'Shops, drivelines and fleets type part numbers, set quantities and add everything to the cart at once. Approved trade accounts get standing discounts applied automatically at checkout.',
+        image: 'case/uds-quick-order.jpg',
+        stat: '7,541 parts, cross-referenced 1310–1810',
+      },
+      {
+        title: 'Built for the shop floor',
+        text: 'The finder, builder and catalog work one-handed on a phone, with a sticky price bar in the builder and the same live data as desktop. Same-day shipping on stock ordered before 2pm ET.',
+        image: 'case/uds-mobile.jpg',
+        stat: 'Mobile-first, same live data',
+      },
+    ],
+    performance: {
+      measured: '2026-11-05',
+      tool: 'Lighthouse 12.8, the engine behind Google PageSpeed Insights (lab test, homepage)',
+      before: { label: 'Original WordPress site', url: 'https://universaldriveshafts.com' },
+      after: { label: 'New build', url: 'https://dev.udshafts.com' },
+      note: 'Mobile simulates a mid-range phone on a slow 4G connection. SEO is not compared because the new build runs on a staging domain that blocks indexing on purpose.',
+      runs: [
+        { device: 'Mobile', before: { perf: 65, a11y: 87, bp: 79, fcp: 2909, lcp: 2939, tbt: 1104, cls: 0.067, si: 3466, bytes: 1613204, reqs: 164, js: 1239015 }, after: { perf: 99, a11y: 100, bp: 100, fcp: 1380, lcp: 2029, tbt: 0, cls: 0.0, si: 1919, bytes: 637439, reqs: 35, js: 14326 } },
+        { device: 'Desktop', before: { perf: 84, a11y: 87, bp: 78, fcp: 1506, lcp: 2022, tbt: 42, cls: 0.057, si: 1506, bytes: 1670439, reqs: 170, js: 1238974 }, after: { perf: 100, a11y: 100, bp: 100, fcp: 331, lcp: 611, tbt: 0, cls: 0.0, si: 753, bytes: 992979, reqs: 52, js: 14326 } },
+      ],
+    },
     images: ['case/uds-1.jpg', 'case/uds-2.jpg', 'case/uds-3.jpg', 'case/uds-4.jpg'],
   },
   {
@@ -191,36 +260,6 @@ export const projects: Project[] = [
     solution: 'A minimal, photography-first layout with a fully right-to-left interface, simplified navigation and a two-step checkout.',
     images: ['case/joya-1.jpg', 'case/joya-2.jpg'],
   },
-  {
-    slug: 'sure-thing-car-subscription',
-    index: '06',
-    title: 'Sure Thing Car Subscription',
-    client: 'Sure Thing · Sydney, Australia',
-    category: 'Car rental website',
-    tags: 'Design, WordPress',
-    year: '2023',
-    cover: 'work/sure-thing.jpg',
-    summary:
-      'WordPress site for a flexible car-rental and subscription company in Sydney: plans from $149 a week, a clear offer and a fast path to an enquiry.',
-    role: ['Web design', 'WordPress development'],
-    stack: ['WordPress', 'Elementor', 'Responsive'],
-    images: ['case/sure-thing-1.jpg'],
-  },
-  {
-    slug: 'bebes-click',
-    index: '07',
-    title: 'Bebés Click',
-    client: 'Bebés Click',
-    category: 'Blog, neo-brutalism',
-    tags: 'Design, WordPress',
-    year: '2023',
-    cover: 'work/bebes-click.jpg',
-    summary:
-      'A kids and parenting blog with a playful neo-brutalist look: bold colours, chunky cards and a category grid that invites browsing.',
-    role: ['Art direction', 'WordPress development'],
-    stack: ['WordPress', 'Elementor'],
-    images: ['case/bebes-click-1.jpg', 'case/bebes-click-2.jpg'],
-  },
   // ── Concepts: self-initiated pieces made to explore an industry before pitching it ──
   {
     slug: 'advancing-eco-agriculture-concept',
@@ -232,6 +271,7 @@ export const projects: Project[] = [
     year: '2026',
     cover: 'work/aea.jpg',
     url: 'https://federico-schwindt.github.io/Advancing-Eco-Agriculture-Website/',
+    featured: true,
     concept: true,
     video: 'media/aea.mp4',
     summary:

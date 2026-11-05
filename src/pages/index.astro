@@ -10,7 +10,7 @@ import { audit, contact, faq, hero, marquee, packages, pricingNote, process, pro
 import { bySlug, orgLd, personLd, SITE_URL, thumbOf, url, websiteLd } from '../lib/site'
 
 const linkedin = socials.find((s) => s.label === 'LinkedIn')!.href
-const reel = ['la-virginia-concept', 'advancing-eco-agriculture-concept', 'velocity-motors-concept', 'brasa-coffee-concept', 'atelier-norte-concept'].map((s) => bySlug(s)!)
+const reel = ['andreani-concept', 'la-virginia-concept', 'advancing-eco-agriculture-concept', 'velocity-motors-concept', 'brasa-coffee-concept', 'atelier-norte-concept'].map((s) => bySlug(s)!)
 const days = series.days.map((d) => ({ ...d, p: bySlug(d.slug)! }))
 const nextDay = String(days[0].day + 1).padStart(2, '0')
 const recommended = 'Grow'

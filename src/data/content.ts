@@ -62,6 +62,7 @@ export const series = {
   title: 'Redesign a Day',
   text: 'A public series: every day I pick a real company and redesign its website as a working site, not a mockup. Unofficial concepts, not affiliated with the brands.',
   days: [
+    { day: 3, slug: 'andreani-concept' },
     { day: 2, slug: 'la-virginia-concept' },
     { day: 1, slug: 'advancing-eco-agriculture-concept' },
   ],
@@ -200,6 +201,80 @@ export const projects: Project[] = [
       ],
     },
     images: ['case/uds-1.jpg', 'case/uds-2.jpg', 'case/uds-3.jpg', 'case/uds-4.jpg'],
+  },
+  {
+    slug: 'andreani-concept',
+    kinds: ['Website', 'Motion'],
+    title: 'Andreani',
+    client: 'Self-initiated concept · not affiliated with Andreani Grupo Logístico',
+    category: 'Logistics website with instant quotes and booking',
+    tags: 'Concept, Web design, Code, Logistics, Motion',
+    year: '2026',
+    cover: 'work/andreani.jpg',
+    url: 'https://federico-schwindt.github.io/Andreani-Redesign-Concept/',
+    featured: true,
+    concept: true,
+    video: 'media/andreani.mp4',
+    summary:
+      'An unsolicited, Spanish-language redesign for Andreani, Argentina’s largest logistics network (54.6 million shipments a year). An opening animation built from the real truck livery, a six-step quote-and-book flow that ends in a printed label with a working QR code, live tracking, and a finder with 291 real branches.',
+    role: ['Research & concept', 'Art direction', 'UX / UI design', 'Front-end development', 'Motion (AI-assisted)'],
+    stack: ['Astro', 'TypeScript', 'GSAP + ScrollTrigger', 'Lenis', 'Andreani public API', 'Georef API (open data)', 'Higgsfield (Kling 3.0)', 'GPT Image', 'GitHub Pages'],
+    stats: [
+      { value: '89', label: 'Lighthouse mobile performance (was 7)' },
+      { value: '10.6×', label: 'Faster main content on a phone' },
+      { value: '291', label: 'Real branches with opening hours' },
+      { value: '6 steps', label: 'From route to printed label' },
+    ],
+    challenge:
+      'Andreani moves 54.6 million shipments a year and turned 80, but its website asks you to log in before you can send anything, and the company’s scale, history and network barely show. On a phone, the homepage downloaded 5.6 MB and its main content took almost 29 seconds to appear. How do you make sending a package feel as fast as the network behind it?',
+    solution:
+      'A bold system drawn from the brand: the expanded italic of the logo, the Andreani red, packing tape and shipping labels. The site opens with the real livery: a truck rolls in, boxes load, the camera dives into one and its flaps open onto the homepage. The quote flow borrows the best of digital freight companies: prices in seconds with no sign-up, live re-pricing, bulk upload by CSV, the nearest real branches with their hours, and a label that prints on screen with a QR code that opens the tracking page for that same shipment. Every town in Argentina autocompletes through the government’s open geodata.',
+    result:
+      'A static Astro build with seven pages: 89 Lighthouse performance and 100 accessibility on mobile for the homepage (the current site scores 7 and 86), and 98/100 on the branch finder. The homepage downloads 431 KB instead of 5.6 MB, in 14 requests instead of 109. A Spanish pitch page presents it to the Andreani team with a before-and-after slider, the measurements and a plan to build it on the tools they already use.',
+    features: [
+      {
+        title: 'An opening that loads the truck',
+        text: 'The real livery, drawn in SVG: the trailer rolls in, 24 boxes load front to back, the camera dives into one and its flaps open onto the homepage. Pure CSS and the Web Animations API, shown once per session and skipped with reduced motion.',
+        image: 'case/an-loader.jpg',
+        stat: 'Shown once per session',
+      },
+      {
+        title: 'Prices in seconds, no sign-up',
+        text: 'Parcels, envelopes, wine or pallets in rows or from a CSV with up to 50 boxes. Origin and destination autocomplete every town in the country, the route draws itself on the map, and Standard and Priority prices recalculate live as you change anything.',
+        image: 'case/an-quote.jpg',
+        stat: 'Live re-pricing',
+      },
+      {
+        title: 'From route to label in six steps',
+        text: 'Boxes, origin, destination, contact, payment and label. The nearest three real branches appear with distance and hours while the map zooms in, and the label prints on screen with a sorting code and a QR that opens its own tracking page.',
+        image: 'case/an-label.jpg',
+        stat: 'Scan the QR, track the package',
+      },
+      {
+        title: 'The network, on one map',
+        text: '291 branches from Andreani’s public API, searchable by town, postcode or proximity, with filters, opening hours and directions. The map zooms to the results.',
+        image: 'case/an-finder.jpg',
+        stat: '98 Lighthouse performance',
+      },
+      {
+        title: 'A pitch with the numbers',
+        text: 'A Spanish proposal page with a draggable before-and-after, Lighthouse results for two pages, the quote flow explained step by step and a plan to integrate with their current CMS and APIs.',
+        image: 'case/an-pitch.jpg',
+        stat: '10.6× faster main content',
+      },
+    ],
+    performance: {
+      measured: '2026-11-05',
+      tool: 'Lighthouse 12.8.2, the engine behind Google PageSpeed Insights (lab test, mobile)',
+      before: { label: 'Current site', url: 'https://www.andreani.com' },
+      after: { label: 'Redesign', url: 'https://federico-schwindt.github.io/Andreani-Redesign-Concept/' },
+      note: 'Mobile simulates a mid-range phone on a slow 4G connection. SEO is not compared because the concept blocks indexing on purpose.',
+      runs: [
+        { device: 'Homepage', before: { perf: 7, a11y: 86, bp: 75, fcp: 10086, lcp: 28881, tbt: 3075, cls: 0.396, si: 14057, bytes: 5596644, reqs: 109, js: 5261213 }, after: { perf: 89, a11y: 100, bp: 100, fcp: 1650, lcp: 2737, tbt: 23, cls: 0.001, si: 6753, bytes: 431250, reqs: 14, js: 70809 } },
+        { device: 'Branch finder', before: { perf: 23, a11y: 82, bp: 68, fcp: 5041, lcp: 24132, tbt: 3016, cls: 0.121, si: 13273, bytes: 3002585, reqs: 93, js: 2596271 }, after: { perf: 98, a11y: 100, bp: 100, fcp: 1230, lcp: 2280, tbt: 4, cls: 0, si: 1471, bytes: 298479, reqs: 11, js: 23813 } },
+      ],
+    },
+    images: ['case/an-1.jpg', 'case/an-2.jpg', 'case/an-3.jpg', 'case/an-4.jpg'],
   },
   {
     slug: 'la-virginia-concept',

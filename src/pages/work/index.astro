@@ -5,9 +5,9 @@ import ProjectCard from '../../components/ProjectCard.astro'
 import { projects, workIntro, type Kind } from '../../data/content'
 import { breadcrumbLd, canonicalFor, SITE_URL } from '../../lib/site'
 
-const kinds: Kind[] = ['Website', 'E-commerce', 'Motion']
+const kinds: Kind[] = ['Website', 'E-commerce', '3D', 'Motion']
 const n = (k: Kind) => projects.filter((p) => p.kinds.includes(k)).length
-const label: Record<Kind, string> = { Website: 'Websites', 'E-commerce': 'E-commerce', Motion: 'Motion' }
+const label: Record<Kind, string> = { Website: 'Websites', 'E-commerce': 'E-commerce', '3D': '3D modeling', Motion: 'Motion' }
 ---
 <Base
   title="Work · Websites, online stores & motion | Federico Schwindt"

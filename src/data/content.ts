@@ -41,7 +41,7 @@ export const hero = {
 }
 
 /** The red band under the hero */
-export const marquee = ['Design', 'Code', 'Marketing', '+551% sales', '99 Lighthouse', 'E-commerce', 'SEO', 'Motion']
+export const marquee = ['Design', 'Code', 'Marketing', '+551% sales', '99 Lighthouse', 'E-commerce', 'SEO', 'Motion', '3D renders']
 
 /** Proof right after the hero: one big number, three supporting facts */
 export const proof = {
@@ -51,7 +51,7 @@ export const proof = {
   label: 'Sales growth for Universal Driveshafts after I redesigned and rebuilt their store, 2024 → 2026.',
   slug: 'universal-driveshafts',
   facts: [
-    { value: '99', label: 'Lighthouse mobile performance on the new UDS store' },
+    { value: '99', label: 'Lighthouse desktop performance on the live UDS store' },
     { value: '5.0', label: 'Average rating across 13 projects on Freelancer.com' },
     { value: '100%', label: 'Projects delivered on time and on budget' },
   ],
@@ -75,7 +75,7 @@ export const process = [
   { index: '04', title: 'Grow', italic: '& support', text: 'SEO, analytics and campaigns after launch. The process bends to fit you, not the other way around.' },
 ]
 
-export type Kind = 'Website' | 'E-commerce' | 'Motion'
+export type Kind = 'Website' | 'E-commerce' | 'Motion' | '3D'
 
 export type Project = {
   slug: string
@@ -139,68 +139,129 @@ export const projects: Project[] = [
     tags: 'Design, Code, Marketing',
     year: '2024 — 2026',
     cover: 'work/uds.jpg',
-    url: 'https://dev.udshafts.com',
+    url: 'https://universaldriveshafts.com',
     featured: true,
     summary:
-      'Complete redesign and rebuild of universaldriveshafts.com: a catalog of 7,500+ parts, a vehicle fitment finder, an online driveshaft builder and a wholesale flow. Sales grew 551% from 2024 to 2026.',
+      'Complete redesign and rebuild of universaldriveshafts.com, now live: a catalog of 7,500+ parts, a vehicle fitment finder, an online driveshaft builder and a wholesale flow. Sales grew 551% from 2024 to 2026.',
     role: ['Strategy', 'UX / UI design', 'Front-end & back-end', 'SEO & campaigns'],
     stack: ['Custom storefront', 'Fitment catalog', 'Cart & checkout', 'Multi-language', 'SEO', 'Google Ads', 'Analytics'],
     stats: [
       { value: '+551%', label: 'Sales growth, 2024 → 2026' },
       { value: '7,541', label: 'Parts across 44 categories' },
       { value: '4,433', label: 'Driveshafts in the vehicle finder' },
-      { value: '99', label: 'Lighthouse mobile performance (was 65)' },
+      { value: '99', label: 'Lighthouse desktop performance on the live store (was 84)' },
     ],
     challenge:
       'The original WordPress site made it hard to find the right part. Thousands of SKUs, no fitment logic and a checkout that leaked customers, in a category where buyers need the exact part, today.',
     solution:
-      'A new storefront built around how mechanics actually search: by component series, by vehicle (make → year → model from the real fitment catalog) or by having a shaft built to spec. Same-day shipping, wholesale pricing and three languages on top of a fast, custom codebase.',
+      'A new storefront built around how mechanics actually search: by part or OEM number, by component series, by vehicle (make → year → model from the real fitment catalog) or by having a shaft built to spec. An app-style layout keeps the whole catalog one tap away in a side menu, with a driveline tech’s phone and WhatsApp always in reach. Same-day shipping, wholesale pricing and five languages on top of a fast, custom codebase.',
     result:
-      'Sales up 551% between 2024 and 2026, with a catalog of 7,541 parts across 44 categories and 4,433 complete driveshafts searchable across 43 makes. The new build scores 99 on Lighthouse mobile performance and 100 on accessibility, ships 14 KB of JavaScript instead of 1.2 MB, and has zero layout shift. The site is now the company’s primary sales channel.',
+      'Sales up 551% between 2024 and 2026, with a catalog of 7,541 parts across 44 categories and 4,433 complete driveshafts searchable across 41 makes. The live store scores 99 on Lighthouse desktop performance and 100 on accessibility and SEO, with zero layout shift. Its own code ships about 22 KB of JavaScript, against 1.2 MB on the old WordPress site; the rest is the Google and Meta tags behind the ad campaigns. The site is now the company’s primary sales channel.',
     features: [
       {
         title: 'Find the driveshaft by vehicle',
-        text: 'Make, year and model, straight from the fitment catalog, so only real combinations show up. Every result carries its exact part number, price and stock, across 4,433 complete driveshafts and 43 makes.',
+        text: 'Make, year and model, straight from the fitment catalog, so only real combinations show up. Start from the home page or pick the make by its logo, and every result carries its exact part number, price and stock.',
         image: 'case/uds-vehicle.jpg',
-        stat: '4,433 driveshafts · 43 makes',
+        stat: '4,433 driveshafts · 41 makes',
       },
       {
         title: 'Online driveshaft builder',
-        text: 'Pick duty, series and yokes, enter six measurements and watch the price update live. One piece or two, steel or aluminum, then the shop builds and balances it to spec.',
+        text: 'One question at a time, each with a drawing: what the shaft connects to at the transmission and the axle, u-joint series, tube material, yokes and measurements, plus an optional critical-speed check. The price updates live, then the shop builds and balances it to spec.',
         image: 'case/uds-builder.jpg',
         stat: 'Live pricing as you spec it',
       },
       {
         title: 'Driveshaft designer',
-        text: 'Draw the shaft, dimension it and print the sheet, or send it to the shop with the measurements attached. Free, no account needed.',
+        text: 'Choose a one-piece or two-piece style from dimensioned drawings, fill in the sections and measurements, then print the sheet or send it to the shop. Free, no account needed.',
         image: 'case/uds-designer.jpg',
         stat: 'Print-ready spec sheets',
       },
       {
         title: 'Quick order & wholesale',
-        text: 'Shops, drivelines and fleets type part numbers, set quantities and add everything to the cart at once. Approved trade accounts get standing discounts applied automatically at checkout.',
+        text: 'Shops, drivelines and fleets type part numbers with live suggestions, set quantities and add everything to the cart at once. Category pages work the same way: a filterable table by series, brand and style, with cap size and width per row and an Add button on each line. Approved trade accounts get standing discounts at checkout.',
         image: 'case/uds-quick-order.jpg',
         stat: '7,541 parts, cross-referenced 1310–1810',
       },
       {
         title: 'Built for the shop floor',
-        text: 'The finder, builder and catalog work one-handed on a phone, with a sticky price bar in the builder and the same live data as desktop. Same-day shipping on stock ordered before 2pm ET.',
+        text: 'The finder, builder and catalog work one-handed on a phone, with a sticky Add to cart bar on every part and the same live data as desktop. Product pages estimate delivery by ZIP code and show cross-references, alternatives and what other customers bought.',
         image: 'case/uds-mobile.jpg',
         stat: 'Mobile-first, same live data',
       },
     ],
     performance: {
-      measured: '2026-11-05',
+      measured: '2026-11-16',
       tool: 'Lighthouse 12.8, the engine behind Google PageSpeed Insights (lab test, homepage)',
-      before: { label: 'Original WordPress site', url: 'https://universaldriveshafts.com' },
-      after: { label: 'New build', url: 'https://dev.udshafts.com' },
-      note: 'Mobile simulates a mid-range phone on a slow 4G connection. SEO is not compared because the new build runs on a staging domain that blocks indexing on purpose.',
+      before: { label: 'Original WordPress site (Nov 5, 2026)' },
+      after: { label: 'Live store (Nov 16, 2026)', url: 'https://universaldriveshafts.com' },
+      note: 'Mobile simulates a mid-range phone on a slow 4G connection. The live store loads Google Analytics, Google Ads and the Meta Pixel for the campaigns: about 570 KB of the JavaScript below and most of the mobile blocking time. The store’s own code is about 22 KB.',
       runs: [
-        { device: 'Mobile', before: { perf: 65, a11y: 87, bp: 79, fcp: 2909, lcp: 2939, tbt: 1104, cls: 0.067, si: 3466, bytes: 1613204, reqs: 164, js: 1239015 }, after: { perf: 99, a11y: 100, bp: 100, fcp: 1380, lcp: 2029, tbt: 0, cls: 0.0, si: 1919, bytes: 637439, reqs: 35, js: 14326 } },
-        { device: 'Desktop', before: { perf: 84, a11y: 87, bp: 78, fcp: 1506, lcp: 2022, tbt: 42, cls: 0.057, si: 1506, bytes: 1670439, reqs: 170, js: 1238974 }, after: { perf: 100, a11y: 100, bp: 100, fcp: 331, lcp: 611, tbt: 0, cls: 0.0, si: 753, bytes: 992979, reqs: 52, js: 14326 } },
+        { device: 'Mobile', before: { perf: 65, a11y: 87, bp: 79, fcp: 2909, lcp: 2939, tbt: 1104, cls: 0.067, si: 3466, bytes: 1613204, reqs: 164, js: 1239015 }, after: { perf: 77, a11y: 100, bp: 79, fcp: 2273, lcp: 3245, tbt: 536, cls: 0.0, si: 2273, bytes: 1400819, reqs: 52, js: 605630 } },
+        { device: 'Desktop', before: { perf: 84, a11y: 87, bp: 78, fcp: 1506, lcp: 2022, tbt: 42, cls: 0.057, si: 1506, bytes: 1670439, reqs: 170, js: 1238974 }, after: { perf: 99, a11y: 100, bp: 78, fcp: 535, lcp: 676, tbt: 69, cls: 0.0, si: 635, bytes: 1400803, reqs: 52, js: 605638 } },
       ],
     },
     images: ['case/uds-1.jpg', 'case/uds-2.jpg', 'case/uds-3.jpg', 'case/uds-4.jpg'],
+  },
+  {
+    slug: 'uds-3d-driveshafts',
+    kinds: ['3D', 'Motion'],
+    title: 'UDS Product Studio',
+    client: 'Universal Driveshafts · Odessa, FL',
+    category: '3D driveshaft renders & motion',
+    tags: '3D modeling, Rendering, Motion',
+    year: '2026',
+    cover: 'work/uds-3d.jpg',
+    video: 'media/uds-3d.mp4',
+    featured: true,
+    summary:
+      'Complete driveshafts modeled in Blender from the store’s own catalog data: piece count, weld-to-weld tube lengths, u-joint series and end types. Each one is rendered in a white studio from up to six angles and exported as a 3D model, with no supplier photo pixels.',
+    role: ['3D modeling', 'Lighting & rendering', 'Data-driven product builds', 'Motion'],
+    stack: ['Blender (Cycles)', 'Catalog fitment data', 'glTF / GLB', 'Higgsfield (motion)'],
+    stats: [
+      { value: '10', label: 'Complete driveshafts: 1, 2 and 3-piece' },
+      { value: '47', label: 'Studio renders' },
+      { value: '10', label: '3D models (GLB), 1.2 to 4.4 MB each' },
+      { value: '0', label: 'Supplier photo pixels used' },
+    ],
+    challenge:
+      'Most complete driveshafts on the store were shown with supplier photos: different angles, light and backgrounds, often a generic shaft rather than the exact part. Photographing thousands of shafts was never going to happen.',
+    solution:
+      'Each shaft is built from its catalog record: number of pieces, weld-to-weld tube lengths, tube diameter, u-joint series, end types and centre bearings. The same model is rendered from the angles buyers ask about (three-quarter, side, both ends and every centre bearing) and exported as a GLB for an interactive 3D view. A review page puts every render next to today’s catalog photo so the shop can check it against the real part.',
+    result:
+      'A first review set of 10 vehicles, from a Ford Ranger one-piece to an International 4300 three-piece, with 47 consistent studio images that match each part’s proportions because they come from the same numbers the store sells by. The renders were then animated into a short product film for ads and social. The set is being reviewed by the shop before it replaces the catalog photos.',
+    features: [
+      {
+        title: 'Built from the catalog, not from photos',
+        text: 'The 2005–2010 Chrysler 300 / Dodge Charger rear shaft, part 2891-401N: two pieces, 18.37" tubes weld to weld, 1310 series, flex discs at both ends and one centre bearing. Every number in the model comes from the fitment record, and the page shows exactly what it was built from.',
+        image: 'case/uds3d-review.jpg',
+        stat: '2-piece · 1310 · 1,283 mm',
+      },
+      {
+        title: 'Every angle a buyer asks for',
+        text: 'A three-quarter studio shot, a full side view, the transmission and axle ends and a close-up of each centre bearing, all lit the same way on the same white sweep, so the catalog finally looks like one store.',
+        image: 'case/uds3d-angles.jpg',
+        stat: 'Up to 6 angles per part',
+      },
+      {
+        title: 'One, two and three-piece shafts',
+        text: 'Steel and aluminum tubes, slip yokes, CV joints, flex discs, u-joints with straps or U-bolts and one or two centre bearings: the same build handles 1310, 1330, 1350 and 1710 series shafts.',
+        image: 'case/uds3d-set.jpg',
+        stat: '10 vehicles · 4 series',
+      },
+      {
+        title: 'Checked against the real part',
+        text: 'A proportion check lays the side render over today’s catalog photo of the same part, so the shop can approve each shaft before it goes live.',
+        image: 'case/uds3d-compare.jpg',
+        stat: 'Reviewed part by part',
+      },
+      {
+        title: 'From still to motion',
+        text: 'The renders became the first and last frames of a short film: the camera pushes in along the shaft to the centre bearing while the u-joint turns. Animated with Higgsfield from the studio renders, so the part stays the part.',
+        image: 'case/uds3d-motion.jpg',
+        stat: '13-second product film',
+      },
+    ],
+    images: ['case/uds3d-1.jpg', 'case/uds3d-2.jpg', 'case/uds3d-3.jpg', 'case/uds3d-4.jpg'],
   },
   {
     slug: 'andreani-concept',

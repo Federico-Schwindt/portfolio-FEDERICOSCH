@@ -12,6 +12,9 @@ import { bySlug, orgLd, personLd, SITE_URL, thumbOf, url, websiteLd } from '../l
 const linkedin = socials.find((s) => s.label === 'LinkedIn')!.href
 const reel = ['andreani-concept', 'la-virginia-concept', 'advancing-eco-agriculture-concept', 'velocity-motors-concept', 'brasa-coffee-concept', 'atelier-norte-concept'].map((s) => bySlug(s)!)
 const days = series.days.map((d) => ({ ...d, p: bySlug(d.slug)! }))
+// 3D & motion band: the UDS Product Studio case (shafts, renders, supplier pixels)
+const studio = bySlug('uds-3d-driveshafts')!
+const studioFacts = [0, 1, 3].map((k) => studio.stats![k])
 const nextDay = String(days[0].day + 1).padStart(2, '0')
 const recommended = 'Grow'
 ---
@@ -143,12 +146,38 @@ const recommended = 'Grow'
     </div>
   </section>
 
+  <!-- ================= 3D & MOTION ================= -->
+  <section class="sec t-paper studio" id="3d" data-theme="paper" aria-labelledby="studio-title">
+    <div class="wrap">
+      <div class="shead">
+        <div>
+          <span class="tag">(04) 3D &amp; motion</span>
+          <Lines class="h1" text="Parts, rendered|*from data.*" />
+          <h2 class="sr-only" id="studio-title">3D product renders and motion</h2>
+        </div>
+        <div data-rv>
+          <p class="lede">Complete driveshafts for Universal Driveshafts, modeled in Blender from the store’s own fitment data and rendered in a white studio, with no supplier photos. Then animated into a short product film.</p>
+          <a class="link studio__li" href={url(`/work/${studio.slug}/`)}>See the 3D case study <Icon name="arrow-r" size={18} /></a>
+        </div>
+      </div>
+      <a class="studio__film" href={url(`/work/${studio.slug}/`)} data-rv aria-label={`${studio.title}: open the 3D case study`}>
+        <video data-autoplay muted loop playsinline preload="none" poster={url(studio.cover)} data-src={url(studio.video ?? '')} width="1440" height="900" aria-hidden="true"></video>
+        <span class="studio__badge tag">Blender · Higgsfield</span>
+      </a>
+      <dl class="studio__facts">
+        {studioFacts.map((f, i) => (
+          <div data-rv style={`--d:${i * 90}`}><dt>{f.label}</dt><dd>{f.value}</dd></div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
   <!-- ================= SERVICES ================= -->
   <section class="sec t-paper" id="services" data-theme="paper" aria-labelledby="services-title">
     <div class="wrap">
       <div class="shead">
         <div>
-          <span class="tag">(04) Services</span>
+          <span class="tag">(05) Services</span>
           <Lines class="h1" text="What I build|*for you.*" />
           <h2 class="sr-only" id="services-title">Services</h2>
         </div>
@@ -172,7 +201,7 @@ const recommended = 'Grow'
     <div class="wrap">
       <div class="shead">
         <div>
-          <span class="tag">(05) Process</span>
+          <span class="tag">(06) Process</span>
           <Lines class="h1" text="Four steps.|*No surprises.*" />
           <h2 class="sr-only" id="process-title">Process</h2>
         </div>
@@ -195,7 +224,7 @@ const recommended = 'Grow'
     <div class="wrap">
       <div class="shead">
         <div>
-          <span class="tag">(06) Pricing</span>
+          <span class="tag">(07) Pricing</span>
           <Lines class="h1" text="Clear prices.|*Real results.*" />
           <h2 class="sr-only" id="pricing-title">Pricing</h2>
         </div>
@@ -224,7 +253,7 @@ const recommended = 'Grow'
   <section class="sec--sm t-paper faq" id="faq" data-theme="paper" aria-labelledby="faq-title">
     <div class="wrap faq__grid">
       <div>
-        <span class="tag tag--accent">(07) FAQ</span>
+        <span class="tag tag--accent">(08) FAQ</span>
         <h2 class="h2" id="faq-title" style="margin-top:18px">Questions,<br />answered.</h2>
       </div>
       <div class="faq__list">
@@ -242,7 +271,7 @@ const recommended = 'Grow'
   <section class="sec t-red audit" id="audit" data-theme="red" aria-labelledby="audit-title">
     <div class="wrap audit__grid">
       <div>
-        <span class="tag">(08) {audit.kicker}</span>
+        <span class="tag">(09) {audit.kicker}</span>
         <h2 class="h1" id="audit-title" style="margin-top:18px">{audit.title} {audit.titleItalic}</h2>
         <p class="lede" style="margin-top:24px">{audit.text}</p>
         <ul class="audit__pts">{audit.points.map((p) => <li>{p}</li>)}</ul>
@@ -254,7 +283,7 @@ const recommended = 'Grow'
   <!-- ================= CONTACT ================= -->
   <section class="sec t-ink talk" data-theme="ink" aria-labelledby="talk-title">
     <div class="wrap">
-      <p class="tag tag--accent">(09) {contact.title}</p>
+      <p class="tag tag--accent">(10) {contact.title}</p>
       <a class="talk__big" href={url('/contact/')} id="talk-title">
         <span class="xl">Let’s talk</span>
         <span class="talk__arrow"><Icon name="arrow" size={64} /></span>
@@ -302,6 +331,16 @@ const recommended = 'Grow'
   .work__more { margin-top: 40px; }
 
   /* Series */
+  .studio__li { margin-top: 18px; }
+  .studio__film { position: relative; display: block; overflow: hidden; margin-top: clamp(28px, 4vw, 56px); background: #fff; box-shadow: inset 0 0 0 1px var(--line); }
+  .studio__film video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #fff; transition: transform 1.2s var(--ease); }
+  .studio__film:hover video { transform: scale(1.02); }
+  .studio__badge { position: absolute; left: 16px; bottom: 14px; padding: 6px 10px; background: var(--ink); color: var(--paper); }
+  .studio__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .studio__facts div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; padding: 24px 24px 0 0; }
+  .studio__facts div + div { padding-left: 24px; border-left: 1px solid var(--line); }
+  .studio__facts dd { font-size: clamp(2.4rem, 5vw, 4.4rem); font-weight: 700; letter-spacing: -0.06em; line-height: 1; }
+  .studio__facts dt { color: var(--muted); max-width: 30ch; }
   .series__li { margin-top: 18px; color: var(--paper); }
   .series__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 0.62fr); gap: clamp(16px, 2vw, 28px); align-items: start; }
   .series__next { display: flex; flex-direction: column; gap: 14px; justify-content: space-between; aspect-ratio: 10 / 10.6; padding: 24px; box-shadow: inset 0 0 0 1px var(--line); transition: background-color 0.4s, color 0.4s; }
@@ -391,6 +430,9 @@ const recommended = 'Grow'
     .plans, .faq__grid, .audit__grid { grid-template-columns: minmax(0, 1fr); }
     .plan--hi { transform: none; }
     .proof__facts { grid-template-columns: minmax(0, 1fr); }
+    .studio__facts { grid-template-columns: minmax(0, 1fr); }
+    .studio__facts div + div { padding-left: 0; border-left: 0; }
+    .studio__facts div { padding: 20px 0; border-bottom: 1px solid var(--line); }
     .proof__facts div + div { padding-left: 0; border-left: 0; }
     .proof__facts div { padding: 20px 0; border-bottom: 1px solid var(--line); }
     .proof__row { grid-template-columns: minmax(0, 1fr); }

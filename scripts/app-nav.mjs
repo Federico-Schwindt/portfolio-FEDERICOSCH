@@ -10,7 +10,7 @@ try {
     page.on('pageerror', (e) => errors.push(e.message))
     await page.addInitScript((mode) => localStorage.setItem('theme', mode), theme)
     await page.goto('http://localhost:' + Number(process.env.STUDIO_TEST_PORT || 4330) + '/' + (lang === 'es' ? 'es/' : '') + 'app/?demo')
-    await page.locator('.af input[type=email]').fill('mobile@example.com')
+    await page.locator('.af input[autocomplete=username]').fill('mobile@example.com')
     await page.locator('.af input[type=password]').fill('demo')
     await page.locator('.af button[type=submit]').click()
 

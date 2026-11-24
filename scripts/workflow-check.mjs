@@ -18,7 +18,9 @@ let connection = await pool.connect()
 let created = false, preview, browser
 const passed = name => console.log('OK', name)
 const child = (args, mode = 'inherit') => spawn(process.execPath, ['--import',preload,...args], {
-  stdio:mode, windowsHide:true, env:{...process.env, STUDIO_TEST_SCHEMA:schema, STUDIO_TEST_PORT:String(port), STUDIO_MAIL_PAUSED:'0'}
+  stdio:mode, windowsHide:true, env:{...process.env, STUDIO_TEST_SCHEMA:schema, STUDIO_TEST_PORT:String(port), STUDIO_MAIL_PAUSED:'0',
+    // Legacy fixtures sign up in the disposable schema. The private portal test uses pre-created accounts.
+    ALLOW_SIGNUP:process.argv.includes('--client-messages') ? '0' : '1'}
 })
 const agent = () => {
   let cookie = ''
@@ -30,7 +32,12 @@ const agent = () => {
     return {data:res.status === 204 ? null : await res.json(), status:res.status, headers:res.headers}
   }
 }
-try {
+async function runScript(script, ...args) {
+  console.log('Running', script, ...args)
+  const test = child(['scripts/'+script+'.mjs',...args.map(String)])
+  assert.equal((await once(test,'exit'))[0],0,script)
+}
+async function run() {
   if (await fetch(origin+'/api/health/').then(()=>true,()=>false)) throw new Error('Test port already in use')
   await connection.query('begin')
   await connection.query('create schema '+schema)
@@ -56,6 +63,10 @@ try {
     await delay(250)
   }
   const owner = agent(), member = agent(), studio = agent(), other = agent()
+  if (process.argv.includes('--client-messages')) {
+    await runScript('client-messages-check',port,'--live')
+    return
+  }
   const password = randomUUID()
   const createdIds = []
   const signup = async (call, name, invite) => {
@@ -348,15 +359,16 @@ try {
   assert.equal(left.n,0)
   if (process.argv.includes('--suite')) {
     for (const [script,...args] of [
-      ['welcome-check',port],['studio-check',port],['api-check',port],['workspace-search-check',port],['plan-admin-check',port],
+      ['client-messages-check',port,'--live'],['welcome-check',port],['studio-check',port],['api-check',port],['workspace-search-check',port],['plan-admin-check',port],
       ['studio-operations-check',port],['studio-ratings-check',port],['plan-quote-check',port],
       ['request-page-check',port],['studio-read-check',port],['app-nav'],['mobile-fit'],['sections',port],['activity-check',port],['app-live',port],['app'],['app','es','dark'],
     ]) {
-      console.log('Running', script, ...args)
-      const test = child(['scripts/'+script+'.mjs',...args.map(String)])
-      assert.equal((await once(test,'exit'))[0],0,script)
+      await runScript(script,...args)
     }
   }
+}
+try {
+  await run()
 } catch (err) {
   // Provider and connection details must stay out of diagnostics.
   console.error('Workflow check failed:', err.name, err.code ?? '')

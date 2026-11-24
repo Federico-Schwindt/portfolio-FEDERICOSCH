@@ -6,7 +6,7 @@ import fs from 'node:fs'
 fs.mkdirSync('public/img/app', { recursive: true })
 const b = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch())
 for (const lang of ['en', 'es']) {
-  const base = 'http://localhost:4330/' + (lang === 'es' ? 'es/' : '')
+  const base = 'http://localhost:' + (process.env.FS_PORT || 4330) + '/' + (lang === 'es' ? 'es/' : '')
   const p = await (await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1.5 })).newPage()
   await p.goto(base + 'app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.af')
   await p.fill('.af input[autocomplete=username]', 'ana@cafelavirginia.com'); await p.fill('.af input[type=password]', 'demo'); await p.click('.af button[type=submit]')

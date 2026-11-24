@@ -1,6 +1,15 @@
 import type { Kind, Status } from './types'
 
 const en = {
+  clientHome: {
+    first: 'Send your first request to Federico. You can include a reference, a file and the date you need it.',
+    waiting: 'You can send requests now. Federico will start work when your workspace is active.',
+    messages: 'Messages from Federico', hint: 'Open requests where Federico wrote the latest message. Anyone on your team can reply.',
+    loading: 'Checking for messages…', failed: 'Couldn’t load messages from Federico.', reply: 'Reply',
+    replyTo: (title: string) => `Reply about ${title}`, sent: 'Reply added to the request.',
+    stale: 'This conversation has changed. Check the request before sending another reply.',
+    sendError: 'Couldn’t confirm your reply. Your text is still here.', more: (n: number) => `Show ${n} more`,
+  },
   studioRead: {
     loading: (section: string) => `Loading “${section}”…`, error: (section: string) => `Couldn’t load “${section}”.`,
     business: 'Your first client plan or request will appear here.', invoices: 'Invoices will appear here when a client payment is recorded.',
@@ -166,6 +175,15 @@ const en = {
 }
 type Dict = typeof en
 const es: Dict = {
+  clientHome: {
+    first: 'Envía tu primer pedido a Federico. Puedes incluir una referencia, un archivo y la fecha en que lo necesitas.',
+    waiting: 'Ya puedes enviar pedidos. Federico empezará a trabajar en ellos cuando tu espacio esté activo.',
+    messages: 'Mensajes de Federico', hint: 'Pedidos abiertos en los que Federico escribió el último mensaje. Cualquier integrante de tu equipo puede responder.',
+    loading: 'Buscando mensajes…', failed: 'No se pudieron cargar los mensajes de Federico.', reply: 'Responder',
+    replyTo: (title) => `Responder sobre ${title}`, sent: 'Tu respuesta quedó en el pedido.',
+    stale: 'La conversación cambió. Revisa el pedido antes de enviar otra respuesta.',
+    sendError: 'No se pudo confirmar el envío. Tu texto sigue aquí.', more: (n) => `Mostrar ${n} más`,
+  },
   studioRead: {
     loading: (section: string) => `Cargando «${section}»…`, error: (section: string) => `No se pudo cargar «${section}».`,
     business: 'Aquí verás el primer plan o pedido de tus clientes.', invoices: 'Aquí verás las facturas cuando se registre un pago de un cliente.',

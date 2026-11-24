@@ -1,0 +1,9 @@
+.ops__decision:has(.studio-quote) { min-inline-size: 0; max-inline-size: 100%; grid-template-columns: minmax(0, 1fr); }
+.studio-quote { max-inline-size: min(24rem, 100%); min-inline-size: 0; text-align: start; }
+.studio-quote summary { cursor: pointer; font-size: .85rem; text-decoration: underline; text-underline-offset: .18em; }
+.studio-quote[open] summary { margin-block-end: .5rem; }
+.studio-quote dl { margin: 0; }
+.studio-quote dl > div { display: flex; justify-content: space-between; gap: .75rem; padding-block: .35rem; font-size: .83rem; }
+.studio-quote dd { margin: 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.studio-quote__total { font-weight: 700; }
+.studio-quote p { max-inline-size: 38ch; margin-block: .45rem; font-size: .85rem; }

@@ -1,0 +1,5 @@
+---
+import AppLayout from '../../../layouts/AppLayout.astro'
+import App from '../../../app/App'
+---
+<AppLayout title="Empieza tu plan | Federico Schwindt" lang="es"><App client:only="react" lang="es" base={import.meta.env.BASE_URL} entry="checkout" /></AppLayout>

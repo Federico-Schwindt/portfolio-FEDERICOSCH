@@ -1,42 +1,34 @@
-/**
- * Renders the Open Graph image (public/og.jpg, 2400×1260) in the brand style with Playwright.
- *   npm run og
- */
-import { createRequire } from 'node:module'
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
-
-const require = createRequire(import.meta.url)
-const { chromium } = require('playwright')
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const b64 = (p) => readFileSync(resolve(root, 'node_modules', p)).toString('base64')
-const geist = b64('@fontsource-variable/geist/files/geist-latin-wght-normal.woff2')
-const mono = b64('@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2')
-
-const html = `<!doctype html><html><head><style>
-@font-face{font-family:G;src:url(data:font/woff2;base64,${geist}) format('woff2');font-weight:100 900}
-@font-face{font-family:M;src:url(data:font/woff2;base64,${mono}) format('woff2');font-weight:100 900}
-*{margin:0;box-sizing:border-box}
-body{width:1200px;height:630px;background:#0b0b0b;color:#fff;font-family:G;padding:48px 56px;display:flex;flex-direction:column;overflow:hidden}
-.top{display:flex;justify-content:space-between;align-items:center;font-family:M;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.64)}
-.logo{display:flex;align-items:center;gap:14px;font-family:G;font-weight:700;font-size:22px;letter-spacing:-.03em;color:#fff;text-transform:none}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff2a1a;margin-right:10px}
-h1{margin-top:auto;font-weight:800;font-size:184px;line-height:.8;letter-spacing:-.045em;text-transform:uppercase}
-h1 span{color:#ff2a1a}
-.bot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:36px;font-size:24px;color:rgba(255,255,255,.72);letter-spacing:-.01em}
-.bot b{color:#fff}
-.chip{font-family:M;font-size:15px;letter-spacing:.06em;text-transform:uppercase;background:#ff2a1a;color:#0b0b0b;padding:10px 14px}
-</style></head><body>
-<div class="top"><span class="logo"><svg width="40" height="40" viewBox="0 0 30 30"><rect width="30" height="30" fill="#ff2a1a"/><g fill="#0b0b0b"><rect x="6.5" y="7" width="3.5" height="16"/><rect x="6.5" y="7" width="7.5" height="3.5"/><rect x="6.5" y="12.5" width="6" height="3.5"/><rect x="16" y="7" width="8" height="3.5"/><rect x="16" y="7" width="3.5" height="9"/><rect x="16" y="12.5" width="8" height="3.5"/><rect x="20.5" y="12.5" width="3.5" height="10.5"/><rect x="16" y="19.5" width="8" height="3.5"/></g></svg>Federico Schwindt</span><span><i class="dot"></i>Open for work</span></div>
-<h1>Websites<br>that <span>sell.</span></h1>
-<div class="bot"><p><b>Design · Code · Marketing</b> — +551% sales for Universal Driveshafts</p><span class="chip">From $300</span></div>
+// Renders the social preview image (1200 x 630) from the site's own fonts and colours.
+import { chromium } from 'playwright-core'
+import fs from 'node:fs'
+const font = (f) => `data:font/woff2;base64,${fs.readFileSync(f).toString('base64')}`
+const archivo = font('node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2')
+const serif = font('node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2')
+const mono = font('node_modules/@fontsource-variable/martian-mono/files/martian-mono-latin-wght-normal.woff2')
+const html = `<html><head><style>
+@font-face{font-family:A;src:url(${archivo}) format('woff2');font-weight:100 900;font-stretch:62% 125%}
+@font-face{font-family:S;src:url(${serif}) format('woff2');font-style:italic}
+@font-face{font-family:M;src:url(${mono}) format('woff2');font-weight:100 800}
+body{margin:0;width:1200px;height:630px;background:#fff1e0;font-family:A;position:relative;overflow:hidden}
+.g{position:absolute;inset:0;background-image:radial-gradient(rgba(11,11,11,.14) 1.2px,transparent 1.6px);background-size:22px 22px}
+.t{margin:0;position:absolute;left:70px;top:150px;font-weight:900;font-size:150px;line-height:.86;letter-spacing:-.045em;color:#f01111}
+.t i{display:block;font-family:S;font-weight:400;letter-spacing:0;color:#0b0b0b;font-size:162px;padding-left:180px}
+.b{margin:0;position:absolute;left:70px;top:64px;font-family:M;font-size:18px;letter-spacing:.08em;text-transform:uppercase;color:#0b0b0b;display:flex;gap:14px;align-items:center}
+.b:before{content:'';width:12px;height:12px;border-radius:50%;background:#f01111}
+.f{margin:0;position:absolute;left:70px;right:70px;bottom:52px;display:flex;justify-content:space-between;font-family:M;font-size:17px;letter-spacing:.06em;text-transform:uppercase;color:#0b0b0b;border-top:2px solid #0b0b0b;padding-top:18px}
+.s{position:absolute;border:2px solid #f01111;left:52px;top:136px;width:850px;height:300px}
+.s b{position:absolute;width:12px;height:12px;background:#fff;border:2px solid #f01111;transform:translate(-50%,-50%)}
+</style></head><body><div class="g"></div>
+<p class="b">Federico Schwindt</p>
+<div class="s"><b style="left:0;top:0"></b><b style="left:100%;top:0"></b><b style="left:100%;top:100%"></b><b style="left:0;top:100%"></b></div>
+<p class="t">From sketch<i>to sold.</i></p>
+<p class="f"><span>Design · Development · Branding · Marketing</span><span>From $300</span></p>
 </body></html>`
-
-const browser = await chromium.launch()
-const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 2 })
-await page.setContent(html)
-await page.waitForTimeout(300)
-await page.screenshot({ path: resolve(root, 'public/og.jpg'), type: 'jpeg', quality: 86 })
-await browser.close()
-console.log('public/og.jpg')
+const b = await chromium.launch({ channel: 'chrome', headless: true })
+const p = await b.newPage({ viewport: { width: 1200, height: 630 } })
+await p.setContent(html); await p.waitForTimeout(500)
+// the selection box hugs the headline exactly
+await p.evaluate(() => { const r = document.querySelector('.t').getBoundingClientRect(), s = document.querySelector('.s'); Object.assign(s.style, { left: r.left - 16 + 'px', top: r.top - 10 + 'px', width: r.width + 32 + 'px', height: r.height + 14 + 'px' }) })
+await p.screenshot({ path: 'public/og.jpg', type: 'jpeg', quality: 88 })
+await b.close()
+console.log('og ok')

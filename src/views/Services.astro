@@ -1,0 +1,67 @@
+---
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import Crumbs from '../components/Crumbs.astro'
+import { url } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const { offers, addons } = data(lang)
+const L = (p: string) => url(lp(lang, p))
+const C = {
+  en: { title: 'Services: Web, Brand & Marketing | Federico Schwindt', desc: 'Web design, development, branding, marketing, community management and 3D for small businesses. One person, from the first sketch to the monthly report.',
+    crumb: 'Services', h1: ['Everything a brand', 'needs online.'], lead: 'Six disciplines, one person. Take one, or let them work together: the brand on the site, the site in the ads, the ads in the report.',
+    incl: 'see what is included', added: ['Added', 'on top.'], unsure: ['Not sure', 'which one?'], start: 'Start a project', audit: 'Already have a site? Get a free audit' },
+  es: { title: 'Servicios: web, marca y marketing | Federico Schwindt', desc: 'Diseño web, desarrollo, branding, marketing, community management y 3D para pequeñas empresas. Una persona, del primer boceto al reporte mensual.',
+    crumb: 'Servicios', h1: ['Todo lo que una marca', 'necesita online.'], lead: 'Seis disciplinas, una persona. Toma una, o deja que trabajen juntas: la marca en el sitio, el sitio en los anuncios, los anuncios en el reporte.',
+    incl: 'ver qué incluye', added: ['Y además,', 'extras.'], unsure: ['¿No sabes', 'cuál elegir?'], start: 'Empezar un proyecto', audit: '¿Ya tienes sitio? Pide una auditoría gratis' },
+}[lang]
+import Compare from '../components/Compare.astro'
+import Next from '../components/Next.astro'
+import '../styles/pages.css'
+import '../styles/home-app.css'
+---
+<Base title={C.title} description={C.desc} lang={lang}>
+  <header class="phead t-ink">
+    <div class="wrap">
+      <Crumbs trail={[{ label: C.crumb }]} lang={lang} />
+      <h1 class="d h-xl" data-lines><span class="line"><span>{C.h1[0]}</span></span><span class="line" style="--i:1"><span><i>{C.h1[1]}</i></span></span></h1>
+      <p class="lead sv-lead" data-reveal>{C.lead}</p>
+    </div>
+  </header>
+  <section class="t-ink sv-wrap">
+    <div class="wrap sv-cards" data-fx="gap">
+      {offers.map((o, i) => (
+        <a class="sv-card" data-fx-hover data-fx-name={o.name} href={L(`/services/${o.slug}/`)} data-reveal style={`--i:${i}`}>
+          <div class="sv-card__img"><img src={url(`/${o.image}`)} alt="" width="1440" height="900" loading={i === 0 ? 'eager' : 'lazy'} /></div>
+          <h2 class="d h-m">{o.name}</h2>
+          <p class="sv-card__buyer">{o.buyer}</p>
+          <p class="muted">{o.deliverable}.</p>
+          <p class="mono sv-card__meta"><span>{o.timeline}</span><span>{o.from}</span></p>
+          <span class="link">{o.road}: {C.incl} <Icon name="arrowUpRight" /></span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <section class="section t-paper">
+    <div class="wrap sv-add">
+      <h2 class="d h-m">{C.added[0]} <i>{C.added[1]}</i></h2>
+      <ul>
+        {addons.map((a) => <li data-reveal><h3 class="d h-s">{a.t}</h3><p>{a.d}</p></li>)}
+      </ul>
+    </div>
+  </section>
+  <section class="section t-paper cmp sv-cmp">
+    <Compare lang={lang} />
+  </section>
+  <section class="section t-main">
+    <div class="wrap end__cta">
+      <h2 class="d h-l">{C.unsure[0]} <i>{C.unsure[1]}</i></h2>
+      <div class="end__btns">
+        <button type="button" class="btn" data-plans data-plans-quiz>{lang === 'es' ? 'Tres preguntas y te digo cuál' : 'Three questions and I tell you'} <Icon name="arrowRight" /></button>
+        <a class="link" href={L('/audit/')}>{C.audit} <Icon name="arrowRight" /></a>
+      </div>
+      <Next lang={lang} />
+    </div>
+  </section>
+</Base>

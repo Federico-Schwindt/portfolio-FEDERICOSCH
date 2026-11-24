@@ -1,0 +1,10 @@
+You are Codex, taking part in a planning discussion with Claude about Federico Schwindt's portfolio website. The whole conversation lives in CHAT.md at the repository root.
+
+Do this:
+1. Read CHAT.md completely, including the rules at the top. Follow those rules.
+2. Inspect the repository as needed to ground your reply: src/pages/index.astro, src/styles/home.css, src/data/content.ts, src/scripts/, src/gl/, the inner pages, and the screenshots in docs/plan/screens/ (they are attached too).
+3. Append ONE new turn at the END of CHAT.md, with the heading "## [Ronda N] Codex" where N matches the round of Claude's latest turn. Write it in Spanish.
+4. In your turn: answer every question Claude asked, disagree where you have evidence, add what is missing, and give a concrete prioritised proposal (conversion, SEO, design level, performance). Be specific: section order, page list, keywords, numbers. No praise, no filler. When Claude asks you to PROPOSE design (art direction, palette with hex values, layouts, transitions, page templates), do propose it concretely yourself, do not only critique. The screenshots full-*.jpg show the current home top to bottom and case-*.jpg show a current project page.
+5. End your turn with "### Acuerdos" and "### Abierto" as the rules require.
+
+Hard limits: do NOT modify any file other than CHAT.md. Do not create other files. Do not run builds or installs. Do not edit previous turns.

@@ -1,0 +1,80 @@
+/* Case study. The plate is the unit: a screenshot shown whole, at its real proportion, on a lavender ground. */
+
+.plate { display: block; background: var(--lav); padding: clamp(0.7rem, 1.6vw, 1.6rem); position: relative; }
+.plate img, .plate video { display: block; width: 100%; height: auto; box-shadow: 0 1.2rem 2.4rem -1rem rgb(var(--ink-rgb) / 0.35); }
+/* selection handles: the four corners of the plate, shown when it is hovered or focused */
+a.plate::before, a.plate::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.16s; }
+a.plate::before { outline: 2px solid var(--main); outline-offset: -1px; }
+a.plate::after { margin: -5px; background:
+  linear-gradient(var(--main), var(--main)) left top / 10px 10px no-repeat, linear-gradient(var(--main), var(--main)) right top / 10px 10px no-repeat,
+  linear-gradient(var(--main), var(--main)) left bottom / 10px 10px no-repeat, linear-gradient(var(--main), var(--main)) right bottom / 10px 10px no-repeat; }
+a.plate:hover::before, a.plate:hover::after, a.plate:focus-visible::before, a.plate:focus-visible::after { opacity: 1; }
+a.plate:focus-visible { outline: 3px solid var(--main); outline-offset: 3px; }
+
+/* 1. Brief and evidence */
+.cs-head { padding-bottom: var(--section); }
+.cs-head__grid { display: grid; grid-template-columns: 5fr 7fr; gap: clamp(2rem, 4vw, 5rem); align-items: center; }
+.cs-head__copy { display: grid; gap: 1.1rem; justify-items: start; }
+.cs-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+.cs-title { font-size: clamp(2.6rem, 5.4vw, 6rem); overflow-wrap: anywhere; }
+.cs-fn { font-size: clamp(1.5rem, 2.5vw, 2.6rem); line-height: 1; color: var(--hl); }
+.cs-sum { max-width: 46ch; font-size: 1.08rem; }
+.cs-proof { display: flex; align-items: center; gap: 0.9rem; font-weight: 600; line-height: 1.25; padding-top: 1rem; border-top: 2px solid var(--line); max-width: 30rem; }
+.cs-proof b { font-size: clamp(2.8rem, 4.6vw, 4.8rem); line-height: 0.8; flex: none; color: var(--hl); }
+.cs-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 0.4rem; }
+.cs-cover { margin: 0; }
+
+/* 2. Problem and decision */
+.cs-why { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 6rem); }
+.cs-why h2 { margin-bottom: 1.2rem; }
+.cs-why h2 i { color: var(--hl); }
+.cs-text { font-size: clamp(1.05rem, 1rem + 0.35vw, 1.3rem); line-height: 1.5; max-width: 60ch; }
+.cs-meta { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; padding-top: 1.4rem; border-top: 2px solid var(--line); }
+.cs-meta div { display: grid; gap: 0.4rem; align-content: start; }
+.cs-meta dd { font-weight: 550; font-size: 0.98rem; }
+
+/* 3. Product tour */
+.cs-tour { display: grid; gap: clamp(2.5rem, 5vw, 5rem); margin-top: clamp(2rem, 4vw, 4rem); }
+.cs-row { display: grid; gap: clamp(1.5rem, 3vw, 3rem); }
+.cs-row--2 { grid-template-columns: 1fr 1fr; }
+.cs-fig { display: grid; gap: 1.1rem; align-content: start; margin: 0; }
+.cs-row--1 .cs-fig { grid-template-columns: 1.9fr 1fr; gap: clamp(1.5rem, 3vw, 3rem); align-items: end; }
+.cs-fig figcaption { display: grid; gap: 0.6rem; align-content: start; }
+.cs-fig figcaption p { max-width: 52ch; }
+.cs-fstat { color: var(--hl); }
+.cs-notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 2rem; }
+.cs-notes li { display: grid; gap: 0.6rem; align-content: start; padding-top: 1.1rem; border-top: 2px solid var(--line); }
+.cs-plates { display: grid; gap: clamp(1rem, 2vw, 2rem); }
+.cs-plates--2 { grid-template-columns: 1fr 1fr; }
+
+/* 4. Result */
+.cs-result { margin-top: 2rem; }
+.cs-rest { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: clamp(2.5rem, 5vw, 4.5rem); padding-top: 1.6rem; border-top: 2px solid var(--line); }
+.cs-rest b { display: block; font-size: clamp(3rem, 6vw, 6.4rem); line-height: 0.8; color: var(--hl); margin-bottom: 0.8rem; }
+.cs-rest p { max-width: 28ch; }
+.cs-perf { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 5rem); margin-top: clamp(2.5rem, 5vw, 4.5rem); }
+.cs-run table { width: 100%; border-collapse: collapse; font-size: 0.98rem; }
+.cs-run caption { text-align: left; font-family: var(--f-display); font-weight: 900; font-size: 1.5rem; letter-spacing: -0.04em; padding-bottom: 0.8rem; }
+.cs-run th, .cs-run td { text-align: left; padding: 0.55rem 0; font-weight: 500; }
+.cs-run thead th { font-family: var(--f-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 2px solid var(--line); }
+.cs-run tbody tr + tr th, .cs-run tbody tr + tr td { border-top: 1px solid var(--line); }
+.cs-run td b { color: var(--hl); }
+.cs-pnote { grid-column: 1 / -1; max-width: 80ch; font-size: 0.92rem; }
+
+/* 5. Next step */
+.cs-end { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(2rem, 5vw, 6rem); align-items: end; }
+.cs-offer { display: grid; gap: 1.1rem; padding-left: clamp(1rem, 2vw, 2rem); border-left: 2px solid var(--line); }
+.cs-offer div { display: grid; gap: 0.3rem; }
+.cs-offer dd { font-weight: 650; font-size: 1.15rem; }
+.cs-disc { grid-column: 1 / -1; font-size: 0.95rem; opacity: 0.85; }
+.cs-next { display: block; padding-block: var(--section); border-top: 2px solid #2e2b28; }
+.cs-next .wrap { display: grid; gap: 1.5rem; justify-items: start; }
+.cs-next__t { font-stretch: 88%; transition: font-stretch 0.8s var(--ease), color 0.3s; overflow-wrap: anywhere; }
+.cs-next:hover .cs-next__t { font-stretch: 110%; color: var(--hl); }
+
+@media (max-width: 860px) {
+  .cs-head__grid, .cs-why, .cs-row--2, .cs-row--1 .cs-fig, .cs-perf, .cs-end, .cs-plates--2 { grid-template-columns: 1fr; }
+  .cs-meta { grid-template-columns: 1fr 1fr; }
+  .cs-rest { grid-template-columns: 1fr; }
+  .cs-offer { padding-left: 0; border-left: 0; padding-top: 1.2rem; border-top: 2px solid var(--line); }
+}

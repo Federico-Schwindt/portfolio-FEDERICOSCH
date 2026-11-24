@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro'
+import { url, heroStat } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+import Icon from '../components/Icon.astro'
+import Next from '../components/Next.astro'
+import '../styles/home.css'
+import '../styles/home-app.css'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const { projects } = data(lang)
+const L = (p: string) => url(lp(lang, p))
+const kinds = ['Website', 'E-commerce', 'Motion', '3D']
+const C = {
+  en: { title: 'Work & Case Studies | Federico Schwindt', desc: 'Client projects and working concepts in web design, development, e-commerce, branding and 3D. Each case opens with its result and the numbers behind it.',
+    h1: ['All', 'work.'], lead: (n: number) => `${n} projects. Client work and self-initiated concepts share one list, and concepts are labelled.`, all: 'All', kind: { Website: 'Website', 'E-commerce': 'E-commerce', Motion: 'Motion', '3D': '3D' } as Record<string, string>, concept: 'Concept', client: 'Client' },
+  es: { title: 'Trabajos y casos de estudio | Federico Schwindt', desc: 'Proyectos de clientes y conceptos propios en diseño web, desarrollo, e-commerce, branding y 3D. Cada caso abre con su resultado y los números detrás.',
+    h1: ['Todos los', 'trabajos.'], lead: (n: number) => `${n} proyectos. Trabajos para clientes y conceptos propios en una sola lista; los conceptos están marcados.`, all: 'Todos', kind: { Website: 'Sitio web', 'E-commerce': 'E-commerce', Motion: 'Motion', '3D': '3D' } as Record<string, string>, concept: 'Concepto', client: 'Cliente' },
+}[lang]
+---
+<Base title={C.title} description={C.desc} lang={lang}>
+  <header class="phead t-ink">
+    <div class="wrap">
+      <h1 class="d h-xl" data-lines><span class="line"><span class="n">{C.h1[0]}</span> <span class="x">{C.h1[1]}</span></span></h1>
+      <p class="lead wk-lead" data-reveal>{C.lead(projects.length)}</p>
+      <div class="wk-filter" data-filter data-reveal>
+        <button class="chip" type="button" data-kind="all" aria-pressed="true">{C.all}</button>
+        {kinds.map((k) => <button class="chip" type="button" data-kind={k} aria-pressed="false">{C.kind[k]}</button>)}
+      </div>
+    </div>
+  </header>
+  <section class="t-ink wk">
+    <div class="wrap wk-grid">
+      {projects.map((p) => {
+        const s = heroStat(p)
+        return (
+          <a class="card" data-fx-hover data-fx-name={p.title} href={L(`/work/${p.slug}/`)} data-kinds={p.kinds.join(',')} data-hover-video>
+            <div class="card__media">
+              <img src={url(`/${p.cover}`)} alt={`${p.title}: ${p.category}`} width="1440" height="900" loading="lazy" />
+              {p.video && <video muted loop playsinline preload="none" data-src={url(`/${p.video}`)} />}
+            </div>
+            <div class="card__meta">
+              <h2 class="d h-s">{p.title}</h2>
+              <span class="chip">{p.concept ? C.concept : C.client}</span>
+            </div>
+            <p class="muted">{p.category}</p>
+            {s && <p class="card__stat"><span class="d n">{s.value}</span> {s.label}</p>}
+          </a>
+        )
+      })}
+    </div>
+  </section>
+  <section class="section t-main acta">
+    <div class="wrap">
+      <h2 class="d h-l">{lang === 'es' ? 'El próximo' : 'The next one'} <i>{lang === 'es' ? 'puede ser el tuyo.' : 'could be yours.'}</i></h2>
+      <div class="end__btns">
+        <a class="btn" data-plans href={L('/pricing/')}>{lang === 'es' ? 'Empezar un proyecto' : 'Start a project'} <Icon name="arrowUpRight" /></a>
+        <a class="link" href={L('/audit/')}>{lang === 'es' ? '¿Ya tienes sitio? Pide una auditoría gratis' : 'Already have a site? Get a free audit'} <Icon name="arrowRight" /></a>
+      </div>
+      <Next lang={lang} />
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .wk-lead { margin-top: 2rem; max-width: 36ch; }
+  .wk-filter { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2.5rem; }
+  .wk-filter .chip { background: transparent; color: var(--paper); cursor: pointer; font-size: 0.78rem; padding: 0.7rem 1.1rem; transition: background 0.25s, color 0.25s; }
+  .wk-filter .chip[aria-pressed='true'] { background: var(--hl); color: var(--ink); border-color: var(--hl); }
+  .wk { padding-bottom: var(--section); }
+  .wk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2.5rem, 5vw, 5rem) clamp(1.5rem, 3vw, 3rem); }
+  .wk-grid .card { width: auto; }
+  .wk-grid .card[hidden] { display: none; }
+  @media (max-width: 860px) { .wk-grid { grid-template-columns: 1fr; } }
+</style>

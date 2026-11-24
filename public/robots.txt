@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /portfolio-FEDERICOSCH/admin
 
 Sitemap: https://federico-schwindt.github.io/portfolio-FEDERICOSCH/sitemap.xml

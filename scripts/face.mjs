@@ -1,0 +1,10 @@
+import { chromium } from 'playwright-core'
+const b = await chromium.launch({ channel: 'chrome', headless: true })
+const p = await b.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 3 })
+await p.goto('http://localhost:4330/', { waitUntil: 'networkidle' })
+await p.waitForTimeout(1500)
+await p.evaluate(() => { const e = document.querySelector('.land__photo'); window.scrollTo(0, scrollY + e.getBoundingClientRect().top - 120) })
+await p.waitForTimeout(1500)
+const r = await p.evaluate(() => { const e = document.querySelector('.land__photo').getBoundingClientRect(); return { x: e.left + e.width * 0.26, y: e.top + e.height * 0.2, width: e.width * 0.48, height: e.height * 0.2 } })
+await p.screenshot({ path: 'scripts/.shots/face.png', clip: r })
+await b.close()

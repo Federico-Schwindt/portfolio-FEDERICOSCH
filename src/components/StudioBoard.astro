@@ -1,0 +1,100 @@
+---
+/**
+ * The studio board: one svg, 1000 x 640 units. The statement is drawn with the real letter outlines
+ * of the site's fonts (built at compile time), and the box of every letter is handed to the script,
+ * so selections, cursors and the stick man touch the letters exactly.
+ */
+import * as fontkit from 'fontkit'
+const archivo = (fontkit.openSync('node_modules/@fontsource-variable/archivo/files/archivo-latin-wdth-normal.woff2') as any).getVariation({ wght: 900, wdth: 100 })
+const serif = fontkit.openSync('node_modules/@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2') as any
+import type { Lang } from '../i18n'
+const { lang = 'en' } = Astro.props as { lang?: Lang }
+const ES = lang === 'es'
+const X0 = 70
+const T = ES ? ['Muchas webs', 'se miran.', 'Las mías', 'convierten.'] : ['Most sites get', 'looked at.', 'Mine get', 'bought from.']
+// the letters the stick man uses on the last line: the hole he climbs out of, two steps, the one he hangs from
+const MAN = ES ? 'o,n,v,t' : 'o,u,g,h'
+const LINES = [
+  { text: T[0], serif: false, size: 100, base: 132 },
+  { text: T[1], serif: false, size: 100, base: 234 },
+  { text: T[2], serif: false, size: 100, base: 344 },
+  { text: T[3], serif: true, size: 120, base: 566 },
+]
+type G = { d: string; ch: string; x0: number; x1: number; y0: number; y1: number }
+const lines = LINES.map((ln) => {
+  const f = ln.serif ? serif : archivo
+  const s = ln.size / f.unitsPerEm, track = ln.serif ? 0 : -0.045 * ln.size
+  const run = f.layout(ln.text)
+  let x = X0
+  const glyphs: G[] = []
+  run.glyphs.forEach((g: any, i: number) => {
+    const d = g.path.scale(s, -s).translate(x, ln.base).toSVG()
+    const b = g.bbox
+    if (d) glyphs.push({ d, ch: ln.text[i] ?? '', x0: +(x + b.minX * s).toFixed(1), x1: +(x + b.maxX * s).toFixed(1), y0: +(ln.base - b.maxY * s).toFixed(1), y1: +(ln.base - b.minY * s).toFixed(1) })
+    x += run.positions[i].xAdvance * s + track
+  })
+  return { ...ln, glyphs, width: x - X0 }
+})
+const meta = lines.map((l) => ({ text: l.text, base: l.base, size: l.size, glyphs: l.glyphs.map(({ ch, x0, x1, y0, y1 }) => ({ ch, x0, x1, y0, y1 })) }))
+const comments = ES ? [
+  { k: 'red', who: 'Diseño', a: 'D', time: 'ahora', tag: 'UNA PERSONA', lines: ['Quien lo diseña es', 'quien lo construye.'] },
+  { k: 'ink', who: 'Código', a: 'C', time: '1m', tag: 'PLAZOS', lines: ['Online en una a seis semanas.', 'Un link para probar desde la semana uno.'] },
+  { k: 'paper', who: 'Textos', a: 'T', time: '2m', tag: 'ES TUYO', lines: ['Tu dominio, tu código,', 'tus cuentas. Nada alquilado.'] },
+] : [
+  { k: 'red', who: 'Design', a: 'D', time: 'now', tag: 'ONE PERSON', lines: ['The person who designs it is', 'the one who builds it.'] },
+  { k: 'ink', who: 'Code', a: 'C', time: '1m', tag: 'TIMELINE', lines: ['Live in one to six weeks.', 'A link you can click from week one.'] },
+  { k: 'paper', who: 'Words', a: 'W', time: '2m', tag: 'OWNERSHIP', lines: ['Your domain, your code,', 'your accounts. Nothing rented.'] },
+]
+---
+<svg class="sb" viewBox="0 0 1000 640" data-sb data-man={MAN} data-meta={JSON.stringify(meta)} aria-hidden="true">
+  <defs>
+    <clipPath id="sb-out"><rect data-clip-top x="0" y="0" width="1000" height="0" /><ellipse data-clip-hole cx="0" cy="0" rx="0" ry="0" /></clipPath>
+  </defs>
+  <!-- the template that gets deleted -->
+  <g class="sb__tpl" data-tpl>
+    <g class="sb__badge" transform="translate(16 16)"><rect width="86" height="20" rx="2" /><text x="8" y="14">{ES ? 'PLANTILLA' : 'TEMPLATE'}</text></g>
+    <g data-tpl-img class="sb__img"><rect x="600" y="70" width="330" height="170" /><path d="M600 70L930 240M930 70L600 240" /><text x="765" y="160" text-anchor="middle">{ES ? 'IMAGEN' : 'IMAGE'}</text></g>
+    <g data-tpl-cta class="sb__ctab"><rect class="sb__bar" x="70" y="330" width="290" height="10" /><rect class="sb__bar" x="70" y="356" width="200" height="10" /><rect class="sb__btn" x="70" y="392" width="150" height="44" rx="22" /><text x="145" y="420" text-anchor="middle">{ES ? 'Ver más' : 'Learn more'}</text></g>
+  </g>
+  <!-- guides with their distance -->
+  <g class="sb__guides" data-guides>
+    <line x1="70" y1="0" x2="70" y2="640" /><line x1="0" y1="60" x2="1000" y2="60" />
+    <g transform="translate(76 30)"><rect width="28" height="16" /><text x="5" y="12">70</text></g>
+    <g transform="translate(20 66)"><rect width="28" height="16" /><text x="5" y="12">60</text></g>
+  </g>
+  <!-- the statement, letter by letter -->
+  <g class="sb__stmt">
+    <g data-l12>
+      {lines.slice(0, 2).map((l, li) => <g class="sb__ln" data-line={li}>{l.glyphs.map((g, gi) => <path d={g.d} data-g={gi} />)}</g>)}
+    </g>
+    {lines.slice(2).map((l, k) => <g class={`sb__ln${l.serif ? ' sb__ln--serif' : ''}`} data-line={k + 2}>{l.glyphs.map((g, gi) => <path d={g.d} data-g={gi} />)}</g>)}
+    <rect class="sb__caret" data-caret x="0" y="0" width="5" height="78" />
+  </g>
+  <!-- deleted tags -->
+  <g class="sb__del" data-del="img" transform="translate(765 252)"><rect x="-38" width="76" height="18" /><text y="13" text-anchor="middle">{ES ? 'Borrado' : 'Deleted'}</text></g>
+  <g class="sb__del" data-del="cta" transform="translate(145 448)"><rect x="-38" width="76" height="18" /><text y="13" text-anchor="middle">{ES ? 'Borrado' : 'Deleted'}</text></g>
+  <!-- comments -->
+  {comments.map((c, i) => (
+    <g class={`sb__cm sb__cm--${c.k}`} data-cm={i}>
+      <g class="sb__cmi">
+        <rect class="sb__cmb" width="250" height="74" rx="10" />
+        <circle cx="20" cy="20" r="10" /><text class="sb__cma" x="20" y="24" text-anchor="middle">{c.a}</text>
+        <text class="sb__cmw" x="38" y="25">{c.who}</text><text class="sb__cmt" x="38" y="25" data-cmt>{c.time}</text>
+        <text class="sb__cmk" x="238" y="24" text-anchor="end">{c.tag}</text>
+        {c.lines.map((t, k) => <text class="sb__cmx" x="14" y={48 + k * 16}>{t}</text>)}
+      </g>
+    </g>
+  ))}
+  <!-- selection -->
+  <g class="sb__sel" data-sel><rect class="sb__selr" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><rect class="sb__selh" width="8" height="8" /><g class="sb__selt"><rect height="18" rx="2" /><text y="13" /></g></g>
+  <!-- the stick man -->
+  <g class="sb__man" data-man clip-path="url(#sb-out)">
+    <path class="sb__limb" data-bone="lleg" /><path class="sb__limb" data-bone="rleg" /><path class="sb__limb" data-bone="body" /><path class="sb__limb" data-bone="larm" /><path class="sb__limb" data-bone="rarm" />
+    <circle class="sb__head" data-bone="head" r="9" />
+  </g>
+  <g class="sb__say" data-say><rect width="132" height="26" rx="13" /><text x="66" y="17.5" text-anchor="middle">{ES ? 'Hola, hago estas' : 'Hi, I build these'}</text></g>
+  <!-- cursors -->
+  <g class="sb__cur sb__cur--red" data-cur="d"><g class="sb__curi"><path d="M0 0L0 21L5.6 15.9L9.4 24.6L13.2 23L9.5 14.6L16.6 14.6Z" /><g transform="translate(15 24)"><rect width="56" height="18" rx="3" /><text x="7" y="13">{ES ? 'Diseño' : 'Design'}</text></g></g></g>
+  <g class="sb__cur" data-cur="c"><g class="sb__curi"><path d="M0 0L0 21L5.6 15.9L9.4 24.6L13.2 23L9.5 14.6L16.6 14.6Z" /><g transform="translate(15 24)"><rect width="46" height="18" rx="3" /><text x="7" y="13">{ES ? 'Código' : 'Code'}</text></g></g></g>
+  <g class="sb__cur sb__cur--paper" data-cur="w"><g class="sb__curi"><path d="M0 0L0 21L5.6 15.9L9.4 24.6L13.2 23L9.5 14.6L16.6 14.6Z" /><g transform="translate(15 24)"><rect width="52" height="18" rx="3" /><text x="7" y="13">{ES ? 'Textos' : 'Words'}</text></g></g></g>
+</svg>

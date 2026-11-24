@@ -1,12 +1,1 @@
-{
-  "extends": "astro/tsconfigs/strict",
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "types": ["node"],
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
-  },
-  "include": [".astro/types.d.ts", "src", "functions", "neon.ts"],
-  "exclude": ["dist", "node_modules"]
-}
+{ "extends": "astro/tsconfigs/base", "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "react" }, "include": ["src", ".astro/types.d.ts"], "exclude": ["dist", "_legacy"] }

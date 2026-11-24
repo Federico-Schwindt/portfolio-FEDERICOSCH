@@ -1,0 +1,32 @@
+---
+/** Three ways to get a site built: the comparison a buyer is already making. */
+import Icon from './Icon.astro'
+import { url } from '../lib/site'
+import { lp, type Lang } from '../i18n'
+import { blocks } from '../data/blocks'
+interface Props { lang: Lang; cta?: string }
+const { lang, cta } = Astro.props
+const C = { ...blocks[lang], prices: cta ?? (lang === 'es' ? 'Ver los precios' : 'See the prices') }
+const L = (p: string) => url(lp(lang, p))
+---
+<div class="wrap">
+  <div class="cmp__head">
+    <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.cmp.h[0]} <i>{C.cmp.h[1]}</i></span></span></h2>
+    <p class="lead" data-reveal data-bd>{C.cmp.lead}</p>
+  </div>
+  <div class="cmp__table" role="table" aria-label={C.cmpName} data-bd>
+    <div class="cmp__row cmp__row--head" role="row">
+      <span role="columnheader"></span>
+      {C.cmp.cols.map((c, i) => <span role="columnheader" class={i === 2 ? 'is-me' : ''}>{i === 2 && <em class="mono">{C.cmp.best}</em>}{c}</span>)}
+    </div>
+    {C.cmp.rows.map(([k, a, b, me], i) => (
+      <div class="cmp__row" role="row" data-reveal style={`--i:${i}`}>
+        <span role="rowheader">{k}</span><span role="cell">{a}</span><span role="cell">{b}</span><span role="cell" class="is-me"><Icon name="check" />{me}</span>
+      </div>
+    ))}
+  </div>
+  <div class="cmp__foot" data-reveal data-bd>
+    <p class="mono">{C.cmp.foot}</p>
+    <a class="btn" data-plans href={L('/pricing/')}>{C.prices} <Icon name="arrowUpRight" /></a>
+  </div>
+</div>

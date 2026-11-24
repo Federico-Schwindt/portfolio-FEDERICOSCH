@@ -1,36 +1,41 @@
 ---
-import Logo from './Logo.astro'
 import Icon from './Icon.astro'
-import { nav, site, socials } from '../data/content'
 import { url } from '../lib/site'
-interface Props { on?: 'ink' | 'paper' | 'red' }
-const { on = 'ink' } = Astro.props
-const here = Astro.url.pathname
-const current = (href: string) => !href.includes('#') && href !== '/' && here.startsWith(url(href))
+import { lp, twin, t, type Lang } from '../i18n'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const T = t(lang)
+const links = [
+  { label: T.nav.work, href: '/work/' },
+  { label: T.nav.services, href: '/services/' },
+  { label: T.nav.pricing, href: '/pricing/' },
+  { label: T.nav.about, href: '/about/' },
+]
+const path = Astro.url.pathname
+const other: Lang = lang === 'es' ? 'en' : 'es'
+const otherHref = url(twin(path, other))
 ---
-<header class="nav" data-nav data-on={on}>
-  <div class="nav__bg"></div>
-  <div class="wrap nav__in">
-    <a href={url('/')} aria-label={`${site.name}, home`}><Logo /></a>
-    <nav class="nav__links" aria-label="Main">
-      {nav.map((n) => <a href={url(n.href)} aria-current={current(n.href) ? 'page' : undefined}>{n.label}</a>)}
-    </nav>
-    <div class="nav__right">
-      <span class="nav__avail tag"><i class="dot"></i>{site.availability}</span>
-      <a class="btn btn--sm" href={url('/contact/')}>Start a project <Icon name="arrow" /></a>
-      <button class="nav__menu" type="button" data-menu-open aria-label="Open menu" aria-controls="menu" aria-expanded="false"><span></span></button>
-    </div>
+<header class="nav" data-nav>
+  <a class="nav__logo" href={url(lp(lang, '/'))} aria-label={T.homeLabel}>
+    <img src={url('/brand/mark-main.svg')} alt="" width="67" height="22" />
+  </a>
+  <nav class="nav__links" aria-label={T.mainNav}>
+    {links.map((l) => <a href={url(lp(lang, l.href))} aria-current={path.includes(l.href) ? 'page' : undefined}>{l.label}</a>)}
+  </nav>
+  <div class="nav__tools">
+    <a class="nav__login mono" href={url(lp(lang, '/app/'))}>{T.login}</a>
+    <a class="nav__tool nav__lang mono" href={otherHref} hreflang={other} lang={other} title={T.lang.title} data-lang-switch>{T.lang.short}</a>
+    <button class="nav__tool" type="button" data-theme-toggle aria-label={T.theme.toDark} data-to-dark={T.theme.toDark} data-to-light={T.theme.toLight}>
+      <span class="nav__sun"><Icon name="sun" /></span><span class="nav__moon"><Icon name="moon" /></span>
+    </button>
+    <a class="btn" data-plans href={url(lp(lang, '/pricing/'))}>{T.cta} <Icon name="arrowUpRight" /></a>
+    <button class="nav__burger" type="button" aria-label={T.menu} aria-expanded="false" aria-controls="menu" data-burger><span></span><span></span></button>
   </div>
 </header>
-<div class="menu" id="menu" data-menu inert>
-  <button class="menu__close" type="button" data-menu-close aria-label="Close menu">×</button>
-  <nav aria-label="Mobile">
-    <a href={url('/')}><span>00</span>Home</a>
-    {nav.map((n, i) => <a href={url(n.href)}><span>{String(i + 1).padStart(2, '0')}</span>{n.label}</a>)}
-    <a href={url('/contact/')}><span>{String(nav.length + 1).padStart(2, '0')}</span>Contact</a>
+<div class="menu" id="menu" data-menu>
+  <nav aria-label={T.mobileNav}>
+    {links.map((l) => <a class="d" href={url(lp(lang, l.href))}>{l.label}</a>)}
+    <a class="d x" href={url(lp(lang, '/contact/'))}>{T.nav.contact}</a>
   </nav>
-  <div class="menu__foot">
-    <a href={`mailto:${site.email}`}>{site.email}</a>
-    <span>{socials.map((s, i) => <>{i > 0 && ' · '}<a href={s.href} target="_blank" rel="noopener">{s.label}</a></>)}</span>
-  </div>
+  <div class="menu__foot mono"><span>Federico Schwindt</span><a href={otherHref} hreflang={other}>{T.lang.label}</a></div>
 </div>

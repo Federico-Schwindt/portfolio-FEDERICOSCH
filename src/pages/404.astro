@@ -3,21 +3,17 @@ import Base from '../layouts/Base.astro'
 import Icon from '../components/Icon.astro'
 import { url } from '../lib/site'
 ---
-<Base title="Page not found | Federico Schwindt" description="This page does not exist." path="/404" noindex>
-  <section class="nf t-ink" data-theme="ink">
+<Base title="Page not found | Federico Schwindt" noindex>
+  <section class="t-main nf">
     <div class="wrap">
-      <p class="tag" style="color:var(--red)">Error 404</p>
-      <h1 class="nf__n" data-lines><span class="ln"><span style="--i:0">4<span class="red">0</span>4</span></span></h1>
-      <p class="lede">This page doesn’t exist, or it moved when the site was rebuilt. The work is still here.</p>
-      <div class="nf__cta">
-        <a class="btn" href={url('/work/')}>See the work <Icon name="arrow" /></a>
-        <a class="btn btn--ghost" href={url('/')}>Back home</a>
-      </div>
+      <h1 class="d nf__n"><span class="n">4</span><span class="x">0</span><span class="n">4</span></h1>
+      <p class="lead">This page does not exist. The work does.<br /><span lang="es" class="muted">Esta página no existe. Los trabajos, sí.</span></p>
+      <a class="btn" href={url('/work/')}>See the work <Icon name="arrowUpRight" /></a>
     </div>
   </section>
 </Base>
-<style>
-  .nf { min-height: 100svh; display: flex; align-items: center; padding-top: var(--nav-h); }
-  .nf__n { font-size: clamp(8rem, 38vw, 40rem); font-weight: 800; letter-spacing: -0.08em; line-height: 0.8; margin: 16px 0 28px -0.04em; }
-  .nf__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+<style is:global>
+  .nf { min-height: 100dvh; display: grid; align-items: end; padding: calc(var(--nav-h) + 3rem) 0 var(--section); }
+  .nf .wrap { display: grid; gap: 2rem; justify-items: start; width: 100%; }
+  .nf__n { font-size: clamp(8rem, 34vw, 38rem); line-height: 0.78; }
 </style>

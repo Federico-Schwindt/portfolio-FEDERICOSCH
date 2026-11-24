@@ -38,7 +38,8 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          # the pages live in dist/client since /api needs a server (Pages serves them; the app runs in demo mode there)
+          path: dist/client
   deploy:
     needs: build
     runs-on: ubuntu-latest

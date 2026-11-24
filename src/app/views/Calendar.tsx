@@ -29,8 +29,6 @@ export function Calendar() {
       const d = new Date(x.nextAt)
       for (let i = 0; i < (x.every === 'week' ? 26 : 12); i++) { out.push({ key: `rep${x.id}${i}`, day: iso(d), kind: 'repeat', title: x.title }); if (x.every === 'week') d.setDate(d.getDate() + 7); else d.setMonth(d.getMonth() + 1) }
     }
-    if (sub?.periodEnd && !studio) out.push({ key: 'renew', day: iso(new Date(sub.periodEnd)), kind: 'renew', title: `${C.renew} · ${PLANS[sub.plan].name}` })
-    for (const c of changes) if (c.status === 'scheduled' && c.effectiveAt) out.push({ key: 'chg' + c.id, day: iso(new Date(c.effectiveAt)), kind: 'change', title: t.pl.kindTitle(c.kind, PLANS[c.to].name) })
     return out
   }, [reqs, sub, recurring, changes, studio, C.renew, t.pl])
 

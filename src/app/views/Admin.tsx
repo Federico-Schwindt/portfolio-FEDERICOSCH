@@ -32,7 +32,7 @@ export function Admin() {
   const s = operationsText[lang]
   const tabs = [
     ['admin', t.adm.tabs[0]], ['admin/business', studioText[lang].business],
-    ['admin/clients', t.adm.tabs[1]], ['admin/people', usersText[lang].tab], ['admin/changes', studioText[lang].changes], ['admin/finance', s.finance],
+    ['admin/clients', t.adm.tabs[1]], ['admin/people', usersText[lang].tab], ['admin/finance', s.finance],
     ['admin/feedback', s.feedback], ['admin/workload', s.workload], ['admin/payments', t.adm.tabs[2]],
   ]
   const active = tabs.find(([path]) => path === 'admin/' + section)?.[0] ?? 'admin'
@@ -50,14 +50,13 @@ export function Admin() {
           }}>{label}</button>)}
       </nav>
       <div id="studio-panel" role="tabpanel" aria-labelledby={'studio-tab-' + tabs.findIndex(([path]) => path === active)}>
-      {section === 'changes' ? <PlanChanges key={route} client={id} />
-        : section === 'business' ? <StudioMetrics onOpenDeadlines={() => setClientId('')} />
+      {section === 'business' ? <StudioMetrics onOpenDeadlines={() => setClientId('')} />
         : section === 'finance' ? <StudioFinance invoiceId={id} />
         : section === 'feedback' ? <StudioFeedback />
         : section === 'workload' ? <StudioWorkload />
         : section === 'clients' ? <Clients id={id} />
         : section === 'people' ? <StudioUsers />
-        : section === 'payments' ? <><Payments /><MailSettings /></>
+        : section === 'payments' ? <MailSettings />
         : <StudioBoard clientId={clientId} onClient={setClientId} />}
       </div>
     </div>
@@ -145,7 +144,7 @@ function StudioBoard({ clientId, onClient }: { clientId: string; onClient: (id: 
           <header className="card__h"><h2>{t.priorities.pending}</h2><span className="mono">{!failed && pending?.length}</span></header>
           {failed || !pending ? <ReadStatus subject={t.priorities.pending} failed={failed} retry={refresh} /> : pending.length ? <ul>{pending.map((c) => (
               <li key={c.id}><a href={'#/admin/clients/' + c.id}>
-                <span><b>{clientName(c)}</b><small>{PLANS[c.plan!].name}{clientName(c) !== c.email && ' · ' + c.email}</small></span><Icon name="arrowRight" size={16} />
+                <span><b>{clientName(c)}</b><small>{t.cap(PLANS[c.plan!].slots)}{clientName(c) !== c.email && ' · ' + c.email}</small></span><Icon name="arrowRight" size={16} />
               </a></li>
             ))}</ul> : <p className="muted">{t.priorities.none}</p>}
         </section>
@@ -171,7 +170,7 @@ function Clients({ id }: { id?: string }) {
               {visible.map((c) => (
                 <tr key={c.id}>
                   <td><b>{id ? clientName(c) : <a className="ops__profile-link" href={'#/admin/clients/' + c.id}>{clientName(c)}</a>}</b><small>{c.email}{c.role === 'admin' ? ' · admin' : ''} · {c.open} {t.adm.open}{c.team !== undefined && ' · ' + studioText[lang].teamSize(c.team)}</small></td>
-                  <td data-label={t.adm.plan}><select aria-label={t.adm.plan} value={c.plan ?? ''} onChange={(e) => set(c.id, { plan: e.target.value as PlanId, status: c.status ?? 'pending' })}><option disabled value="">—</option>{(Object.keys(PLANS) as PlanId[]).map((p) => <option key={p} value={p}>{PLANS[p].name}</option>)}</select></td>
+                  <td data-label={t.adm.plan}><select aria-label={t.adm.plan} value={c.plan ?? ''} onChange={(e) => set(c.id, { plan: e.target.value as PlanId, status: c.status ?? 'pending' })}><option disabled value="">—</option>{(Object.keys(PLANS) as PlanId[]).map((p) => <option key={p} value={p}>{t.cap(PLANS[p].slots)}</option>)}</select></td>
                   <td data-label={t.adm.status}><select aria-label={t.adm.status} value={c.status ?? ''} onChange={(e) => set(c.id, { status: e.target.value as Subscription['status'] })}><option disabled value="">—</option>{STATUSES.map((s) => <option key={s} value={s}>{t.billing.status[s]}</option>)}</select></td>
                   <td data-label={t.adm.community}><input type="checkbox" checked={!!c.community} onChange={(e) => set(c.id, { community: e.target.checked })} aria-label={t.adm.community} /></td>
                   <td data-label={t.adm.since} className="mono">{new Date(c.since).toLocaleDateString(lang, { day: 'numeric', month: 'short' })}</td>

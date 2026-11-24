@@ -5,6 +5,7 @@ import { Icon } from '../Icon'
 import { rel } from '../i18n'
 import { PLANS, runningSlots } from '../types'
 import { openWelcome, welcomeLeft } from '../ui/Welcome'
+import { StudioMessages } from '../ui/StudioMessages'
 import { welcome } from '../i18n-welcome'
 import { KindTag, Ring, days, sortQueue, forecast, shortDay, isImage } from '../ui/bits'
 
@@ -15,13 +16,8 @@ export function Overview() {
   const studio = user?.role === 'admin'
   const slots = studio ? 0 : runningSlots(sub)
   const waiting = !studio && slots === 0
-  const firstVisit = waiting && reqs.length === 0
-  let lead = t.sub
-  let planStep = t.x.onb.plan
-  if (waiting) {
-    lead = !sub ? t.queueHold.missing : sub.status === 'pending' ? t.queueHold.pending : t.queueHold.inactive
-    planStep = !sub ? t.queueHold.choose : sub.status === 'pending' ? t.queueHold.activation : t.billing.status[sub.status]
-  }
+  const firstVisit = !studio && reqs.length === 0
+  const lead = firstVisit ? t.clientHome.first : waiting ? t.clientHome.waiting : t.sub
   const active = reqs.filter((r) => r.status === 'active')
   const queue = sortQueue(reqs)
   const review = reqs.filter((r) => r.status === 'review')
@@ -46,11 +42,12 @@ export function Overview() {
   const name = (user?.name || '').split(' ')[0]
   const eta = useMemo(() => forecast(reqs, slots), [reqs, slots])
   const steps: [boolean, string, () => void][] = [
-    [slots > 0, planStep, () => go('billing')],
-    [!!user?.brand?.colors?.length && !!user?.brand?.fonts, t.x.onb.brand, () => go('brand')],
-    [files.some((f) => f.kind === 'brand'), t.x.onb.logo, () => go('brand')],
     [reqs.length > 0, t.x.onb.first, () => setNewOpen(true)],
   ]
+  if (!user?.member) steps.push(
+    [!!user?.brand?.colors?.length, t.x.onb.brand, () => go('brand')],
+    [files.some(f => f.kind === 'brand'), t.x.onb.logo, () => go('brand')],
+  )
   const setupLeft = steps.filter((s) => !s[0]).length
   // the welcome conversation: what is still unanswered about the business
   const W = welcome[lang].card
@@ -90,6 +87,8 @@ export function Overview() {
         </motion.section>
       )}
 
+      {user?.role === 'client' && reqs.length > 0 && <StudioMessages key={user.id + '/' + (user.account ?? user.id)} />}
+
       {bizLeft > 0 && !user?.brand?.onboarded && (
         <motion.section className="card wlc" {...up}>
           <span className="wlc__ic">F</span>
@@ -100,9 +99,9 @@ export function Overview() {
       )}
       {setupLeft > 0 && user?.role !== 'admin' && (
         <motion.section className="card onb" {...up}>
-          <div className="onb__h"><div><h2>{t.x.onb.title}</h2><p className="muted">{t.x.onb.sub}</p></div><span className="onb__n mono">{steps.length - setupLeft}/{steps.length}</span></div>
+          <div className="onb__h"><h2>{t.x.onb.title}</h2><span className="onb__n mono">{steps.length - setupLeft}/{steps.length}</span></div>
           <div className="onb__bar"><i style={{ width: `${((steps.length - setupLeft) / steps.length) * 100}%` }} /></div>
-          <ol className="onb__list">{steps.map(([ok, label, run], i) => <li key={label} className={ok ? 'is-ok' : ''}><span className="onb__c">{ok ? <Icon name="check" size={13} /> : null}</span><span>{label}</span>{!ok && <button type="button" className="ap-btn ap-btn--sm ap-btn--ghost" onClick={run}>{i === 0 ? t.queueHold.plan : t.x.onb.go}</button>}</li>)}</ol>
+          <ol className="onb__list">{steps.map(([ok, label, run]) => <li key={label} className={ok ? 'is-ok' : ''}><span className="onb__c">{ok ? <Icon name="check" size={13} /> : null}</span><span>{label}</span>{!ok && <button type="button" className="ap-btn ap-btn--sm ap-btn--ghost" aria-label={label} onClick={run}>{t.x.onb.go}</button>}</li>)}</ol>
         </motion.section>
       )}
 
@@ -166,13 +165,6 @@ export function Overview() {
             <div><dt>{t.status.active}</dt><dd className="n">{active.length}{slots ? ` / ${slots}` : ''}</dd></div>
           </dl>
         </motion.section>
-        {!studio && sub && (
-          <motion.button type="button" className="card rail rail--plan" {...up} transition={{ delay: 0.12 }} onClick={() => go('billing')}>
-            <span className="rail__k">{t.billing.current}</span>
-            <span className="rail__plan"><b>{PLANS[sub.plan].name}</b><span className={`pill pill--${sub.status === 'active' ? 'done' : sub.status === 'building' ? 'active' : 'review'}`}><i />{t.billing.status[sub.status]}</span></span>
-            <span className="rail__go">{t.rail.manage}<Icon name="arrowRight" size={13} /></span>
-          </motion.button>
-        )}
         {!studio && (
           <motion.section className="card rail" {...up} transition={{ delay: 0.14 }}>
             <div className="card__h"><h2>{t.tpl.recurring}</h2><span className="muted rail__n">{recurring.length}</span></div>

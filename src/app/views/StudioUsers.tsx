@@ -90,7 +90,7 @@ function AddPerson({ onDone, onCancel }: { onDone: (username: string) => void; o
         {field('email', T.email, { type: 'email', hint: T.emailHint })}
         <label className="pf__f"><span>{T.role}</span><select value={f.role} onChange={(e) => setF({ ...f, role: e.target.value as 'client' | 'admin' })}><option value="client">{T.client}</option><option value="admin">{T.admin}</option></select></label>
         {field('company', T.company)}
-        {f.role === 'client' && <label className="pf__f"><span>{T.plan}</span><select value={f.plan} onChange={(e) => setF({ ...f, plan: e.target.value as '' | PlanId })}><option value="">{T.noPlan}</option>{PLAN_IDS.map((p) => <option key={p} value={p}>{PLANS[p].name}</option>)}</select></label>}
+        {f.role === 'client' && <label className="pf__f"><span>{T.plan}</span><select value={f.plan} onChange={(e) => setF({ ...f, plan: e.target.value as '' | PlanId })}><option value="">{T.noPlan}</option>{PLAN_IDS.map((p) => <option key={p} value={p}>{t.cap(PLANS[p].slots)}</option>)}</select></label>}
         <label className="pf__f"><span>{T.lang}</span><select value={f.lang} onChange={(e) => setF({ ...f, lang: e.target.value as 'en' | 'es' })}><option value="es">Español</option><option value="en">English</option></select></label>
         {err && <p className="lg__err pf__f--wide" role="alert">{err}</p>}
         <div className="pf__f--wide su__acts">
@@ -115,7 +115,7 @@ function Person({ u, onChange }: { u: AdminUser; onChange: () => void }) {
       <span className="su__who"><b>{who}{u.me && <em> · {T.you}</em>}</b><small>{[u.company, u.accountName ? T.member(u.accountName) : ''].filter(Boolean).join(' · ') || ' '}</small></span>
       <span className="su__login"><b>{u.username ? '@' + u.username : '—'}</b><small>{u.email ?? ''}</small></span>
       <span className="su__role"><span className={`pill${u.role === 'admin' ? ' pill--review' : ''}`}>{u.disabled ? T.off : u.role === 'admin' ? T.studio : T.client}</span></span>
-      <span className="su__plan">{u.plan ? <>{PLANS[u.plan as PlanId]?.name ?? u.plan}<small>{u.status}</small></> : <small className="muted">—</small>}</span>
+      <span className="su__plan">{u.plan ? <>{PLANS[u.plan as PlanId] ? t.cap(PLANS[u.plan as PlanId].slots) : u.plan}<small>{t.billing.status[u.status ?? ''] ?? u.status}</small></> : <small className="muted">—</small>}</span>
       <span className="su__last"><small>{T.cols.last}</small>{u.lastSeen ? rel(u.lastSeen, lang) : T.never}</span>
       <span className="su__acts">
         <button type="button" className="ap-btn ap-btn--ghost ap-btn--sm" onClick={() => setPw(pw === null ? makePassword() : null)}>{T.reset}</button>

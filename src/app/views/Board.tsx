@@ -112,7 +112,7 @@ export function Board({ admin = false, account, requests, children }: { admin?: 
     <div className="bd">
       <header className="ap-head">
         <div>
-          <p className="mono ap-kicker">{admin ? t.studio : `${sub ? PLANS[sub.plan].name : ''}`}</p>
+          <p className="mono ap-kicker">{admin ? t.studio : (user?.company || user?.name || '')}</p>
           <h1 className="d">{admin ? t.admin.title : t.board}</h1>
           <p className="ap-lead">{admin ? t.admin.sub : t.boardSub}</p>
         </div>

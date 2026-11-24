@@ -86,7 +86,7 @@ export function StoreProvider({ lang, base, children }: { lang: 'en' | 'es'; bas
     const k = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); setPalette((v) => !v) }
       else if (!(e.target as HTMLElement).closest('input, textarea, select, [contenteditable]') && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        if (goNext.current) { goNext.current = false; const to = ({ o: 'overview', b: 'board', f: 'files', r: 'reports', p: 'billing', k: 'brand' } as Record<string, string>)[e.key]; if (to) location.hash = '/' + to }
+        if (goNext.current) { goNext.current = false; const to = ({ o: 'overview', b: 'board', f: 'files', r: 'reports', k: 'brand' } as Record<string, string>)[e.key]; if (to) location.hash = '/' + to }
         else if (e.key === 'n') setNewOpen(true)
         else if (e.key === '?') setHelp(true)
         else if (e.key === 'g') goNext.current = true

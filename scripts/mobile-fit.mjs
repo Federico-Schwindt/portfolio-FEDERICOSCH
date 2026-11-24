@@ -3,7 +3,7 @@ import { chromium } from 'playwright-core'
 const b = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch())
 const p = await (await b.newContext({ viewport: { width: 390, height: 844 } })).newPage()
 await p.goto('http://localhost:' + Number(process.env.STUDIO_TEST_PORT || 4330) + '/app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.af')
-await p.fill('.af input[type=email]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'x'); await p.click('.af button[type=submit]'); await p.waitForSelector('.ap-dock')
+await p.fill('.af input[autocomplete=username]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'x'); await p.click('.af button[type=submit]'); await p.waitForSelector('.ap-dock')
 let bad = 0
 for (const h of ['/profile', '/calendar', '/deliveries', '/activity', '/billing', '/team', '/overview']) {
   await p.evaluate((x) => (location.hash = x), h); await p.waitForTimeout(900)

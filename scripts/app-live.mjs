@@ -27,10 +27,14 @@ try {
     const api = async (path, method, body, cookie = '') => { const r = await fetch(origin + '/api/' + path, { method, headers: { 'content-type': 'application/json', 'x-studio': '1', origin, cookie }, body: body ? JSON.stringify(body) : undefined }); return { r, data: await r.json().catch(() => null) } }
     const s = await api('auth/signup/', 'POST', { email: adminEmail, password: 'ui check admin', name: 'UI Studio' })
     if (s.r.status !== 200) throw new Error('admin sign-up ' + s.r.status + ' (start the preview with ALLOW_SIGNUP=1)')
+    created.add(adminEmail)
     await sql`update studio.users set role = 'admin' where email = ${adminEmail}`
     const cookie = s.r.headers.get('set-cookie').split(';')[0]
-    const c = await api('admin/users/', 'POST', { name: 'UI Check', username: uname, email, password: 'ui check password', role: 'client', company: 'UI Check Co' }, cookie)
+    const c = await api('admin/users/', 'POST', { name: 'UI Check', username: uname, email, password: 'ui check password', role: 'client', company: 'UI Check Co', plan: 'grow' }, cookie)
     if (c.r.status !== 200) throw new Error('create user ' + c.r.status + ' ' + JSON.stringify(c.data))
+    created.add(email)
+    // the plan starts on hold, so the queue can be reordered before the studio switches it on
+    await sql`update studio.subscriptions set status = 'pending' where user_id = (select id from studio.users where email = ${email})`
   })
   await step('client signs in with the username', async () => { await p.goto(origin + '/app/', { waitUntil: 'load' }); await p.waitForSelector('.af'); if (await p.locator('.ap-demo').count()) throw new Error('demo mode'); await p.fill('.af input[autocomplete=username]', uname); await p.fill('.af input[type=password]', 'ui check password'); await p.click('.af button[type=submit]'); await p.waitForSelector('.ov', { timeout: 15000 }); await p.waitForTimeout(800); await shot('3-overview-pending') })
   await step('three requests', async () => {
@@ -85,8 +89,6 @@ try {
     await q.fill('.af input[autocomplete=name]', 'Mate Check'); await q.fill('.af input[type=password]', 'ui check password'); await q.click('.af button[type=submit]')
     await q.waitForSelector('.ov', { timeout: 15000 })
     if (new URL(q.url()).searchParams.has('invite')) throw new Error('invite left in the address')
-    await q.evaluate(() => (location.hash = '/billing')); await q.waitForSelector('.tm__billing')
-    if (await q.locator('.bl__start button, .bl button.ap-btn--red').count()) throw new Error('member can pay')
     await q.evaluate(() => (location.hash = '/board')); await q.waitForSelector('.kb'); const n = await q.locator('.kb .kc, .kb [data-id]').count()
     await q.screenshot({ path: 'scripts/.shots/live-5e-teammate.png' }); await q.context().close()
     if (!n) throw new Error('teammate sees no requests')

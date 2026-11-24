@@ -54,7 +54,7 @@ function Studio() {
         {s.be.mode === 'demo' && <p className="ap-demo mono"><Icon name="lightning" size={13} /> {s.t.demo}</p>}
         <AnimatePresence mode="wait">
           <motion.div key={view} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}>
-            {view === 'request' ? <Drawer key={id} id={id} page /> : view === 'board' ? <Board /> : view === 'admin' ? <Admin /> : view === 'files' ? <Files /> : view === 'reports' ? <Reports /> : view === 'billing' ? <Billing /> : view === 'brand' ? <BrandKit /> : view === 'team' ? <Team /> : view === 'profile' ? <Profile /> : view === 'calendar' ? <Calendar /> : view === 'deliveries' ? <Deliveries /> : view === 'activity' ? <Activity /> : <Overview />}
+            {view === 'request' ? <Drawer key={id} id={id} page /> : view === 'board' ? <Board /> : view === 'admin' ? <Admin /> : view === 'files' ? <Files /> : view === 'reports' ? <Reports /> : view === 'brand' ? <BrandKit /> : view === 'team' ? <Team /> : view === 'profile' ? <Profile /> : view === 'calendar' ? <Calendar /> : view === 'deliveries' ? <Deliveries /> : view === 'activity' ? <Activity /> : <Overview />}
           </motion.div>
         </AnimatePresence>
       </main>
@@ -85,7 +85,7 @@ function Side() {
   const home: Destination = ['overview', 'house', t.nav.overview]
   const board: Destination = ['board', 'kanban', t.nav.board]
   const files: Destination = ['files', 'file', t.x.nav.files]
-  const more: Destination[] = [['reports', 'chartBar', t.x.nav.reports], ['billing', 'creditCard', t.nav.billing], ['brand', 'palette', t.nav.brand]]
+  const more: Destination[] = [['reports', 'chartBar', t.x.nav.reports], ['brand', 'palette', t.nav.brand]]
   if (user?.role !== 'admin') more.push(['team', 'users', t.x.team.nav])
   if (user?.role === 'admin') more.push(['admin', 'userGear', t.nav.admin])
   const extra: Destination[] = [['calendar', 'calendar', t.sec.calendar], ['deliveries', 'package', t.sec.deliveries], ['activity', 'pulse', t.sec.activity]]
@@ -103,9 +103,9 @@ function Side() {
   const search = <button className="ap-search" type="button" onClick={() => { sheet.current?.close(); setPalette(true) }}><Icon name="magnifyingGlass" size={15} /><span>{t.palette}</span><kbd className="mono">{t.kbd}</kbd></button>
   const account = (
     <>
-      {plan && (
+      {plan && slots > 0 && (
         <div className="ap-plan">
-          <p className="mono">{plan.name} · {t.billing.status[sub!.status]}</p>
+          <p className="mono">{t.cap(slots)}</p>
           {slots > 0 && <><div className="ap-plan__slots">{Array.from({ length: slots }, (_, i) => <i key={i} className={i < active ? 'is-on' : ''} />)}</div>
           <p>{t.slots(active, slots)}</p></>}
         </div>

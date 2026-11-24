@@ -10,7 +10,7 @@ try {
     page.on('pageerror', (e) => errors.push(e.message))
     await page.addInitScript((mode) => localStorage.setItem('theme', mode), theme)
     await page.goto('http://localhost:' + Number(process.env.STUDIO_TEST_PORT || 4330) + '/' + (lang === 'es' ? 'es/' : '') + 'app/?demo')
-    await page.locator('.af input[type=email]').fill('mobile@example.com')
+    await page.locator('.af input[autocomplete=username]').fill('mobile@example.com')
     await page.locator('.af input[type=password]').fill('demo')
     await page.locator('.af button[type=submit]').click()
 
@@ -44,14 +44,14 @@ try {
     await page.locator('.nr').waitFor({ state: 'hidden' })
 
     await more.tap()
-    assert.equal(await sheet.locator('.ap-nav button').count(), 7) // calendar, deliveries, activity, reports, plan, brand kit, team
+    assert.equal(await sheet.locator('.ap-nav button').count(), 6) // calendar, deliveries, activity, reports, brand kit, team
     await page.keyboard.press('Escape')
     assert(await more.evaluate((el) => el === document.activeElement))
     await more.tap()
     await page.keyboard.press('Control+k')
     await page.locator('.pl input:focus').waitFor()
     await page.keyboard.press('Escape')
-    for (const [index, route] of ['calendar', 'deliveries', 'activity', 'reports', 'billing', 'brand'].entries()) {
+    for (const [index, route] of ['calendar', 'deliveries', 'activity', 'reports', 'brand'].entries()) {
       await more.tap()
       await sheet.locator('.ap-nav button').nth(index).tap()
       await page.waitForFunction((route) => location.hash === '#/' + route, route)

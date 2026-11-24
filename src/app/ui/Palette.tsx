@@ -80,7 +80,7 @@ function WorkspaceSearch() {
     ['overview', t.nav.overview, 'house'], ['board', t.nav.board, 'kanban'],
     ['calendar', t.sec.calendar, 'calendar'], ['deliveries', t.sec.deliveries, 'package'],
     ['files', t.x.nav.files, 'file'], ['activity', t.sec.activity, 'pulse'],
-    ['reports', t.x.nav.reports, 'chartBar'], ['billing', t.nav.billing, 'creditCard'],
+    ['reports', t.x.nav.reports, 'chartBar'],
     ['brand', t.nav.brand, 'palette'], ['profile', t.sec.profile, 'userGear'],
   ]
   if (studio) {

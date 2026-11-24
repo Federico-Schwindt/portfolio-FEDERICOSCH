@@ -1,4 +1,4 @@
-// Home on a phone (390 px): no sideways scroll anywhere, the product block and the plans popup work. Needs :4330.
+// Home on a phone (390 px): no sideways scroll anywhere, the product block works and the hero button leads to the contact page. Needs :4330 (or FS_PORT).
 import { chromium } from 'playwright-core'
 const b = await chromium.launch({ channel: 'chrome' }).catch(() => chromium.launch())
 let bad = 0
@@ -15,12 +15,12 @@ for (const [path, theme] of [['/', 'light'], ['/es/', 'dark']]) {
   }
   await p.evaluate(() => document.getElementById('dashboard').scrollIntoView()); await p.locator('[data-app-tab="2"]').tap(); await p.waitForTimeout(700)
   const tabOk = await p.evaluate(() => document.querySelector('[data-app-shot="2"]').classList.contains('is-on'))
-  await p.evaluate(() => scrollTo(0, 0)); await p.waitForTimeout(500); await p.evaluate(() => document.querySelector('[data-hx-cta]').click()); await p.waitForSelector('#plans-dialog[open]'); await p.waitForTimeout(700)
-  await p.screenshot({ path: `scripts/.shots/hm-${theme}-popup.jpg`, type: 'jpeg', quality: 60 })
-  const pop = await p.evaluate(() => { const r = document.getElementById('plans-dialog').getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth + 1 })
-  const ok = over <= 2 && tabOk && pop && !errs.length
+  const want = path === '/es/' ? '/es/contact/' : '/contact/'
+  const cta = await p.evaluate(() => new URL(document.querySelector('[data-hx-cta]').href).pathname)
+  const ctaOk = cta.endsWith(want) && !(await p.evaluate(() => document.querySelector('[data-plans], #plans-dialog')))
+  const ok = over <= 2 && tabOk && ctaOk && !errs.length
   if (!ok) bad++
-  console.log(ok ? 'ok' : 'FAIL', path, theme, { over, tabOk, pop, errs })
+  console.log(ok ? 'ok' : 'FAIL', path, theme, { over, tabOk, cta, ctaOk, errs })
   await ctx.close()
 }
 await b.close()

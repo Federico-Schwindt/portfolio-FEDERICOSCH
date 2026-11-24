@@ -10,9 +10,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props
 const { site, socials } = data(lang)
 const C = {
-  en: { title: 'Contact: Start a Project | Federico Schwindt', desc: 'Tell me what you are working on. I reply within one business day, in English or Spanish, with an honest plan and a fixed quote.',
+  en: { title: 'Contact: Start a Project | Federico Schwindt', desc: 'Tell me what you are working on. I reply within one business day, in English or Spanish, with an honest answer and a clear quote.',
     h1: ['Start a', 'project.'], lead: 'Treat it like a first coffee. I look at what you have and tell you honestly what I would do.', reply: 'Reply time', replyV: 'One business day', based: 'Based in', elsewhere: 'Elsewhere' },
-  es: { title: 'Contacto: empecemos un proyecto | Federico Schwindt', desc: 'Cuéntame en qué estás trabajando. Respondo en un día hábil, en español o en inglés, con un plan honesto y un presupuesto cerrado.',
+  es: { title: 'Contacto: empecemos un proyecto | Federico Schwindt', desc: 'Cuéntame en qué estás trabajando. Respondo en un día hábil, en español o en inglés, con una respuesta honesta y un presupuesto claro.',
     h1: ['Empecemos un', 'proyecto.'], lead: 'Tómalo como un primer café. Miro lo que tienes y te digo con honestidad qué haría yo.', reply: 'Respuesta', replyV: 'En un día hábil', based: 'Desde', elsewhere: 'En otros lados' },
 }[lang]
 ---
@@ -25,7 +25,6 @@ const C = {
           <span class="line" style="--i:1"><span class="x">{C.h1[1]}</span></span>
         </h1>
         <p class="lead" data-reveal>{C.lead}</p>
-        <p class="co__plans" data-reveal><a class="btn" data-plans href={url(lp(lang, '/pricing/'))}>{lang === 'es' ? '¿Ya sabes qué quieres? Elige un plan' : 'Already know what you want? Pick a plan'} <Icon name="arrowRight" /></a></p>
         <dl class="co__meta" data-reveal>
           <div><dt class="mono muted">Email</dt><dd><a class="link" href={`mailto:${site.email}`}>{site.email}</a></dd></div>
           <div><dt class="mono muted">{C.reply}</dt><dd>{C.replyV}</dd></div>

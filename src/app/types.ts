@@ -106,7 +106,11 @@ export interface Backend {
   recurring(): Promise<Recurring[]>
   addRecurring(r: { title: string; kind: Kind; brief: string; checklist: CheckItem[]; priority: 1 | 2 | 3; every: 'week' | 'month' }): Promise<void>
   stopRecurring(id: string): Promise<void>
-  // the studio only
+  // the studio only: accounts (the studio creates every account)
+  adminUsers(): Promise<AdminUser[]>
+  createUser(u: NewUser): Promise<void>
+  updateUser(id: string, p: { name?: string; company?: string; role?: 'client' | 'admin'; password?: string; disabled?: boolean; username?: string }): Promise<void>
+  deleteUser(id: string): Promise<void>
   adminChanges(): Promise<PlanChange[]>
   /** paid: confirms the payment (adds the invoice) and applies; apply: applies without an invoice */
   settleChange(id: string, how: 'paid' | 'apply'): Promise<void>
@@ -119,5 +123,7 @@ export interface Backend {
 export type { ChangeKind, Quote } from '../lib/plan-rules'
 import type { ChangeKind, Quote } from '../lib/plan-rules'
 export type PlanChange = { id: string; kind: ChangeKind; from: PlanId; to: PlanId; amount: number; status: 'awaiting_payment' | 'scheduled' | 'applied' | 'cancelled'; effectiveAt: string | null; at: string; closedAt: string | null; quote?: Quote; resolution?: 'paid' | 'waived' | 'rejected' | null; invoiceId?: string | null; client?: { id: string; email: string; name: string; company: string } }
+export type AdminUser = { id: string; username: string | null; email: string | null; name: string; company: string; role: 'client' | 'admin'; lang: string; since: string; lastSeen: string | null; disabled: boolean; accountId: string | null; accountName: string | null; plan: string | null; status: string | null; open: number; me: boolean }
+export type NewUser = { name: string; username: string; email?: string; password: string; role: 'client' | 'admin'; company?: string; plan?: PlanId; lang?: 'en' | 'es' }
 export type Client = { id: string; email: string; name: string; company: string; role: string; since: string; plan: PlanId | null; status: Subscription['status'] | null; community: boolean | null; open: number; team?: number }
 export type PayView = { provider: 'none' | 'lemonsqueezy'; apiKey: string; storeId: string; webhookSecret: string; variants: Record<string, string>; webhook?: string }

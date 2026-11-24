@@ -14,14 +14,13 @@ const L = (p: string) => url(lp(lang, p))
       <div class="footer__top" data-bd>
         <p class="lead footer__lead">{T.footer}</p>
         <div class="footer__cta">
-          <a class="btn" data-plans href={L('/pricing/')}>{T.cta} <Icon name="arrowUpRight" /></a>
+          <a class="btn" href={L('/contact/')}>{T.cta} <Icon name="arrowUpRight" /></a>
           <a class="link" href={url(lp(lang, '/app/'))}>{T.login} <Icon name="arrowRight" /></a>
         </div>
       </div>
       <div class="footer__col" data-bd>
         <a href={L('/work/')}>{T.nav.work}</a>
         <a href={L('/services/')}>{T.nav.services}</a>
-        <a href={L('/pricing/')}>{T.nav.pricing}</a>
         <a href={L('/audit/')}>{T.nav.audit}</a>
         <a href={L('/about/')}>{T.nav.about}</a>
         <a href={L('/contact/')}>{T.nav.contact}</a>

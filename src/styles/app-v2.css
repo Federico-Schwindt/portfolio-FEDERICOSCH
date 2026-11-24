@@ -297,3 +297,7 @@ button.rail--plan:hover { transform: translateY(-1px); box-shadow: var(--shadow-
   .ap-sheet .ap-nav { overflow: visible; }
   .ap-sheet__head button { color: var(--fg); }
 }
+
+/* the mark (inline svg): blades in the text colour, red dot */
+.ap-logo .mark, .lg__card .mark { display: block; color: var(--fg); }
+.ap-logo img { display: none; }

@@ -11,15 +11,11 @@ document.querySelectorAll<HTMLFormElement>('form[data-lead]').forEach((form) => 
   const label = btn.querySelector('span')!
   const err = form.querySelector<HTMLElement>('[data-error]')!
 
-  // ?package=grow preselects the package (links from the pricing cards)
   const params = new URLSearchParams(location.search)
-  const pkg = params.get('package')
   // context from a case study or a service page: shown in the form and sent with the message
   const ctx = [['case', 'Case'], ['service', 'Service']].map(([k, l]) => (params.get(k) ? `${l}: ${params.get(k)!.replace(/[^a-z0-9-]/gi, '').replace(/-/g, ' ')}` : '')).filter(Boolean).join(' / ')
   const caseName = params.get('case')?.replace(/[^a-z0-9-]/gi, '').replace(/-/g, ' ')
   if (caseName && variant === 'contact') { const note = document.createElement('p'); note.className = 'form__ctx'; note.textContent = `${M.about}: ${caseName}`; form.prepend(note) } // the service shows in its own field
-  const sel = form.querySelector<HTMLSelectElement>('select[name=package]')
-  if (pkg && sel && [...sel.options].some((o) => o.value === pkg)) sel.value = pkg
   // ?service=branding preselects the discipline (links from the service and case pages)
   const svc = params.get('service'), ssel = form.querySelector<HTMLSelectElement>('select[name=service]')
   if (svc && ssel && [...ssel.options].some((o) => o.value === svc)) ssel.value = svc
@@ -38,7 +34,7 @@ document.querySelectorAll<HTMLFormElement>('form[data-lead]').forEach((form) => 
     }
     const v = (n: string) => (form.elements.namedItem(n) as HTMLInputElement | null)?.value.trim() ?? ''
     const input: LeadInput = {
-      source: variant === 'audit' ? 'audit' : pkg ? 'pricing' : 'contact', // 'pricing' only when the visitor came from a plan button
+      source: variant === 'audit' ? 'audit' : 'contact',
       name: v('name') || v('email').split('@')[0],
       email: v('email'),
       company: v('company'),

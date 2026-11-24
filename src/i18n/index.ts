@@ -33,7 +33,7 @@ export const data = (lang: Lang) => ({
 /** interface words shared by every page */
 export const ui = {
   en: {
-    nav: { work: 'Work', services: 'Services', pricing: 'Pricing', about: 'About', contact: 'Contact', audit: 'Free audit' },
+    nav: { work: 'Work', services: 'Services', about: 'About', contact: 'Contact', audit: 'Free audit' },
     cta: 'Start a project', login: 'Log in',
     menu: 'Menu', mainNav: 'Main', mobileNav: 'Mobile', home: 'Home', skip: 'Skip to content', homeLabel: 'Federico Schwindt, home',
     menuFoot: 'Design, code, marketing',
@@ -45,12 +45,12 @@ export const ui = {
     form: {
       website: 'Your website', websitePh: 'yourbusiness.com', email: 'Email', name: 'Name', company: 'Company', current: 'Current website', optional: 'Optional',
       need: 'What do you need?', needUnsure: 'Not sure, help me decide', several: 'Several of these',
-      plan: 'Website plan', planUnsure: 'Not sure yet', budget: 'Budget', message: 'Tell me about it', hp: 'Leave empty',
+      budget: 'Budget', message: 'Tell me about it', hp: 'Leave empty',
       sendAudit: 'Get my free audit', send: 'Send message',
     },
   },
   es: {
-    nav: { work: 'Trabajos', services: 'Servicios', pricing: 'Precios', about: 'Sobre mí', contact: 'Contacto', audit: 'Auditoría gratis' },
+    nav: { work: 'Trabajos', services: 'Servicios', about: 'Sobre mí', contact: 'Contacto', audit: 'Auditoría gratis' },
     cta: 'Empezar un proyecto', login: 'Entrar',
     menu: 'Menú', mainNav: 'Principal', mobileNav: 'Móvil', home: 'Inicio', skip: 'Ir al contenido', homeLabel: 'Federico Schwindt, inicio',
     menuFoot: 'Diseño, código, marketing',
@@ -62,7 +62,7 @@ export const ui = {
     form: {
       website: 'Tu sitio web', websitePh: 'tunegocio.com', email: 'Email', name: 'Nombre', company: 'Empresa', current: 'Sitio web actual', optional: 'Opcional',
       need: '¿Qué necesitas?', needUnsure: 'No sé, ayúdame a decidir', several: 'Varios de estos',
-      plan: 'Plan web', planUnsure: 'Todavía no sé', budget: 'Presupuesto', message: 'Cuéntame', hp: 'Dejar vacío',
+      budget: 'Presupuesto', message: 'Cuéntame', hp: 'Dejar vacío',
       sendAudit: 'Quiero mi auditoría gratis', send: 'Enviar mensaje',
     },
   },

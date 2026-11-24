@@ -20,16 +20,15 @@ const C = {
   en: { crumb: 'Services', for: 'For', timeline: 'Timeline', price: 'Price', start: 'Start a project', demo: 'Try the demo', how: 'How it works', howH: ['How it', 'works.'], step: 'Step',
     sample: 'Sample data', explore: 'Explore the concept', real: 'The real one', make: 'Make', year: 'Year', model: 'Model', part: 'Part', fits: 'Fits', treatment: 'Treatment', time: 'Time', booking: 'Booking request', minutes: 'minutes',
     bookNote: "Preview only. On a real site this lands in the spa's inbox and calendar.", anyMake: 'Any make', maxPrice: 'Max price', anyPrice: 'Any price', of: 'of', carsW: 'cars', miles: 'miles', carNote: 'An enquiry from this page would name this car.',
-    get: ['What you', 'get.'], need: 'What I need from you', added: 'Often added', proof: ['Proof,', 'not adjectives.'], concept: 'Concept', client: 'Client', ready: ['Ready when', 'you are.'], compare: 'Compare the plans' },
+    get: ['What you', 'get.'], need: 'What I need from you', added: 'Often added', proof: ['Proof,', 'not adjectives.'], concept: 'Concept', client: 'Client', ready: ['Ready when', 'you are.'], seeWork: 'See the work' },
   es: { crumb: 'Servicios', for: 'Para', timeline: 'Plazo', price: 'Precio', start: 'Empezar un proyecto', demo: 'Probar la demo', how: 'Cómo funciona', howH: ['Cómo', 'funciona.'], step: 'Paso',
     sample: 'Datos de ejemplo', explore: 'Ver el concepto', real: 'El real', make: 'Marca', year: 'Año', model: 'Modelo', part: 'Pieza', fits: 'Compatible con', treatment: 'Tratamiento', time: 'Horario', booking: 'Pedido de turno', minutes: 'minutos',
     bookNote: 'Solo una vista previa. En un sitio real esto llega a la bandeja y al calendario del spa.', anyMake: 'Cualquier marca', maxPrice: 'Precio máximo', anyPrice: 'Cualquier precio', of: 'de', carsW: 'autos', miles: 'millas', carNote: 'Una consulta desde esta página nombraría este auto.',
-    get: ['Lo que', 'recibes.'], need: 'Lo que necesito de ti', added: 'Se suele sumar', proof: ['Pruebas,', 'no adjetivos.'], concept: 'Concepto', client: 'Cliente', ready: ['Cuando', 'tú quieras.'], compare: 'Comparar los planes' },
+    get: ['Lo que', 'recibes.'], need: 'Lo que necesito de ti', added: 'Se suele sumar', proof: ['Pruebas,', 'no adjetivos.'], concept: 'Concepto', client: 'Cliente', ready: ['Cuando', 'tú quieras.'], seeWork: 'Ver los trabajos' },
 }[lang]
 const serviceLd = {
   '@context': 'https://schema.org', '@type': 'Service', name: o.name, serviceType: o.name, alternateName: o.keywords, description: o.description,
   url: `${SITE_URL}${path}`, inLanguage: lang, provider: { '@id': `${SITE_URL}/#person` }, areaServed: ['US', 'IL', 'AU', 'IN', 'AR'],
-  ...(o.from.includes('$600') ? { offers: { '@type': 'Offer', price: '600', priceCurrency: 'USD', description: o.from } } : {}),
 }
 const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: o.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }
 const f0 = fitment[0], c0 = cars[0]
@@ -179,7 +178,7 @@ const f0 = fitment[0], c0 = cars[0]
         <p class="lead">{o.timeline}. {o.from}.</p>
         <div class="end__btns">
           <a class="btn" href={L(`/contact/?service=${o.slug}`)}>{C.start} <Icon name="arrowUpRight" /></a>
-          <a class="link" href={L('/pricing/')}>{C.compare} <Icon name="arrowRight" /></a>
+          <a class="link" href={L('/work/')}>{C.seeWork} <Icon name="arrowRight" /></a>
         </div>
       </div>
       <div class="fq__list">

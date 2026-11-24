@@ -1,6 +1,6 @@
 // Every route in both languages: status, lang attribute, hreflang twins, leftover English in the Spanish pages, console errors.
 import { chromium } from 'playwright-core'
-const base = 'http://localhost:4330'
+const base = 'http://localhost:' + (process.env.FS_PORT || 4330)
 const xml = await (await fetch(base + '/sitemap.xml')).text()
 const locs = [...new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname.replace('/portfolio-FEDERICOSCH', '')))]
 const b = await chromium.launch({ channel: 'chrome', headless: true })

@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { StoreProvider, useStore } from './store'
 import { Icon, type IconName } from './Icon'
+import { Mark } from './Mark'
 import { Login } from './views/Login'
 import { Overview } from './views/Overview'
 import { Board } from './views/Board'
@@ -98,7 +99,7 @@ function Side() {
   const plan = sub ? PLANS[sub.plan] : null
   const slots = runningSlots(sub)
   const active = reqs.filter((r) => r.owner === (user?.account ?? user?.id) && r.status === 'active').length
-  const logo = <a className="ap-logo" href={base + (lang === 'es' ? 'es/' : '')}><img src={base + 'brand/mark-main.svg'} alt={t.brand} width="54" height="18" /><span className="mono">{t.studio}</span></a>
+  const logo = <a className="ap-logo" href={base + (lang === 'es' ? 'es/' : '')}><Mark size={26} label={t.brand} /><span className="mono">{t.studio}</span></a>
   const search = <button className="ap-search" type="button" onClick={() => { sheet.current?.close(); setPalette(true) }}><Icon name="magnifyingGlass" size={15} /><span>{t.palette}</span><kbd className="mono">{t.kbd}</kbd></button>
   const account = (
     <>

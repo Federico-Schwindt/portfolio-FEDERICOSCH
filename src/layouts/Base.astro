@@ -5,7 +5,6 @@ import Footer from '../components/Footer.astro'
 import { site, socials } from '../data/content'
 import { SITE_URL, canonicalFor, url } from '../lib/site'
 import { langOf, twin, t, type Lang } from '../i18n'
-import PlansDialog from '../components/PlansDialog.astro'
 interface Props { title?: string; description?: string; path?: string; image?: string; noindex?: boolean; ld?: Record<string, unknown>[]; lang?: Lang }
 const {
   title = 'Federico Schwindt | From sketch to sold. Web design and development',
@@ -58,6 +57,5 @@ const person = {
     <Footer lang={lang} />
     <script>import '../scripts/preload.ts'</script>
     <script>import '../scripts/core.ts'</script>
-    <PlansDialog lang={lang} />
   </body>
 </html>

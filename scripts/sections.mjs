@@ -12,18 +12,13 @@ const step = async (name, fn) => { try { await fn(); steps.push([name, 'ok']) } 
 const shot = (n) => p.screenshot({ path: `scripts/.shots/sec-${n}.jpg`, type: 'jpeg', quality: 70 })
 const go = async (hash, sel) => { await p.evaluate((h) => (location.hash = h), hash); await p.waitForSelector(sel); await p.waitForTimeout(600) }
 
-await step('home: hero button opens the plans popup', async () => {
-  await p.goto(origin + '/', { waitUntil: 'load' }); await p.waitForTimeout(4500)
-  await p.evaluate(() => document.querySelector('[data-hx-cta]').click()); await p.waitForSelector('#plans-dialog[open]'); await p.waitForTimeout(900); await shot('0-plans-popup')
-  if ((await p.locator('.pd__card').count()) !== 3) throw new Error('three plans expected')
-  const href = await p.locator('.pd__card.is-hot .pd__go').getAttribute('href'); if (!/checkout\/\?plan=grow/.test(href)) throw new Error('grow link: ' + href)
-  await p.keyboard.press('Escape'); await p.waitForSelector('#plans-dialog:not([open])', { state: 'attached' })
+await step('home: hero button goes to the contact page', async () => {
+  await p.goto(origin + '/', { waitUntil: 'load' }); await p.waitForTimeout(2500)
+  const href = await p.locator('[data-hx-cta]').getAttribute('href'); if (!/\/contact\/$/.test(href)) throw new Error('hero link: ' + href)
 })
 await step('demo sign-in with a plan', async () => {
-  await p.goto(origin + '/checkout/?plan=grow&demo', { waitUntil: 'load' }); await p.waitForSelector('.af')
-  await p.fill('.af input[type=email]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'x'); await p.click('.af button[type=submit]'); await p.waitForSelector('.co2__me')
-  await p.click('.co2__pay'); await p.waitForSelector('.co2__pay-m'); await p.click('.co2__pay-m .ap-btn--red'); await p.waitForSelector('.co2__ok')
-  await p.goto(origin + '/app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.eng')
+  await p.goto(origin + '/app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.af')
+  await p.fill('.af input[autocomplete=username]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'x'); await p.click('.af button[type=submit]'); await p.waitForSelector('.eng')
 })
 await step('profile: edit, picture, notices', async () => {
   await go('/profile', '.pf')

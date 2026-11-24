@@ -12,12 +12,12 @@ export const offers: Offer[] = [
     roadLine: 'Un sitio que se entiende en cinco segundos.',
     h1: ['Diseño web que deja', 'claro el siguiente paso.'],
     title: 'Diseño web para pequeñas empresas | Federico Schwindt',
-    description: 'Diseño web a medida para pequeñas empresas: páginas claras, un siguiente paso obvio, diseñado con tu contenido real y probado en celulares. Desde $600.',
+    description: 'Diseño web a medida para pequeñas empresas: páginas claras, un siguiente paso obvio, diseñado con tu contenido real y probado en celulares.',
     keywords: ['diseño web para pequeñas empresas', 'diseñador web freelance', 'diseño de páginas web', 'rediseño de sitio web', 'diseño UX UI'],
     buyer: 'Negocios cuyo sitio se ve bien pero no explica qué hacen',
     deliverable: 'Cada página diseñada con tu contenido real, con un prototipo navegable antes de escribir una línea de código',
     timeline: '1 a 3 semanas',
-    from: 'Incluido en todos los planes, desde $600',
+    from: 'Un presupuesto claro antes de empezar',
     image: 'work/nova.jpg',
     intro: 'La gente decide en segundos si un sitio es para ella. Diseño cada página alrededor de un mensaje y un siguiente paso, para que quien entra sepa qué haces, por qué tú y dónde hacer clic.',
     steps: [
@@ -50,12 +50,12 @@ export const offers: Offer[] = [
     roadLine: 'Páginas, tiendas y herramientas rápidas que funcionan en cualquier celular.',
     h1: ['Desarrollo web', 'que se mantiene rápido.'],
     title: 'Desarrollo web, WordPress y Shopify | Federico Schwindt',
-    description: 'Desarrollador web freelance: sitios a medida, tiendas WordPress, WooCommerce y Shopify, buscadores de productos y formularios. Desde $600 + $80/mes.',
+    description: 'Desarrollador web freelance: sitios a medida, tiendas WordPress, WooCommerce y Shopify, buscadores de productos y formularios. Rápidos en el celular.',
     keywords: ['desarrollo web', 'desarrollador web freelance', 'desarrollo web WordPress', 'tienda online WooCommerce', 'tienda Shopify', 'desarrollo de sitios web a medida'],
     buyer: 'Quien necesita que su sitio haga algo: vender, reservar, buscar, cotizar',
     deliverable: 'Un sitio rápido en tu dominio, un enlace de prueba desde la primera semana, y el código y las cuentas a tu nombre',
     timeline: '2 a 6 semanas',
-    from: 'Desde $600 + $80/mes',
+    from: 'Un presupuesto claro antes de empezar',
     image: 'work/uds.jpg',
     intro: 'Escribo el código yo mismo, así que quien diseñó la página es quien la construye. Páginas livianas que cargan rápido aunque la señal sea mala, tiendas fáciles de buscar y formularios que llegan a tu correo.',
     steps: [
@@ -93,7 +93,7 @@ export const offers: Offer[] = [
     buyer: 'Negocios nuevos, y marcas que ya superaron su primer logo',
     deliverable: 'Un sistema de logo, colores, tipografía, algunas reglas de tono y un manual de marca en PDF',
     timeline: '1 a 3 semanas',
-    from: 'Incluido desde el plan Grow, $1,200 + $150/mes',
+    from: 'Se cotiza por proyecto',
     image: 'work/brasa.jpg',
     intro: 'Una marca es lo que la gente recuerda después de cerrar la pestaña. Diseño el logo, los colores, la tipografía y una guía breve de voz, y después los aplico en tu sitio, para que todo combine desde el primer día.',
     steps: [
@@ -113,7 +113,7 @@ export const offers: Offer[] = [
     faq: [
       { q: '¿Recibo los archivos fuente?', a: 'Sí. Los logos en vector, los valores de color, las fuentes y el manual son tuyos para guardarlos y usarlos donde quieras.' },
       { q: '¿Puedes renovar mi marca sin que deje de reconocerse?', a: 'Sí. Una renovación conserva lo que la gente ya reconoce y corrige lo que estorba.' },
-      { q: '¿El sitio web está incluido?', a: 'El plan Grow incluye una identidad de marca completa y el sitio construido con ella. El branding por separado se cotiza por proyecto.' },
+      { q: '¿El sitio web está incluido?', a: 'Puede estarlo. Marca y sitio suelen hacerse juntos, así el sitio usa la identidad nueva desde el primer día. El branding por separado se cotiza por proyecto.' },
     ],
   },
   {
@@ -128,7 +128,7 @@ export const offers: Offer[] = [
     buyer: 'Negocios con un buen sitio que no encuentra suficiente gente',
     deliverable: 'Búsqueda bien configurada, campañas con seguimiento y un reporte al mes que de verdad se entiende',
     timeline: 'Mensual, revisado cada mes',
-    from: 'Plan mensual, cotizado tras una auditoría gratuita',
+    from: 'Mensual, cotizado tras una auditoría gratuita',
     image: 'work/velocity.jpg',
     intro: 'Un gran sitio que nadie encuentra es un secreto. Corrijo el SEO técnico, configuro tu Perfil de Empresa de Google, manejo campañas en Google y Meta con un presupuesto claro y te cuento cada mes qué funcionó, en palabras simples.',
     steps: [
@@ -163,7 +163,7 @@ export const offers: Offer[] = [
     buyer: 'Marcas que deberían publicar cada semana y nunca encuentran el tiempo',
     deliverable: 'Un calendario mensual, publicaciones y videos cortos diseñados, respuestas a comentarios y mensajes, y un reporte',
     timeline: 'Mensual',
-    from: '$1,000/mes, sumado a cualquier plan',
+    from: 'Mensual, cotizado tras una llamada corta',
     image: 'work/motion-loop.jpg',
     intro: 'Una cuenta que no publica desde marzo les dice a tus clientes que quizá cerraste. Planifico el mes contigo, diseño las publicaciones y los videos cortos con tu marca, los publico, respondo comentarios y mensajes, y te envío un reporte.',
     steps: [
@@ -182,7 +182,7 @@ export const offers: Offer[] = [
     cases: ['motion-ident-concept', 'brasa-coffee-concept', 'velocity-motors-concept'],
     faq: [
       { q: '¿Qué redes manejas?', a: 'Instagram, Facebook, LinkedIn y TikTok. A la mayoría de los pequeños negocios les va mejor enfocándose en una o dos.' },
-      { q: '¿Cuántas publicaciones al mes?', a: 'Depende del plan; un inicio común es tres publicaciones por semana más historias. Lo ajustamos a lo que puedas sostener.' },
+      { q: '¿Cuántas publicaciones al mes?', a: 'Depende de la marca; un inicio común es tres publicaciones por semana más historias. Lo ajustamos a lo que puedas sostener.' },
       { q: '¿También respondes mensajes?', a: 'Sí. Los comentarios y mensajes directos se responden con tu voz, y las consultas reales te llegan directo a ti.' },
     ],
   },
@@ -227,7 +227,7 @@ export const offers: Offer[] = [
 export const addons = [
   { t: 'Landing pages', d: 'Una página, un objetivo, para una campaña o un lanzamiento.' },
   { t: 'Redacción', d: 'Los textos de tu sitio, escritos para que se entiendan, en español o en inglés.' },
-  { t: 'Community management', d: '$1,000/mes sobre cualquier plan: publicaciones, respuestas y un calendario de contenido semanal.' },
+  { t: 'Community management', d: 'Publicaciones, respuestas y un calendario de contenido semanal, sobre cualquier servicio.' },
 ]
 
 /** Trabajo a distancia. Solo datos ya publicados en el sitio. */
@@ -235,7 +235,7 @@ export const remote = [
   { t: 'Dónde', d: 'Desde Argentina (GMT-3). Clientes hasta ahora en Estados Unidos, Israel, Australia e India.' },
   { t: 'Llamadas', d: 'En tu zona horaria, en español o en inglés.' },
   { t: 'Respuestas', d: 'En menos de un día hábil.' },
-  { t: 'Plan mensual', d: 'Hosting, seguridad y actualizaciones, más tus pedidos: 2, 4 o 6 a la vez.' },
+  { t: 'Después del lanzamiento', d: 'Hosting, seguridad y actualizaciones, más tus pedidos desde tu propio panel, varios a la vez.' },
 ]
 
 export const offerBySlug = (slug: string) => offers.find((o) => o.slug === slug)

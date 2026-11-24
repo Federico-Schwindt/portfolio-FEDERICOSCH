@@ -30,7 +30,6 @@ export const socials = [
 export const nav = [
   { label: 'Work', href: '/work/' },
   { label: 'Services', href: '/#services' },
-  { label: 'Pricing', href: '/#pricing' },
   { label: 'About', href: '/about/' },
 ]
 
@@ -595,20 +594,16 @@ export const audit = {
 
 export const faq = [
   {
-    q: 'How much does a website cost?',
-    a: 'Launch is $600 to build plus $80/month with 2 requests at a time. Grow is $1,200 plus $150/month with branding and 4 requests at a time. Scale is $3,000 plus $250/month with AI, workflows and 6 requests at a time. Community management can be added to any plan for $1,000/month.',
-  },
-  {
     q: 'How do requests work?',
-    a: 'You send a request (a new page, a banner, a campaign, a fix, a post) and it goes into your queue. Your plan sets how many move at the same time: 2, 4 or 6. Most are done in two to three business days, and the next one starts as soon as one is delivered.',
+    a: 'You send a request (a new page, a banner, a campaign, a fix, a post) from your dashboard and it goes into your queue. Several move at the same time. Most are done in two to three business days, and the next one starts as soon as one is delivered.',
   },
   {
     q: 'How long does it take?',
-    a: 'The first build of a Launch site goes live in one to two weeks; Grow and Scale take two to six weeks. After that, requests are delivered in days, every month.',
+    a: 'A simple site usually goes live in one to two weeks; larger sites and brands take two to six weeks. After that, requests are delivered in days.',
   },
   {
-    q: 'What is included in the monthly plan?',
-    a: 'Hosting, SSL, backups, security updates and uptime monitoring, plus your requests: new pages, changes, graphics, campaigns. The plan sets how many are worked on at once, not how many you can send.',
+    q: 'What happens after launch?',
+    a: 'Hosting, SSL, backups, security updates and uptime monitoring, plus your requests: new pages, changes, graphics, campaigns, sent from your own dashboard.',
   },
   {
     q: 'Do you work with clients outside Argentina?',
@@ -623,54 +618,6 @@ export const faq = [
     a: 'Whatever fits the business. WordPress and WooCommerce for most business sites and stores, Shopify when you want the simplest store to run, and custom code (React, Node) when performance or a unique experience matters.',
   },
 ]
-
-// Setup price, then a monthly fee (hosting, maintenance, updates).
-export const packages = [
-  {
-    code: 'FS/PKG.01-L1',
-    short: 'LCH',
-    name: 'Launch',
-    text: "A simple, sharp site live fast, then a team on call every month for whatever the business needs next.",
-    textItalic: '',
-    requests: "2 requests at a time",
-    items: ["Simple site, up to 5 pages","Custom visual direction","Hosting, security and updates","Most requests done in 2 to 3 business days"],
-    price: '$600',
-    monthly: "$80/month",
-    stamp: 'IDEAS ARE NOT RECYCLABLE',
-    stub: 'CREATIVE MATERIAL, DO NOT RECYCLE',
-  },
-  {
-    code: 'FS/PKG.02-G1',
-    short: 'GRW',
-    name: 'Grow',
-    text: "Brand and site designed together: your own identity, a medium-sized custom site and a team that keeps shipping.",
-    textItalic: '',
-    requests: "4 requests at a time",
-    items: ["Complete brand identity","Medium site, up to 12 pages + CMS","Fully custom design","SEO, analytics and integrations","Ahead of Launch in the queue"],
-    price: '$1,200',
-    monthly: "$150/month",
-    stamp: '100% ORIGINAL AND HUMAN-MADE',
-    stub: '100% ORGANIC AND HUMAN PRODUCED',
-  },
-  {
-    code: 'FS/PKG.03-S1',
-    short: 'SCL',
-    name: 'Scale',
-    text: "The complete build: innovative design, a system of your own, AI connected to the business and workflows that run by themselves.",
-    textItalic: '',
-    requests: "6 requests at a time, unlimited queue",
-    items: ["Complete site with innovative design","Your own design system","AI connected: assistants, content, support","Automated workflows and integrations","First in the queue"],
-    price: '$3,000',
-    monthly: "$250/month",
-    stamp: 'STORED IN DIRECT ACCESS OF CLIENTS',
-    stub: 'STORE IN DIRECT ACCESS OF CLIENTS',
-  },
-]
-
-/** the add-on every plan can take */
-export const addonCM = {"t":"Community management","price":"$1,000/month","d":"Add it to any plan: posts, replies and a content calendar, every week."}
-
-export const pricingNote = {"lead":"A whole team, in one person.","text":"Design, code, brand and marketing from one person, with AI agents doing the repetitive work so several requests move at once. You subscribe, you ask, it gets done, every month."}
 
 export const contact = {
   title: 'Ready to grow?',

@@ -1,0 +1,34 @@
+/* Studio → People */
+.su { display: grid; gap: 1rem; }
+.su__h { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.su__h h2 { font: 800 1.4rem/1.1 var(--f-display); letter-spacing: -0.03em; }
+.su__h p { font-size: 0.9rem; margin-top: 0.25rem; max-width: 60ch; }
+.su__add { display: grid; gap: 1rem; }
+.su__pw { display: flex; gap: 0.4rem; align-items: center; }
+.su__pw input { flex: 1; min-width: 0; font-family: var(--f-mono); font-size: 0.85rem; }
+.su__acts { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+.su__bar { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
+.su__n { font-style: normal; margin-left: 0.35rem; font-size: 0.72rem; opacity: 0.6; }
+.su__empty { padding: 1.5rem 0; }
+.su__list { display: grid; border-radius: 16px; background: var(--card); border: 1px solid var(--hair); box-shadow: var(--shadow); overflow: hidden; }
+.su__p { display: grid; grid-template-columns: auto minmax(0, 1.4fr) minmax(0, 1.2fr) auto minmax(0, 0.7fr) minmax(0, 0.7fr) auto; align-items: center; gap: 0.9rem; padding: 0.8rem 1rem; border-top: 1px solid var(--hair); }
+.su__p:first-child { border-top: 0; }
+.su__p.is-off { opacity: 0.6; }
+.su__av { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--ink); color: var(--paper); font-weight: 750; font-size: 0.85rem; }
+.su__who, .su__login, .su__plan, .su__last { display: grid; min-width: 0; font-size: 0.86rem; }
+.su__who b, .su__login b { font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.su__who em { font-style: normal; font-weight: 500; color: var(--muted); }
+.su__login b { font-family: var(--f-mono); font-size: 0.8rem; font-weight: 500; }
+.su__who small, .su__login small, .su__plan small, .su__last small { font-size: 0.75rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.su__acts { justify-self: end; }
+.su__del { color: var(--main); }
+.su__reset { grid-column: 2 / -1; display: flex; align-items: flex-end; gap: 0.5rem; flex-wrap: wrap; padding-top: 0.4rem; }
+.su__reset .pf__f { flex: 1; min-width: 220px; }
+.su__reset input { font-family: var(--f-mono); font-size: 0.85rem; }
+.su__err { grid-column: 2 / -1; }
+@media (max-width: 1100px) {
+  .su__p { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .su__login, .su__plan, .su__last { grid-column: 2 / -1; }
+  .su__role { grid-row: 1; grid-column: 3; }
+  .su__acts { grid-column: 1 / -1; justify-self: start; }
+}

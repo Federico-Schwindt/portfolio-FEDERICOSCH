@@ -47,10 +47,8 @@ for (const theme of ['light', 'dark']) for (const [w, h] of [[1440, 900], [390, 
   const ctx = await b.newContext({ viewport: { width: w, height: h }, hasTouch: w < 900, isMobile: w < 900 })
   await ctx.addInitScript((t) => localStorage.setItem('theme', t), theme)
   const p = await ctx.newPage()
-  await p.goto(origin + '/checkout/?plan=grow&demo', { waitUntil: 'load' }); await p.waitForSelector('.af')
-  await p.fill('.af input[type=email]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'x'); await p.click('.af button[type=submit]'); await p.waitForSelector('.co2__me')
-  await p.click('.co2__pay'); await p.waitForSelector('.co2__pay-m'); await p.click('.co2__pay-m .ap-btn--red'); await p.waitForSelector('.co2__ok')
-  await p.goto(origin + '/app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.eng')
+  await p.goto(origin + '/app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.af')
+  await p.fill('.af input[autocomplete=username]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'x'); await p.click('.af button[type=submit]'); await p.waitForSelector('.eng')
   const report = async (where) => { const bad = await p.evaluate(scan); if (bad.length) { fails += bad.length; console.log(`FAIL ${theme} ${w}px ${where}`); console.table(bad) } }
   for (const v of VIEWS) { await p.evaluate((x) => (location.hash = '/' + x), v); await p.waitForTimeout(900); await report(v) }
   if (w < 900) { await p.locator('.ap-dock button').last().tap(); await p.waitForSelector('.ap-sheet[open]'); await p.waitForTimeout(500); await report('more sheet'); await p.keyboard.press('Escape') }

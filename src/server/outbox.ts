@@ -74,7 +74,8 @@ async function deliverOne(c: MailConfig) {
   if (!r) return false
   const msg = r.envelope ?? envelope(r as Notice, c, c.appUrl)
   let status = 'failed'
-  if (!r.enabled || msg.to !== r.email) status = 'skipped'
+  // accounts made with a username only have no email: their notices stay in the app
+  if (!r.enabled || !r.email || msg.to !== r.email) status = 'skipped'
   else if (!r.expired) {
     await db`update studio.outbox set envelope=${JSON.stringify(msg)}::jsonb where id=${r.id} and attempts=${r.attempts}`
     try {

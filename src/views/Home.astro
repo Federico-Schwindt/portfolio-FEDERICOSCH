@@ -15,20 +15,20 @@ import '../styles/home-app.css'
 
 interface Props { lang: Lang }
 const { lang } = Astro.props
-const { projects, faq, packages, pricingNote, offers, addons, remote, addonCM } = data(lang)
+const { projects, faq, offers, addons } = data(lang)
 const L = (p: string) => url(lp(lang, p))
 const bySlug = (s: string) => projects.find((p) => p.slug === s)!
 
 const C = {
   en: {
     title: 'Freelance Web Designer & Developer | Federico Schwindt',
-    desc: 'A whole creative team in one person: design, code, branding and marketing on a monthly plan. Send requests, AI keeps several moving at once. From $600.',
+    desc: 'A whole creative team in one person: design, code, branding and marketing. Send requests from your own dashboard, AI keeps several moving at once.',
     slogan: 'From sketch to sold.',
     eyebrow: 'Schwindt Federico · A whole team, one person',
     tag: ['From sketch', 'to sold.'],
-    sub: 'Designer, developer, brand strategist and marketer in one person, on a monthly plan. You send requests; AI-powered workflows keep several moving at once.',
-    cta: 'Start a project', prices: 'See the prices',
-    proof: [['+551%', 'sales for Universal Driveshafts after the redesign'], ['$600', 'to build, then from $80 a month'], ['2–6', 'requests moving at the same time'], ['1', 'person with a full team behind the work: you, me and AI']],
+    sub: 'Designer, developer, brand strategist and marketer in one person. You send requests; AI-powered workflows keep several moving at once.',
+    cta: 'Start a project', seeWork: 'See the work',
+    proof: [['+551%', 'sales for Universal Driveshafts after the redesign'], ['5.0', 'average client rating on Freelancer.com'], ['13', 'projects delivered on Freelancer.com, on time and on budget'], ['1', 'person with a full team behind the work: you, me and AI']],
     written: ['Work that moved', 'numbers.'],
     case: 'Case', clientP: 'Client project', concept: 'Independent concept', udsAlt: 'Universal Driveshafts store: parts search and vehicle finder',
     udsDoes: 'Find a driveshaft by vehicle, build one to spec, order wholesale.', udsStat: 'sales, 2024 to 2026',
@@ -39,34 +39,30 @@ const C = {
     who: 'Live file, 3 here', sr: 'Most sites get looked at. Mine get bought from.', boardLabel: '# Studio / Manifesto', foot: 'Point at the little guy. Click him.',
     insp: 'Inspector', text: 'Text', font: 'Font', weight: 'Weight', width: 'Width', size: 'Size', tracking: 'Tracking', fill: 'Fill', fx: 'Effects', paint: 'Paint cursor', on: 'On', notesK: 'Notes', tpl: 'Template / Image', none: 'None',
     notes: 'You get the output of a team without managing one: one person who designs, codes, writes and markets, with AI agents handling the repetitive work. You send requests, they come back done, every month.',
-    pricesH: ['Plans, not', 'projects.'], pricesLead: 'A one-time build, then a monthly plan: your site online and safe, plus a team working through your requests, 2, 4 or 6 at a time.',
-    rec: 'Recommended', build: 'to build it', then: 'then', choose: 'Choose', chooseA: (n: string) => `Choose the ${n} plan`, every: 'In every plan:',
-    chips: ['Responsive', 'Fast on phones', 'Tested in every browser', 'SEO-ready', 'Accessible', 'Code and accounts you own'],
-    unsure: 'Not sure which? Get a free audit', remoteH: ['Working', 'at a distance.'], compare: 'Compare the plans',
-    runs: ['How the plan', 'works.'], example: 'Build once, then requests every month', stages: 'Project stages', preview: 'Preview', studio: 'Studio', you: 'You', sales: 'Sales, 2024 to 2026', play: 'Play or pause the timeline', wk: 'W',
+    runs: ['How we', 'work.'], example: 'Build once, then send requests', stages: 'Project stages', preview: 'Preview', studio: 'Studio', you: 'You', sales: 'Sales, 2024 to 2026', play: 'Play or pause the timeline', wk: 'W',
     steps: [
-      { t: 'Subscribe', w: 'Day 1', d: 'Pick a plan and tell me about the business. You leave the call with a written plan and a start date.', list: ['A written brief', 'A fixed price', 'Your request board'] },
-      { t: 'Build', w: 'Weeks 1 to 6', d: 'Your site, and your brand on Grow and Scale, designed and built with a link you can open every day.', list: ['Prototype you can click', 'Your content in place', 'Live on your domain'] },
-      { t: 'Request', w: 'Every week', d: 'Ask for anything: a page, a banner, a campaign, a fix. AI-assisted workflows keep 2, 4 or 6 moving at once.', list: ['Pages and features', 'Graphics and content', 'Campaigns and fixes'] },
+      { t: 'Talk', w: 'Day 1', d: 'Tell me about the business on a short call. You leave with a written brief, a clear quote and a start date.', list: ['A written brief', 'A clear quote', 'Your own dashboard'] },
+      { t: 'Build', w: 'Weeks 1 to 6', d: 'Your site, and your brand if you need one, designed and built with a link you can open every day.', list: ['Prototype you can click', 'Your content in place', 'Live on your domain'] },
+      { t: 'Requests', w: 'Every week', d: 'Ask for anything from your dashboard: a page, a banner, a campaign, a fix. AI-assisted workflows keep several moving at once.', list: ['Pages and features', 'Graphics and content', 'Campaigns and fixes'] },
       { t: 'Grow', w: 'Every month', d: 'Requests come back in days, and a monthly report shows what moved. You never wait for a new project to start.', list: ['Delivered in days', 'A monthly report', 'Hosting and security included'] },
     ],
     tracks: [['Strategy', ['Call and brief']], ['Design', ['Brand', 'Page designs']], ['Build', ['Front end', 'AI and flows', 'QA']], ['Content', ['Copy', 'Images and film']], ['Requests', ['Launch', 'Requests']]] as [string, string[]][],
     hi: ['A whole team,', 'one person.'], hiLead: 'I am Federico: designer, developer, brand strategist and marketer. You talk to the person who does the work.',
     hiBody: 'AI agents I connect take the repetitive work, so several requests move at once. From Argentina, for clients in the US, Israel, Australia and India.', more: 'More about me', picAlt: 'Federico Schwindt at his desk',
-    ready: ['Ready when', 'you are.'], readyLead: 'Tell me what you sell and what is not working. You get an honest plan, the right tier, and your first request on the board.', audit: 'Already have a site? Get a free audit', moreQ: 'More questions',
+    ready: ['Ready when', 'you are.'], readyLead: 'Tell me what you sell and what is not working. You get an honest answer, a clear quote and your first request on the board.', audit: 'Already have a site? Get a free audit', moreQ: 'Ask me anything',
     live: { tag: 'How a request moves', states: ['Sent', 'In progress', 'Ready for your review', 'Delivered'], items: ['Landing page for the summer promo', 'Instagram carousel, 5 slides', 'Fix the menu on phones', 'Monthly newsletter'] },
     agents: { h: 'AI agents, working now', rows: ['Drafting three headline options', 'Resizing images for phone and desktop', 'Checking links and spelling'] },
-    svcName: 'Services', sn: ['Intro', 'Work', 'Services', 'Studio', 'Pricing', 'Process', 'About', 'Contact'], svcDesc: 'A whole creative team in one person: web design, development, branding, marketing, community management and 3D, on monthly plans that work through requests, with AI-assisted workflows.',
+    svcName: 'Services', sn: ['Intro', 'Work', 'Services', 'Studio', 'Process', 'About', 'Contact'], svcDesc: 'A whole creative team in one person: web design, development, branding, marketing, community management and 3D, working through requests with AI-assisted workflows.',
   },
   es: {
     title: 'Diseñador y desarrollador web freelance | Federico Schwindt',
-    desc: 'Un equipo creativo entero en una persona: diseño, código, branding y marketing en un plan mensual. Envías pedidos y la IA mueve varios a la vez. Desde $600.',
+    desc: 'Un equipo creativo entero en una persona: diseño, código, branding y marketing. Envías pedidos desde tu propio panel y la IA mueve varios a la vez.',
     slogan: 'Del boceto a la venta.',
     eyebrow: 'Schwindt Federico · Un equipo entero, una persona',
     tag: ['Del boceto', 'a la venta.'],
-    sub: 'Diseñador, desarrollador, estratega de marca y marketer en una sola persona, con un plan mensual. Tú envías pedidos; flujos de trabajo con IA mueven varios a la vez.',
-    cta: 'Empezar un proyecto', prices: 'Ver los precios',
-    proof: [['+551%', 'en ventas para Universal Driveshafts después del rediseño'], ['$600', 'de desarrollo, después desde $80 al mes'], ['2–6', 'pedidos avanzando al mismo tiempo'], ['1', 'persona con un equipo entero detrás del trabajo: tú, yo y la IA']],
+    sub: 'Diseñador, desarrollador, estratega de marca y marketer en una sola persona. Tú envías pedidos; flujos de trabajo con IA mueven varios a la vez.',
+    cta: 'Empezar un proyecto', seeWork: 'Ver los trabajos',
+    proof: [['+551%', 'en ventas para Universal Driveshafts después del rediseño'], ['5.0', 'valoración promedio en Freelancer.com'], ['13', 'proyectos entregados en Freelancer.com, en tiempo y forma'], ['1', 'persona con un equipo entero detrás del trabajo: tú, yo y la IA']],
     written: ['Trabajos que movieron', 'los números.'],
     case: 'Caso', clientP: 'Proyecto de cliente', concept: 'Concepto independiente', udsAlt: 'Tienda de Universal Driveshafts: búsqueda de piezas por vehículo',
     udsDoes: 'Busca un cardán por vehículo, arma uno a medida, compra al por mayor.', udsStat: 'en ventas, de 2024 a 2026',
@@ -77,24 +73,20 @@ const C = {
     who: 'Archivo en vivo, 3 aquí', sr: 'Muchas webs se miran. Las mías convierten.', boardLabel: '# Studio / Manifiesto', foot: 'Señala al muñequito. Hazle clic.',
     insp: 'Inspector', text: 'Texto', font: 'Fuente', weight: 'Peso', width: 'Ancho', size: 'Tamaño', tracking: 'Tracking', fill: 'Relleno', fx: 'Efectos', paint: 'Cursor de pintura', on: 'Sí', notesK: 'Notas', tpl: 'Plantilla / Imagen', none: 'Ninguna',
     notes: 'Recibes el trabajo de un equipo sin tener que gestionarlo: una persona que diseña, programa, escribe y hace marketing, con agentes de IA para lo repetitivo. Envías pedidos y vuelven hechos, todos los meses.',
-    pricesH: ['Planes, no', 'proyectos.'], pricesLead: 'Un desarrollo inicial y después un plan mensual: tu sitio online y seguro, más un equipo trabajando tus pedidos, 2, 4 o 6 a la vez.',
-    rec: 'Recomendado', build: 'para construirlo', then: 'después', choose: 'Elegir', chooseA: (n: string) => `Elegir el plan ${n}`, every: 'En todos los planes:',
-    chips: ['Responsive', 'Rápido en el celular', 'Probado en todos los navegadores', 'Listo para SEO', 'Accesible', 'Código y cuentas a tu nombre'],
-    unsure: '¿No sabes cuál? Pide una auditoría gratis', remoteH: ['Trabajar', 'a distancia.'], compare: 'Comparar los planes',
-    runs: ['Así funciona', 'el plan.'], example: 'Se construye una vez, después pedidos todos los meses', stages: 'Etapas del proyecto', preview: 'Vista previa', studio: 'Estudio', you: 'Tú', sales: 'Ventas, de 2024 a 2026', play: 'Reproducir o pausar la línea de tiempo', wk: 'S',
+    runs: ['Cómo', 'trabajamos.'], example: 'Se construye una vez, después mandas pedidos', stages: 'Etapas del proyecto', preview: 'Vista previa', studio: 'Estudio', you: 'Tú', sales: 'Ventas, de 2024 a 2026', play: 'Reproducir o pausar la línea de tiempo', wk: 'S',
     steps: [
-      { t: 'Suscribirte', w: 'Día 1', d: 'Eliges un plan y me cuentas del negocio. Sales de la llamada con un plan por escrito y una fecha de inicio.', list: ['Un brief por escrito', 'Un precio cerrado', 'Tu tablero de pedidos'] },
-      { t: 'Construir', w: 'Semanas 1 a 6', d: 'Tu sitio, y tu marca en Grow y Scale, diseñados y construidos con un link que puedes abrir todos los días.', list: ['Prototipo clickeable', 'Tu contenido cargado', 'Online en tu dominio'] },
-      { t: 'Pedir', w: 'Cada semana', d: 'Pide lo que sea: una página, un banner, una campaña, un arreglo. Flujos con IA mueven 2, 4 o 6 a la vez.', list: ['Páginas y funciones', 'Gráficas y contenido', 'Campañas y arreglos'] },
+      { t: 'Hablar', w: 'Día 1', d: 'Me cuentas del negocio en una llamada corta. Sales con un brief por escrito, un presupuesto claro y una fecha de inicio.', list: ['Un brief por escrito', 'Un presupuesto claro', 'Tu propio panel'] },
+      { t: 'Construir', w: 'Semanas 1 a 6', d: 'Tu sitio, y tu marca si la necesitas, diseñados y construidos con un link que puedes abrir todos los días.', list: ['Prototipo clickeable', 'Tu contenido cargado', 'Online en tu dominio'] },
+      { t: 'Pedidos', w: 'Cada semana', d: 'Pide lo que sea desde tu panel: una página, un banner, una campaña, un arreglo. Flujos con IA mueven varios a la vez.', list: ['Páginas y funciones', 'Gráficas y contenido', 'Campañas y arreglos'] },
       { t: 'Crecer', w: 'Cada mes', d: 'Los pedidos vuelven en días y un reporte mensual muestra qué se movió. Nunca esperas a que empiece un proyecto nuevo.', list: ['Entregas en días', 'Un reporte mensual', 'Hosting y seguridad incluidos'] },
     ],
     tracks: [['Estrategia', ['Llamada y brief']], ['Diseño', ['Marca', 'Diseño de páginas']], ['Desarrollo', ['Front end', 'IA y flujos', 'QA']], ['Contenido', ['Textos', 'Imágenes y video']], ['Pedidos', ['Lanzamiento', 'Pedidos']]] as [string, string[]][],
     hi: ['Un equipo entero,', 'una persona.'], hiLead: 'Soy Federico: diseñador, desarrollador, estratega de marca y marketer. Hablas con quien hace el trabajo.',
     hiBody: 'Los agentes de IA que conecto se ocupan de lo repetitivo, así varios pedidos avanzan a la vez. Desde Argentina, para clientes de Estados Unidos, Israel, Australia e India.', more: 'Más sobre mí', picAlt: 'Federico Schwindt en su escritorio',
-    ready: ['Cuando', 'tú quieras.'], readyLead: 'Cuéntame qué vendes y qué no está funcionando. Recibes un plan honesto, el nivel justo y tu primer pedido en el tablero.', audit: '¿Ya tienes sitio? Pide una auditoría gratis', moreQ: 'Más preguntas',
+    ready: ['Cuando', 'tú quieras.'], readyLead: 'Cuéntame qué vendes y qué no está funcionando. Recibes una respuesta honesta, un presupuesto claro y tu primer pedido en el tablero.', audit: '¿Ya tienes sitio? Pide una auditoría gratis', moreQ: 'Pregúntame lo que quieras',
     live: { tag: 'Así se mueve un pedido', states: ['Enviado', 'En curso', 'Listo para que lo revises', 'Entregado'], items: ['Landing para la promo de verano', 'Carrusel de Instagram, 5 slides', 'Arreglar el menú en celulares', 'Newsletter mensual'] },
     agents: { h: 'Agentes de IA, trabajando ahora', rows: ['Redactando tres opciones de título', 'Adaptando imágenes a celular y escritorio', 'Revisando links y ortografía'] },
-    svcName: 'Servicios', sn: ['Inicio', 'Trabajos', 'Servicios', 'Studio', 'Precios', 'Proceso', 'Sobre mí', 'Contacto'], svcDesc: 'Un equipo creativo entero en una persona: diseño web, desarrollo, branding, marketing, community management y 3D, en planes mensuales por pedidos, con flujos de trabajo con IA.',
+    svcName: 'Servicios', sn: ['Inicio', 'Trabajos', 'Servicios', 'Studio', 'Proceso', 'Sobre mí', 'Contacto'], svcDesc: 'Un equipo creativo entero en una persona: diseño web, desarrollo, branding, marketing, community management y 3D, trabajando por pedidos con flujos de trabajo con IA.',
   },
 }[lang]
 const B = blocks[lang]
@@ -114,12 +106,12 @@ const spans = [[[0, 1]], [[1, 1.8], [1.85, 3]], [[3, 4.4], [4.45, 5.4], [5.45, 6
 const tracks = C.tracks.map(([n, labels], i) => ({ n, clips: labels.map((l, k) => ({ a: spans[i][k][0], b: spans[i][k][1], l })) }))
 const bars = Array.from({ length: 44 }, (_, i) => 18 + Math.round(Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6)) * 78))
 const code = ['<section class="hero">', '  <h1>Shop the new range.</h1>', '  <Finder make year model />', '  <Button>Find my part</Button>', '</section>', ' ', 'export const perf = 99', 'export const cls = 0']
-const buying = [faq[1], faq[2], faq[4]]
+const buying = [faq[0], faq[1], faq[3]]
 const typed = "const team = {\n  design: 'Federico',\n  code: 'Federico',\n  brand: 'Federico',\n  marketing: 'Federico',\n  agents: 'always on'\n}"
 const home = `${SITE_URL}${lp(lang, '/')}`
 const orgLd = {
   '@context': 'https://schema.org', '@type': 'ProfessionalService', '@id': `${SITE_URL}/#service`, name: 'Federico Schwindt',
-  slogan: C.slogan, url: home, image: `${SITE_URL}/og.jpg`, priceRange: '$600+', founder: { '@id': `${SITE_URL}/#person` },
+  slogan: C.slogan, url: home, image: `${SITE_URL}/og.jpg`, founder: { '@id': `${SITE_URL}/#person` },
   description: C.svcDesc,
   address: { '@type': 'PostalAddress', addressLocality: 'Gualeguaychú', addressRegion: 'Entre Ríos', addressCountry: 'AR' },
   areaServed: ['United States', 'Israel', 'Australia', 'India', 'Argentina'], availableLanguage: ['English', 'Spanish'],
@@ -138,8 +130,8 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage
       <p class="mono hx__eyebrow" data-fx="type">{C.eyebrow}</p>
       <h1 class="hx__h1"><span class="d hx__tag">{C.tag[0]} <i>{C.tag[1]}</i></span><span class="hx__sub">{C.sub}</span></h1>
       <div class="hx__act">
-        <a class="btn hx__cta" data-hx-cta data-plans href={L('/pricing/')}>{C.cta} <Icon name="arrowUpRight" /></a>
-        <a class="link hx__alt" href="#pricing" data-hx-from>{C.prices} <Icon name="arrowRight" /></a>
+        <a class="btn hx__cta" data-hx-cta href={L('/contact/')}>{C.cta} <Icon name="arrowUpRight" /></a>
+        <a class="link hx__alt" href="#work" data-hx-from>{C.seeWork} <Icon name="arrowRight" /></a>
       </div>
       <div class="hx__req" data-live={JSON.stringify(C.live)} aria-hidden="true">
         <span class="mono hx__req-tag"><span class="hx__req-dot"></span>{C.live.tag}</span>
@@ -276,55 +268,13 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage
     </div>
   </section>
 
-  <!-- 5. PRICES AND WORKING AT A DISTANCE -->
-  <section class="section t-paper pc" id="pricing" data-paint="none" data-slide-name={C.sn[4]}>
-    <div class="wrap">
-      <div class="pc__head">
-        <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.pricesH[0]} <i>{C.pricesH[1]}</i></span></span></h2>
-        <span class="pc__g" data-gstop data-node="Price" data-r="42,30,-14" data-spin="1,0,0" aria-hidden="true"></span>
-      </div>
-      <p class="body pc__lead" data-reveal data-bd>{C.pricesLead}</p>
-      <div class="pk__grid" data-fx="gap">
-        {packages.map((p, i) => (
-          <article class={`pk${i === 1 ? ' pk--hot' : ''}`} data-bd data-reveal style={`--i:${i}`}>
-            <p class="pk__top mono"><span>{p.code}</span>{i === 1 && <span class="pk__tag">{C.rec}</span>}</p>
-            <h3 class="d pk__name">{p.name}</h3>
-            <p class="pk__for">{p.text}</p>
-            <p class="pk__price"><b class="d n">{p.price}</b><span>{C.build}</span></p>
-            <p class="pk__month"><span class="mono">{C.then}</span> {p.monthly}</p>
-            <p class="pk__req mono"><i aria-hidden="true"></i>{p.requests}</p>
-            <ul class="pk__list">{p.items.map((it) => <li><Icon name="check" />{it}</li>)}</ul>
-            <div class="pk__stub">
-              <a class="btn" href={L(`/checkout/?plan=${p.name.toLowerCase()}`)} aria-label={C.chooseA(p.name)}>{C.choose} {p.name} <Icon name="arrowUpRight" /></a>
-            </div>
-          </article>
-        ))}
-      </div>
-      <div class="pk__all" data-reveal data-bd>
-        <p class="pk__allh"><b>{pricingNote.lead}</b> {C.every}</p>
-        <ul class="pk__chips">
-          {C.chips.map((c) => <li>{c}</li>)}
-        </ul>
-        <p class="pk__cm"><b>+ {addonCM.t}</b> {addonCM.price}. {addonCM.d}</p>
-        <a class="link" href={L('/audit/')}>{C.unsure} <Icon name="arrowRight" /></a>
-      </div>
-      <div class="rm" data-reveal data-bd>
-        <h3 class="d h-s">{C.remoteH[0]} <i>{C.remoteH[1]}</i></h3>
-        <dl class="rm__grid">
-          {remote.map((r) => <div><dt class="mono">{r.t}</dt><dd>{r.d}</dd></div>)}
-        </dl>
-        <a class="link" href={L('/pricing/')}>{C.compare} <Icon name="arrowUpRight" /></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 6. PROCESS: an edit you can play, scrub and step through. It never holds the scroll -->
-  <!-- THE PRODUCT: the dashboard every plan comes with, shown for real -->
+  <!-- 5. THE PRODUCT: the dashboard every client gets, shown for real -->
   <section class="section t-ink app" id="dashboard" data-paint="none" data-app data-slide-name={B.appName}>
     <AppShow lang={lang} />
   </section>
 
-  <section class="section t-main ed" data-paint="red" data-ed data-step="0" id="process" data-wk={C.wk} data-slide-name={C.sn[5]}>
+  <!-- 6. PROCESS: an edit you can play, scrub and step through. It never holds the scroll -->
+  <section class="section t-main ed" data-paint="red" data-ed data-step="0" id="process" data-wk={C.wk} data-slide-name={C.sn[4]}>
     <div class="wrap">
       <div class="ed__head">
         <h2 class="d h-m" data-bd>{C.runs[0]} <i>{C.runs[1]}</i></h2>
@@ -367,7 +317,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage
               <span class="mono">{C.sales}</span>
             </div>
           </div>
-          <span class="ed__g" data-gstop data-node="Plan" data-r="60,-12,18" data-spin="0,1,0"></span>
+          <span class="ed__g" data-gstop data-node="Process" data-r="60,-12,18" data-spin="0,1,0"></span>
         </div>
       </div>
       <div class="ed__tl" data-bd>
@@ -385,13 +335,13 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage
     </div>
   </section>
 
-  <!-- 7. FEDERICO: the portrait is placed like a frame, and the scroll types the code -->
-  <!-- WHY A PLAN: the honest comparison a buyer is already making -->
+  <!-- WHY WORK WITH ME: the honest comparison a buyer is already making -->
   <section class="section t-paper cmp" id="compare" data-paint="none" data-slide-name={B.cmpName}>
     <Compare lang={lang} />
   </section>
 
-  <section class="kbs t-ink" data-paint="none" data-kb id="about" data-slide-name={C.sn[6]} data-steps="1">
+  <!-- 7. FEDERICO: the portrait is placed like a frame, and the scroll types the code -->
+  <section class="kbs t-ink" data-paint="none" data-kb id="about" data-slide-name={C.sn[5]} data-steps="1">
     <div class="wrap kbs__grid" data-pin>
       <div class="kbs__text">
         <h2 class="d h-l" data-bd>{C.hi[0]} <i>{C.hi[1]}</i></h2>
@@ -419,13 +369,13 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage
   </section>
 
   <!-- 8. QUESTIONS AND CONTACT -->
-  <section class="section t-main end" id="contact" data-paint="red" data-slide-name={C.sn[7]}>
+  <section class="section t-main end" id="contact" data-paint="red" data-slide-name={C.sn[6]}>
     <div class="wrap end__grid">
       <div class="end__cta">
         <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.ready[0]}</span></span><span class="line" style="--i:1"><span><i>{C.ready[1]}</i></span></span></h2>
         <p class="lead" data-reveal data-bd>{C.readyLead}</p>
         <div class="end__btns" data-reveal data-bd style="--i:1">
-          <a class="btn" data-plans href={L('/pricing/')}>{C.cta} <Icon name="arrowUpRight" /></a>
+          <a class="btn" href={L('/contact/')}>{C.cta} <Icon name="arrowUpRight" /></a>
           <a class="link" href={L('/audit/')}>{C.audit} <Icon name="arrowRight" /></a>
         </div>
       </div>
@@ -436,7 +386,7 @@ const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage
             <p class="body">{f.a}</p>
           </details>
         ))}
-        <a class="link end__more" href={L('/pricing/#faq')}>{C.moreQ} <Icon name="arrowUpRight" /></a>
+        <a class="link end__more" href={L('/contact/')}>{C.moreQ} <Icon name="arrowUpRight" /></a>
         <Next lang={lang} />
       </div>
     </div>

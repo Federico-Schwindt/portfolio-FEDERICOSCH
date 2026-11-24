@@ -46,15 +46,6 @@ const id = (n: string) => `${variant}-${n}`
         </select>
       </div>
       <div class="field">
-        <label for={id('package')}>{F.plan}</label>
-        <select class="input" id={id('package')} name="package">
-          <option value="unsure">{F.planUnsure}</option>
-          <option value="launch">Launch</option>
-          <option value="grow">Grow</option>
-          <option value="scale">Scale</option>
-        </select>
-      </div>
-      <div class="field">
         <label for={id('budget')}>{F.budget}</label>
         <input class="input" id={id('budget')} name="budget" placeholder={F.optional} />
       </div>

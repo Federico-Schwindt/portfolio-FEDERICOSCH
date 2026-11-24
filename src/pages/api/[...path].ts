@@ -10,7 +10,7 @@ import { revisionTag, stateResponse } from '../../server/state-response'
 import { maxQueryLength } from '../../app/workspace-search'
 import { KINDS as CHANGE_KINDS, applyChange, applyDue, cancelChange, changeCheckout, openChange, quote as planQuote, toChange, type ChangeKind } from '../../server/plans'
 import { createHash, randomUUID } from 'node:crypto'
-import { sql, json, bad, body, sameOrigin } from '../../server/db'
+import { sql, json, bad, body, sameOrigin, env } from '../../server/db'
 import { hashPassword, checkPassword, startSession, endSession, currentUser, sessionRevision, isAdminEmail, tooMany, type SessionUser } from '../../server/auth'
 import { payConfig, masked, savePayConfig, createCheckout, verifyWebhook, type PayConfig, type PlanId, type Step } from '../../server/payments'
 
@@ -124,6 +124,8 @@ export const ALL: APIRoute = async ({ request, params, url }) => {
       if (!emailOk(b.email)) return bad('Enter a valid email.')
       if (typeof b.password !== 'string' || b.password.length < 8) return bad('Use at least 8 characters for the password.')
       const email = b.email.trim().toLowerCase()
+      // ALLOW_SIGNUP=1 only for local test runs, never on the live server
+      if (!b.invite && !isAdminEmail(email) && env('ALLOW_SIGNUP') !== '1') return bad('Accounts are created by the studio. Ask Federico for your access.', 403)
       const exists = await db`select 1 from studio.users where email = ${email}`
       if (exists.length) return bad('There is already an account with this email. Sign in instead.', 409)
       const inv = b.invite ? await openInvite(b.invite, email) : null
@@ -134,12 +136,14 @@ export const ALL: APIRoute = async ({ request, params, url }) => {
     }
     if (path === 'auth/login' && m === 'POST') {
       const b = await body<{ email: string; password: string; invite?: string }>(request)
-      if (!emailOk(b.email) || typeof b.password !== 'string') return bad('Wrong email or password.', 401)
-      if (tooMany(b.email)) return bad('Too many attempts. Try again in a few minutes.', 429)
-      const rows = await db`select id, password_hash from studio.users where email = ${b.email.trim().toLowerCase()}`
-      if (!rows.length || !(await checkPassword(b.password, rows[0].password_hash))) return bad('Wrong email or password.', 401)
+      const login = typeof b.email === 'string' ? b.email.trim().toLowerCase() : ''
+      if (login.length < 3 || typeof b.password !== 'string') return bad('Wrong username or password.', 401)
+      if (tooMany(login)) return bad('Too many attempts. Try again in a few minutes.', 429)
+      const rows = await db`select id, password_hash, disabled_at from studio.users where lower(email) = ${login} or lower(username) = ${login} limit 1`
+      if (!rows.length || !(await checkPassword(b.password, rows[0].password_hash))) return bad('Wrong username or password.', 401)
+      if (rows[0].disabled_at) return bad('This account is switched off. Ask Federico to turn it back on.', 403)
       if (b.invite) {
-        const inv = await openInvite(b.invite, b.email.trim().toLowerCase())
+        const inv = await openInvite(b.invite, login)
         if (!inv) return bad('This invitation is not valid anymore, or it was sent to another email.', 410)
         if (inv.account_id !== rows[0].id) { await db`update studio.users set account_id = ${inv.account_id} where id = ${rows[0].id} and role = 'client'`; await db`update studio.invites set accepted_at = now(), accepted_by = ${rows[0].id} where id = ${inv.id}` }
       }
@@ -477,6 +481,57 @@ export const ALL: APIRoute = async ({ request, params, url }) => {
     // ── the studio (admin) ──
     if (path.startsWith('admin/')) {
       if (!admin) return bad('forbidden', 403)
+      if (path === 'admin/users' && m === 'GET') {
+        const rows = await db`select u.id, u.username, u.email, u.full_name, u.company, u.role, u.lang, u.created_at, u.last_seen_at, u.disabled_at, u.account_id, o.full_name as owner_name, o.company as owner_company,
+            s.plan_id, s.status, (select count(*) from studio.requests r where r.user_id = u.id and r.status in ('queued','active','review'))::int as open
+          from studio.users u left join studio.users o on o.id = u.account_id left join studio.subscriptions s on s.user_id = u.id order by u.created_at desc`
+        return json(rows.map((r: any) => ({ id: r.id, username: r.username, email: r.email, name: r.full_name, company: r.company, role: r.role, lang: r.lang, since: r.created_at, lastSeen: r.last_seen_at, disabled: !!r.disabled_at, accountId: r.account_id, accountName: r.account_id ? (r.owner_company || r.owner_name) : null, plan: r.plan_id, status: r.status, open: r.open, me: r.id === me.id })))
+      }
+      if (path === 'admin/users' && m === 'POST') {
+        const b = await body<{ name: string; username: string; email?: string; password: string; role?: string; company?: string; lang?: string; plan?: string }>(request)
+        const username = typeof b.username === 'string' ? b.username.trim().toLowerCase() : ''
+        if (!/^[a-z0-9._-]{3,32}$/.test(username)) return bad('Use 3 to 32 letters, numbers, dots, dashes or underscores for the username.')
+        const email = typeof b.email === 'string' && b.email.trim() ? b.email.trim().toLowerCase() : null
+        if (email && !emailOk(email)) return bad('Enter a valid email, or leave it empty.')
+        if (typeof b.password !== 'string' || b.password.length < 8) return bad('Use at least 8 characters for the password.')
+        const name = str(b.name, 120).trim()
+        if (name.length < 2) return bad('Write the person\'s name.')
+        const taken = await db`select 1 from studio.users where lower(username) = ${username} or (${email}::text is not null and lower(email) = ${email})`
+        if (taken.length) return bad('That username or email is already in use.', 409)
+        const role = b.role === 'admin' ? 'admin' : 'client'
+        const [u] = await db`insert into studio.users (username, email, password_hash, full_name, company, role, lang, created_by)
+          values (${username}, ${email}, ${await hashPassword(b.password)}, ${name}, ${str(b.company, 120)}, ${role}, ${b.lang === 'es' ? 'es' : 'en'}, ${me.id}) returning id`
+        // optionally start the client on a plan right away (the studio bills by hand)
+        if (role === 'client' && typeof b.plan === 'string' && PLANS.includes(b.plan as PlanId))
+          await db`insert into studio.subscriptions (user_id, plan_id, status, provider, current_period_end) values (${u.id}, ${b.plan}, 'active', 'manual', now() + interval '1 month')`
+        return json({ id: u.id })
+      }
+      const um = path.match(/^admin\/users\/([0-9a-f-]{36})$/)
+      if (um && m === 'PATCH') {
+        const b = await body<{ name?: string; company?: string; role?: string; password?: string; disabled?: boolean; username?: string; email?: string | null }>(request)
+        const self = um[1] === me.id
+        if (self && (b.disabled === true || b.role === 'client')) return bad('You cannot switch off or demote your own account.', 409)
+        if (b.password !== undefined && (typeof b.password !== 'string' || b.password.length < 8)) return bad('Use at least 8 characters for the password.')
+        const username = typeof b.username === 'string' ? b.username.trim().toLowerCase() : null
+        if (username !== null && !/^[a-z0-9._-]{3,32}$/.test(username)) return bad('Use 3 to 32 letters, numbers, dots, dashes or underscores for the username.')
+        if (username) { const t = await db`select 1 from studio.users where lower(username) = ${username} and id <> ${um[1]}`; if (t.length) return bad('That username is already in use.', 409) }
+        await db`update studio.users set
+            full_name = coalesce(${b.name === undefined ? null : str(b.name, 120)}, full_name),
+            company = coalesce(${b.company === undefined ? null : str(b.company, 120)}, company),
+            role = coalesce(${b.role === 'admin' || b.role === 'client' ? b.role : null}, role),
+            username = coalesce(${username}, username),
+            password_hash = coalesce(${b.password ? await hashPassword(b.password) : null}, password_hash),
+            disabled_at = case when ${b.disabled === undefined} then disabled_at when ${!!b.disabled} then coalesce(disabled_at, now()) else null end
+          where id = ${um[1]}`
+        // a new password or a switched-off account signs every device out
+        if (b.password || b.disabled) await db`delete from studio.sessions where user_id = ${um[1]}`
+        return json({ ok: true })
+      }
+      if (um && m === 'DELETE') {
+        if (um[1] === me.id) return bad('You cannot delete your own account.', 409)
+        await db`delete from studio.users where id = ${um[1]}`
+        return json({ ok: true })
+      }
       if (path === 'admin/clients' && m === 'GET') {
         const rows = await db`select u.id, u.email, u.full_name, u.company, u.role, u.created_at, s.plan_id, s.status, s.addon_community,
           (select count(*) from studio.requests r where r.user_id = u.id and r.status in ('queued','active','review'))::int as open, (select count(*) from studio.users m where m.account_id = u.id)::int as team

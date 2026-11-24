@@ -52,7 +52,7 @@ export async function sessionRevision(req: Request) {
     const [row] = await sql()`select u.id, coalesce(u.account_id, u.id) as acct, u.role,
       studio.state_revision(coalesce(u.account_id, u.id), u.role = 'admin') as revision
       from studio.sessions s join studio.users u on u.id = s.user_id
-      where s.token_hash = ${sha(token)} and s.expires_at > now()`
+      where s.token_hash = ${sha(token)} and s.expires_at > now() and u.disabled_at is null`
     return row ?? null
   } catch (err) {
     // During a rolling update, the previous schema can still serve collection deltas.
@@ -65,7 +65,7 @@ export async function currentUser(req: Request): Promise<SessionUser | null> {
   const t = readCookie(req)
   if (!t) return null
   const rows = await sql()`select u.id, u.email, u.full_name, u.company, u.role, u.brand, u.lang, u.phone, u.job_title, u.timezone, u.avatar, u.notify, u.created_at, s.id as session, u.account_id, coalesce(u.account_id, u.id) as acct, o.full_name as owner_name, o.company as owner_company, o.brand as owner_brand
-    from studio.sessions s join studio.users u on u.id = s.user_id left join studio.users o on o.id = u.account_id where s.token_hash = ${sha(t)} and s.expires_at > now()`
+    from studio.sessions s join studio.users u on u.id = s.user_id left join studio.users o on o.id = u.account_id where s.token_hash = ${sha(t)} and s.expires_at > now() and u.disabled_at is null`
   return (rows[0] as SessionUser) ?? null
 }
 

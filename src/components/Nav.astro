@@ -8,7 +8,6 @@ const T = t(lang)
 const links = [
   { label: T.nav.work, href: '/work/' },
   { label: T.nav.services, href: '/services/' },
-  { label: T.nav.pricing, href: '/pricing/' },
   { label: T.nav.about, href: '/about/' },
 ]
 const path = Astro.url.pathname
@@ -17,7 +16,7 @@ const otherHref = url(twin(path, other))
 ---
 <header class="nav" data-nav>
   <a class="nav__logo" href={url(lp(lang, '/'))} aria-label={T.homeLabel}>
-    <img src={url('/brand/mark-main.svg')} alt="" width="67" height="22" />
+    <img src={url('/brand/mark-main.svg')} alt="" width="34" height="28" />
   </a>
   <nav class="nav__links" aria-label={T.mainNav}>
     {links.map((l) => <a href={url(lp(lang, l.href))} aria-current={path.includes(l.href) ? 'page' : undefined}>{l.label}</a>)}
@@ -28,7 +27,7 @@ const otherHref = url(twin(path, other))
     <button class="nav__tool" type="button" data-theme-toggle aria-label={T.theme.toDark} data-to-dark={T.theme.toDark} data-to-light={T.theme.toLight}>
       <span class="nav__sun"><Icon name="sun" /></span><span class="nav__moon"><Icon name="moon" /></span>
     </button>
-    <a class="btn" data-plans href={url(lp(lang, '/pricing/'))}>{T.cta} <Icon name="arrowUpRight" /></a>
+    <a class="btn" href={url(lp(lang, '/contact/'))}>{T.cta} <Icon name="arrowUpRight" /></a>
     <button class="nav__burger" type="button" aria-label={T.menu} aria-expanded="false" aria-controls="menu" data-burger><span></span><span></span></button>
   </div>
 </header>

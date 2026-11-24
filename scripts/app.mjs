@@ -1,4 +1,4 @@
-// Client app, demo mode, end to end: checkout → account → payment → dashboard → new request → board → drawer → billing → studio view.
+// Client app, demo mode, end to end: sign in → dashboard → new request → board → drawer → billing → studio view.
 import { chromium } from 'playwright-core'
 const lang = process.argv[2] === 'es' ? 'es/' : ''
 const theme = process.argv[3] || 'light'
@@ -12,11 +12,8 @@ const shot = (n) => p.screenshot({ path: `scripts/.shots/app-${lang ? 'es-' : ''
 const steps = []
 const step = async (name, fn) => { try { await fn(); steps.push([name, 'ok']) } catch (e) { steps.push([name, 'FAIL ' + String(e).split('\n')[0]]) } }
 
-await step('checkout opens with plan', async () => { await p.goto(base + 'checkout/?plan=grow&demo', { waitUntil: 'load' }); await p.waitForSelector('.co2__plan.is-on'); await p.waitForTimeout(600); await shot('1-checkout') })
-await step('add-on toggles', async () => { await p.click('.co2__addon'); await p.waitForTimeout(300) })
-await step('sign in (demo)', async () => { await p.click('.af__swap'); await p.click('.af__swap'); await p.fill('.af input[autocomplete=name]', 'Ana Ruiz'); await p.fill('.af input[type=email]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'demo'); await p.click('.af button[type=submit]'); await p.waitForSelector('.co2__me'); await shot('2-signed') })
-await step('pay build (demo)', async () => { await p.click('.co2__pay'); await p.waitForSelector('.co2__pay-m'); await p.waitForTimeout(400); await shot('3-pay'); await p.click('.co2__pay-m .ap-btn--red'); await p.waitForSelector('.co2__ok'); await shot('4-paid') })
-await step('dashboard', async () => { await p.click('.co2__pay-m a'); await p.waitForSelector('.eng'); await p.waitForTimeout(1600); await shot('5-overview') })
+await step('sign in (demo)', async () => { await p.goto(base + 'app/?demo', { waitUntil: 'load' }); await p.waitForSelector('.af'); await shot('1-login'); await p.fill('.af input[autocomplete=username]', 'ana@studio.test'); await p.fill('.af input[type=password]', 'demo'); await p.click('.af button[type=submit]') })
+await step('dashboard', async () => { await p.waitForSelector('.eng'); await p.waitForTimeout(1600); await shot('5-overview') })
 await step('new request', async () => {
   await p.keyboard.press('n'); await p.waitForSelector('.nr'); await p.waitForTimeout(400)
   // a fix: the brief asks for the page, the device, what happens and what should happen

@@ -7,6 +7,7 @@ const sql = neon(process.env.DATABASE_URL)
 const origin = 'http://localhost:' + Number(process.argv[2] || 4330)
 const email = `ui-${Date.now()}@example.com`
 const mate = `ui-mate-${Date.now()}@example.com`
+const adminEmail = `ui-admin-${Date.now()}@example.com`, uname = `ui.check.${Date.now() % 100000}`
 const b = await chromium.launch({ channel: 'chrome', headless: true })
 const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage()
 const created = new Set()
@@ -21,10 +22,17 @@ const shot = (n) => p.screenshot({ path: `scripts/.shots/live-${n}.jpg`, type: '
 const steps = []
 const step = async (name, fn) => { try { await fn(); steps.push([name, 'ok']) } catch (e) { steps.push([name, 'FAIL ' + String(e).split('\n')[0]]) } }
 try {
-  await step('checkout, live backend', async () => { await p.goto(origin + '/checkout/?plan=scale', { waitUntil: 'load' }); await p.waitForSelector('.af'); if (await p.locator('.ap-demo').count()) throw new Error('demo mode') })
-  await step('sign up', async () => { await p.fill('.af input[autocomplete=name]', 'UI Check'); await p.fill('.af input[type=email]', email); await p.fill('.af input[type=password]', 'ui check password'); await p.click('.af button[type=submit]'); await p.waitForSelector('.co2__me', { timeout: 15000 }); await shot('1-signed') })
-  await step('reserve plan (pending)', async () => { await p.click('.co2__pay'); await p.waitForSelector('.co2__pay-m'); await p.waitForTimeout(400); await shot('2-pending') })
-  await step('dashboard', async () => { await p.click('.co2__pay-m a'); await p.waitForSelector('.ov', { timeout: 15000 }); await p.waitForTimeout(800); await shot('3-overview-pending') })
+  await step('the studio creates the account', async () => {
+    // an admin made the way Federico's account works: created, then promoted, then it creates the client
+    const api = async (path, method, body, cookie = '') => { const r = await fetch(origin + '/api/' + path, { method, headers: { 'content-type': 'application/json', 'x-studio': '1', origin, cookie }, body: body ? JSON.stringify(body) : undefined }); return { r, data: await r.json().catch(() => null) } }
+    const s = await api('auth/signup/', 'POST', { email: adminEmail, password: 'ui check admin', name: 'UI Studio' })
+    if (s.r.status !== 200) throw new Error('admin sign-up ' + s.r.status + ' (start the preview with ALLOW_SIGNUP=1)')
+    await sql`update studio.users set role = 'admin' where email = ${adminEmail}`
+    const cookie = s.r.headers.get('set-cookie').split(';')[0]
+    const c = await api('admin/users/', 'POST', { name: 'UI Check', username: uname, email, password: 'ui check password', role: 'client', company: 'UI Check Co' }, cookie)
+    if (c.r.status !== 200) throw new Error('create user ' + c.r.status + ' ' + JSON.stringify(c.data))
+  })
+  await step('client signs in with the username', async () => { await p.goto(origin + '/app/', { waitUntil: 'load' }); await p.waitForSelector('.af'); if (await p.locator('.ap-demo').count()) throw new Error('demo mode'); await p.fill('.af input[autocomplete=username]', uname); await p.fill('.af input[type=password]', 'ui check password'); await p.click('.af button[type=submit]'); await p.waitForSelector('.ov', { timeout: 15000 }); await p.waitForTimeout(800); await shot('3-overview-pending') })
   await step('three requests', async () => {
     for (const [t, k] of [['Homepage redesign', 9], ['Logo refresh', 9], ['Booking automation', 9]]) {
       await p.keyboard.press('n'); await p.waitForSelector('.nr')

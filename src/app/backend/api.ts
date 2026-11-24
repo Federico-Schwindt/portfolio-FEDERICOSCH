@@ -3,7 +3,7 @@
  * One call (/api/state/) loads everything the dashboard shows; the other getters read from that snapshot.
  * Live updates: a light poll every few seconds while the tab is visible.
  */
-import type { SessionRow, Recurring, PlanChange, Backend, Client, Ev, FileItem, Invoice, PayView, Pin, Req, Subscription, TeamView, User } from '../types'
+import type { AdminUser, SessionRow, Recurring, PlanChange, Backend, Client, Ev, FileItem, Invoice, PayView, Pin, Req, Subscription, TeamView, User } from '../types'
 
 const BASE = (import.meta.env.BASE_URL as string).replace(/\/$/, '')
 async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -105,6 +105,10 @@ export const api: Backend = {
   async adminChanges() { return call<PlanChange[]>('admin/changes/') },
   async settleChange(id, how) { await post(`admin/changes/${id}/${how}/`, {}) },
   async rejectChange(id) { await call(`admin/changes/${id}/`, { method: 'DELETE' }) },
+  async adminUsers() { return call<AdminUser[]>('admin/users/') },
+  async createUser(u) { await post('admin/users/', u) },
+  async updateUser(id, p) { await post(`admin/users/${id}/`, p, 'PATCH') },
+  async deleteUser(id) { await call(`admin/users/${id}/`, { method: 'DELETE' }) },
   async clients() { return call<Client[]>('admin/clients/') },
   async updateClient(id, p) { await post(`admin/clients/${id}/`, p, 'PATCH') },
   async payments() { return call<PayView>('admin/payments/') },

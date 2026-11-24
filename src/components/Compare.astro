@@ -6,7 +6,7 @@ import { lp, type Lang } from '../i18n'
 import { blocks } from '../data/blocks'
 interface Props { lang: Lang; cta?: string }
 const { lang, cta } = Astro.props
-const C = { ...blocks[lang], prices: cta ?? (lang === 'es' ? 'Ver los precios' : 'See the prices') }
+const C = { ...blocks[lang], start: cta ?? (lang === 'es' ? 'Empezar un proyecto' : 'Start a project') }
 const L = (p: string) => url(lp(lang, p))
 ---
 <div class="wrap">
@@ -27,6 +27,6 @@ const L = (p: string) => url(lp(lang, p))
   </div>
   <div class="cmp__foot" data-reveal data-bd>
     <p class="mono">{C.cmp.foot}</p>
-    <a class="btn" data-plans href={L('/pricing/')}>{C.prices} <Icon name="arrowUpRight" /></a>
+    <a class="btn" href={L('/contact/')}>{C.start} <Icon name="arrowUpRight" /></a>
   </div>
 </div>

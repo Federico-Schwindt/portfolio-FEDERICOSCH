@@ -3,8 +3,7 @@
  * The home roads, /services/ and each service page all read from here. Sample data for the
  * interactive demos lives in src/data/samples.ts.
  *
- * Prices: only figures that are already public (the website plans) are written as numbers.
- * Everything else says how it is quoted.
+ * Prices are not published: each service says how it is quoted.
  */
 export type Offer = {
   slug: string
@@ -45,12 +44,12 @@ export const offers: Offer[] = [
     roadLine: 'A site people understand in five seconds.',
     h1: ['Web design that makes', 'the next step obvious.'],
     title: 'Web Design Services for Small Businesses | Federico Schwindt',
-    description: 'Custom web design for small businesses: clear pages, one obvious next step, designed on your real content and tested on phones. From $600.',
+    description: 'Custom web design for small businesses: clear pages, one obvious next step, designed on your real content and tested on phones.',
     keywords: ['web design services', 'freelance web designer', 'small business web design', 'website redesign', 'UX UI design'],
     buyer: 'Businesses whose site looks fine but does not explain what they do',
     deliverable: 'Every page designed on your real content, with a clickable prototype before a line of code',
     timeline: '1 to 3 weeks',
-    from: 'Included in every plan, from $600',
+    from: 'A clear quote before we start',
     image: 'work/nova.jpg',
     intro: 'People decide in seconds whether a site is for them. I design each page around one message and one next step, so a visitor knows what you do, why you, and what to click.',
     steps: [
@@ -83,12 +82,12 @@ export const offers: Offer[] = [
     roadLine: 'Fast pages, stores and tools that work on every phone.',
     h1: ['Web development', 'that stays fast.'],
     title: 'Web Development, WordPress & Shopify | Federico Schwindt',
-    description: 'Freelance web developer: custom sites, WordPress, WooCommerce and Shopify stores, product finders and forms. Fast on phones. From $600 + $80/month.',
+    description: 'Freelance web developer: custom sites, WordPress, WooCommerce and Shopify stores, product finders and forms. Fast on phones.',
     keywords: ['web development services', 'freelance web developer', 'WordPress developer', 'WooCommerce developer', 'Shopify developer', 'custom website development'],
     buyer: 'Anyone whose site has to do something: sell, book, search, quote',
     deliverable: 'A fast site on your domain, a staging link from week one, and code and accounts in your name',
     timeline: '2 to 6 weeks',
-    from: 'From $600 + $80/month',
+    from: 'A clear quote before we start',
     image: 'work/uds.jpg',
     intro: 'I write the code myself, so the person who designed the page is the one who builds it. Light pages that load fast on a bad signal, stores that are easy to search, and forms that reach your inbox.',
     steps: [
@@ -126,7 +125,7 @@ export const offers: Offer[] = [
     buyer: 'New businesses, and brands that outgrew their first logo',
     deliverable: 'A logo system, colours, type, a few rules for tone, and a brand guide as a PDF',
     timeline: '1 to 3 weeks',
-    from: 'Included from the Grow plan, $1,200 + $150/month',
+    from: 'Quoted per project',
     image: 'work/brasa.jpg',
     intro: 'A brand is what people remember after they close the tab. I design the logo, colours, type and a short voice guide, and then I use them on your site, so everything matches from day one.',
     steps: [
@@ -146,7 +145,7 @@ export const offers: Offer[] = [
     faq: [
       { q: 'Do I get the source files?', a: 'Yes. Vector logos, colour values, fonts and the guide are yours to keep and use anywhere.' },
       { q: 'Can you refresh my brand without losing recognition?', a: 'Yes. A refresh keeps what people already recognise and fixes what gets in the way.' },
-      { q: 'Is the website included?', a: 'The Grow plan includes a complete brand identity and the site built with it. Branding on its own is quoted per project.' },
+      { q: 'Is the website included?', a: 'It can be. Brand and site are often done together, so the site uses the new identity from day one. Branding on its own is quoted per project.' },
     ],
   },
   {
@@ -161,7 +160,7 @@ export const offers: Offer[] = [
     buyer: 'Businesses with a good site that not enough people find',
     deliverable: 'Search set up properly, campaigns that are watched, and one report a month you can actually read',
     timeline: 'Monthly, reviewed every month',
-    from: 'Monthly plan, quoted after a free audit',
+    from: 'Monthly, quoted after a free audit',
     image: 'work/velocity.jpg',
     intro: 'A great site nobody finds is a secret. I fix the technical SEO, set up your Google Business Profile, run Google and Meta campaigns with a clear budget, and tell you every month what worked, in plain words.',
     steps: [
@@ -196,7 +195,7 @@ export const offers: Offer[] = [
     buyer: 'Brands that should post every week and never find the time',
     deliverable: 'A monthly calendar, designed posts and short videos, replies to comments and messages, and a report',
     timeline: 'Monthly',
-    from: '$1,000/month, added to any plan',
+    from: 'Monthly, quoted after a short call',
     image: 'work/motion-loop.jpg',
     intro: 'An account that has not posted since March tells customers you might be closed. I plan the month with you, design the posts and short videos in your brand, publish them, answer comments and messages, and send you a report.',
     steps: [
@@ -215,7 +214,7 @@ export const offers: Offer[] = [
     cases: ['motion-ident-concept', 'brasa-coffee-concept', 'velocity-motors-concept'],
     faq: [
       { q: 'Which networks do you manage?', a: 'Instagram, Facebook, LinkedIn and TikTok. Most small businesses do best focusing on one or two.' },
-      { q: 'How many posts a month?', a: 'It depends on the plan; a common start is three posts a week plus stories. We size it to what you can sustain.' },
+      { q: 'How many posts a month?', a: 'It depends on the brand; a common start is three posts a week plus stories. We size it to what you can sustain.' },
       { q: 'Do you answer messages too?', a: 'Yes. Comments and direct messages are answered in your voice, and real enquiries are passed straight to you.' },
     ],
   },
@@ -260,7 +259,7 @@ export const offers: Offer[] = [
 export const addons = [
   { t: 'Landing pages', d: 'One page, one goal, for a campaign or a launch.' },
   { t: 'Copywriting', d: 'The words on your site, written to be clear, in English or Spanish.' },
-  { t: 'Community management', d: '$1,000/month on top of any plan: posts, replies and a weekly content calendar.' },
+  { t: 'Community management', d: 'Posts, replies and a weekly content calendar, on top of any service.' },
 ]
 
 /** Working at a distance. Only facts already published on the site; commercial terms are added once confirmed. */
@@ -268,7 +267,7 @@ export const remote = [
   { t: 'Where', d: 'Based in Argentina (GMT-3). Clients so far in the United States, Israel, Australia and India.' },
   { t: 'Calls', d: 'In your time zone, in English or Spanish.' },
   { t: 'Replies', d: 'Within one business day.' },
-  { t: 'Monthly plan', d: 'Hosting, security and updates, plus your requests: 2, 4 or 6 at a time.' },
+  { t: 'After launch', d: 'Hosting, security and updates, plus your requests from your own dashboard, several at once.' },
 ]
 
 export const offerBySlug = (slug: string) => offers.find((o) => o.slug === slug)

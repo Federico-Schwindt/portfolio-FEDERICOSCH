@@ -58,7 +58,7 @@ import '../styles/home-app.css'
     <div class="wrap end__cta">
       <h2 class="d h-l">{C.unsure[0]} <i>{C.unsure[1]}</i></h2>
       <div class="end__btns">
-        <button type="button" class="btn" data-plans data-plans-quiz>{lang === 'es' ? 'Tres preguntas y te digo cuál' : 'Three questions and I tell you'} <Icon name="arrowRight" /></button>
+        <a class="btn" href={L('/contact/')}>{C.start} <Icon name="arrowUpRight" /></a>
         <a class="link" href={L('/audit/')}>{C.audit} <Icon name="arrowRight" /></a>
       </div>
       <Next lang={lang} />

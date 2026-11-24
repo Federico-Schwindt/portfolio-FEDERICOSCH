@@ -15,6 +15,8 @@ import { operationsText } from '../i18n-studio-operations'
 import { PlanChanges, PlanChangeCount } from './PlanChanges'
 import { studioText } from '../i18n-studio'
 import { useStudioRead } from '../studio-data'
+import { StudioUsers } from './StudioUsers'
+import { usersText } from '../i18n-users'
 import '../../styles/app-studio.css'
 
 const STATUSES: Subscription['status'][] = ['pending', 'building', 'active', 'past_due', 'paused', 'cancelled']
@@ -30,7 +32,7 @@ export function Admin() {
   const s = operationsText[lang]
   const tabs = [
     ['admin', t.adm.tabs[0]], ['admin/business', studioText[lang].business],
-    ['admin/clients', t.adm.tabs[1]], ['admin/changes', studioText[lang].changes], ['admin/finance', s.finance],
+    ['admin/clients', t.adm.tabs[1]], ['admin/people', usersText[lang].tab], ['admin/changes', studioText[lang].changes], ['admin/finance', s.finance],
     ['admin/feedback', s.feedback], ['admin/workload', s.workload], ['admin/payments', t.adm.tabs[2]],
   ]
   const active = tabs.find(([path]) => path === 'admin/' + section)?.[0] ?? 'admin'
@@ -54,6 +56,7 @@ export function Admin() {
         : section === 'feedback' ? <StudioFeedback />
         : section === 'workload' ? <StudioWorkload />
         : section === 'clients' ? <Clients id={id} />
+        : section === 'people' ? <StudioUsers />
         : section === 'payments' ? <><Payments /><MailSettings /></>
         : <StudioBoard clientId={clientId} onClient={setClientId} />}
       </div>

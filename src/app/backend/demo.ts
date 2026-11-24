@@ -6,13 +6,13 @@
 import { quote as ruleQuote, type Sub as RuleSub } from '../../lib/plan-rules'
 import { fold, searchLimit } from '../workspace-search'
 import { activityExportSize, activityViewer } from '../types'
-import { PLANS, runningSlots, type Recurring, type PlanChange, type TeamView, type Backend, type Ev, type FileItem, type Invoice, type PayView, type Pin, type PlanId, type Req, type Subscription, type User } from '../types'
+import { PLANS, runningSlots, type AdminUser, type Recurring, type PlanChange, type TeamView, type Backend, type Ev, type FileItem, type Invoice, type PayView, type Pin, type PlanId, type Req, type Subscription, type User } from '../types'
 
 import { blankMail, composeMail, mailMask, type Topic } from '../mail'
 import type { MailItem, MailConfig } from '../types'
 
 type DemoNotice = MailItem & { topic: Topic; recipient: string; requestId?: string }
-type State = { mail?: MailConfig; outbox?: DemoNotice[]; recurring?: Recurring[]; changes?: PlanChange[]; team?: TeamView; user: User | null; sub: Subscription | null; invoices: Invoice[]; reqs: Req[]; events: Ev[]; seq: number; pay?: PayView; files?: FileItem[]; seen?: string; pins?: Pin[] }
+type State = { people?: AdminUser[]; mail?: MailConfig; outbox?: DemoNotice[]; recurring?: Recurring[]; changes?: PlanChange[]; team?: TeamView; user: User | null; sub: Subscription | null; invoices: Invoice[]; reqs: Req[]; events: Ev[]; seq: number; pay?: PayView; files?: FileItem[]; seen?: string; pins?: Pin[] }
 const KEY = 'fs-demo-v1'
 const now = () => new Date().toISOString()
 const ES = typeof document !== 'undefined' && document.documentElement.lang === 'es'
@@ -127,6 +127,8 @@ export const demo: Backend = {
   async session() { if (S.user) startTicker(); return S.user },
   async signIn(_mode, email, _password, name) {
     S.user = { id: 'demo-' + uid(), email, name: name || email.split('@')[0], company: '', lang: ES ? 'es' : 'en', role: 'client', brand: { colors: ['#F01111', '#0B0B0B', '#FFF1E0'], fonts: 'Archivo, Hanken Grotesk' } }
+    // there is no public checkout any more: the demo starts on an active plan with a month of history, as an account Federico set up
+    if (!S.sub) { S.sub = { plan: 'grow', status: 'active', community: false, periodEnd: new Date(Date.now() + 30 * 864e5).toISOString(), portalUrl: null }; if (!S.reqs.length) seed('grow'); promote() }
     save(); startTicker()
   },
   async team() {
@@ -307,6 +309,19 @@ export const demo: Backend = {
   async adminChanges() { return (S.changes ?? []).map((c) => ({ ...c, client: { id: S.user!.id, email: S.user!.email, name: S.user!.name, company: S.user!.company } })) },
   async settleChange(id, how) { const c = (S.changes ?? []).find((x) => x.id === id); if (c) { demoApply(c, how === 'paid'); save() } },
   async rejectChange(id) { const c = (S.changes ?? []).find((x) => x.id === id); if (c && (c.status === 'awaiting_payment' || c.status === 'scheduled')) { c.status = 'cancelled'; c.resolution = 'rejected'; c.closedAt = now(); save() } },
+  async adminUsers() {
+    const me: AdminUser = { id: S.user!.id, username: null, email: S.user!.email, name: S.user!.name, company: S.user!.company, role: S.user!.role, lang: 'en', since: now(), lastSeen: now(), disabled: false, accountId: null, accountName: null, plan: S.sub?.plan ?? null, status: S.sub?.status ?? null, open: S.reqs.filter((r) => ['queued', 'active', 'review'].includes(r.status)).length, me: true }
+    return [me, ...(S.people ?? [])]
+  },
+  async createUser(u) {
+    const name = u.username.trim().toLowerCase()
+    if (!/^[a-z0-9._-]{3,32}$/.test(name)) throw new Error(ES ? 'Usa de 3 a 32 letras, números, puntos o guiones para el usuario.' : 'Use 3 to 32 letters, numbers, dots, dashes or underscores for the username.')
+    if ((S.people ?? []).some((p) => p.username === name)) throw new Error(ES ? 'Ese usuario ya existe.' : 'That username is already in use.')
+    S.people = [{ id: uid(), username: name, email: u.email ?? null, name: u.name, company: u.company ?? '', role: u.role, lang: u.lang ?? 'en', since: now(), lastSeen: null, disabled: false, accountId: null, accountName: null, plan: u.plan ?? null, status: u.plan ? 'active' : null, open: 0, me: false }, ...(S.people ?? [])]
+    save()
+  },
+  async updateUser(id, p) { const x = (S.people ?? []).find((z) => z.id === id); if (x) { if (p.disabled !== undefined) x.disabled = p.disabled; if (p.name) x.name = p.name; if (p.role) x.role = p.role; save() } },
+  async deleteUser(id) { S.people = (S.people ?? []).filter((z) => z.id !== id); save() },
   async clients() {
     if (!S.user) return []
     return [{ id: S.user.id, email: S.user.email, name: S.user.name, company: S.user.company, role: S.user.role, since: now(), plan: S.sub?.plan ?? null, status: S.sub?.status ?? null, community: S.sub?.community ?? null, open: S.reqs.filter((r) => ['queued', 'active', 'review'].includes(r.status)).length }]

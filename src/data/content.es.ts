@@ -33,7 +33,6 @@ export const socials = [
 export const nav = [
   { label: 'Trabajos', href: '/work/' },
   { label: 'Servicios', href: '/#services' },
-  { label: 'Precios', href: '/#pricing' },
   { label: 'Sobre mí', href: '/about/' },
 ]
 
@@ -544,20 +543,16 @@ export const audit = {
 
 export const faq = [
   {
-    q: '¿Cuánto cuesta un sitio web?',
-    a: 'Launch cuesta $600 de desarrollo más $80/mes, con 2 pedidos a la vez. Grow cuesta $1,200 más $150/mes, con branding y 4 pedidos a la vez. Scale cuesta $3,000 más $250/mes, con IA, flujos automatizados y 6 pedidos a la vez. A cualquier plan se le puede sumar community management por $1,000/mes.',
-  },
-  {
     q: '¿Cómo funcionan los pedidos?',
-    a: 'Envías un pedido (una página nueva, un banner, una campaña, un arreglo, una publicación) y entra en tu fila. Tu plan define cuántos avanzan al mismo tiempo: 2, 4 o 6. La mayoría se entrega en dos a tres días hábiles, y el siguiente empieza apenas se entrega uno.',
+    a: 'Envías un pedido (una página nueva, un banner, una campaña, un arreglo, una publicación) desde tu panel y entra en tu fila. Varios avanzan al mismo tiempo. La mayoría se entrega en dos a tres días hábiles, y el siguiente empieza apenas se entrega uno.',
   },
   {
     q: '¿Cuánto tarda?',
-    a: 'Un sitio Launch suele estar en línea en una a dos semanas. Los proyectos Grow y Scale llevan de dos a seis semanas, según el contenido, las integraciones y el tamaño del catálogo.',
+    a: 'Un sitio simple suele estar en línea en una a dos semanas. Los sitios más grandes y las marcas llevan de dos a seis semanas, según el contenido, las integraciones y el tamaño del catálogo.',
   },
   {
-    q: '¿Qué incluye el plan mensual?',
-    a: 'Hosting, SSL, copias de seguridad, actualizaciones de plugins y de seguridad, monitoreo de disponibilidad y una cantidad fija de cambios menores de contenido cada mes. Los planes superiores suman SEO e informes.',
+    q: '¿Qué pasa después del lanzamiento?',
+    a: 'Hosting, SSL, copias de seguridad, actualizaciones de seguridad y monitoreo de disponibilidad, más tus pedidos: páginas nuevas, cambios, gráficas, campañas, enviados desde tu propio panel.',
   },
   {
     q: '¿Trabajas con clientes fuera de Argentina?',
@@ -572,55 +567,6 @@ export const faq = [
     a: 'Lo que mejor le sirva al negocio. WordPress y WooCommerce para la mayoría de los sitios y tiendas, Shopify cuando quieres la tienda más simple de manejar, y código a medida (React, Node) cuando importan el rendimiento o una experiencia única.',
   },
 ]
-
-// Precio de instalación y luego una cuota mensual (hosting, mantenimiento, actualizaciones).
-// `name` se mantiene en inglés: se usa en ?package= del formulario de contacto.
-export const packages = [
-  {
-    code: 'FS/PKG.01-L1',
-    short: 'LCH',
-    name: 'Launch',
-    text: "Un sitio simple y prolijo online rápido, y después un equipo a disposición todos los meses para lo que el negocio necesite.",
-    textItalic: '',
-    requests: "2 pedidos a la vez",
-    items: ["Sitio simple, hasta 5 páginas","Dirección visual a medida","Hosting, seguridad y actualizaciones","La mayoría de los pedidos en 2 a 3 días hábiles"],
-    price: '$600',
-    monthly: "$80/mes",
-    stamp: 'IDEAS ARE NOT RECYCLABLE',
-    stub: 'CREATIVE MATERIAL, DO NOT RECYCLE',
-  },
-  {
-    code: 'FS/PKG.02-G1',
-    short: 'GRW',
-    name: 'Grow',
-    text: "Marca y sitio diseñados juntos: identidad propia, un sitio mediano a medida y un equipo que no deja de entregar.",
-    textItalic: '',
-    requests: "4 pedidos a la vez",
-    items: ["Identidad de marca completa","Sitio mediano, hasta 12 páginas + CMS","Diseño 100% a medida","SEO, analítica e integraciones","Antes que Launch en la fila"],
-    price: '$1,200',
-    monthly: "$150/mes",
-    stamp: '100% ORIGINAL AND HUMAN-MADE',
-    stub: '100% ORGANIC AND HUMAN PRODUCED',
-  },
-  {
-    code: 'FS/PKG.03-S1',
-    short: 'SCL',
-    name: 'Scale',
-    text: "El desarrollo completo: diseño innovador, un sistema propio, IA conectada al negocio y flujos de trabajo que andan solos.",
-    textItalic: '',
-    requests: "6 pedidos a la vez, fila sin límite",
-    items: ["Sitio completo con diseño innovador","Sistema de diseño propio","IA conectada: asistentes, contenido, soporte","Flujos automatizados e integraciones","Primero en la fila"],
-    price: '$3,000',
-    monthly: "$250/mes",
-    stamp: 'STORED IN DIRECT ACCESS OF CLIENTS',
-    stub: 'STORE IN DIRECT ACCESS OF CLIENTS',
-  },
-]
-
-/** the add-on every plan can take */
-export const addonCM = {"t":"Community management","price":"$1,000/mes","d":"Súmalo a cualquier plan: publicaciones, respuestas y un calendario de contenido, todas las semanas."}
-
-export const pricingNote = {"lead":"Un equipo entero, en una persona.","text":"Diseño, código, marca y marketing de una sola persona, con agentes de IA haciendo el trabajo repetitivo para que varios pedidos avancen a la vez. Te suscribes, pides y se hace, todos los meses."}
 
 export const contact = {
   title: '¿Listo para crecer?',

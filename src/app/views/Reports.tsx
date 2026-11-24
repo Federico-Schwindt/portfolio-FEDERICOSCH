@@ -27,7 +27,7 @@ export function Reports() {
   return (
     <div className="rp">
       <header className="ap-head">
-        <div><p className="mono ap-kicker">{user?.company || user?.name} · {sub ? PLANS[sub.plan].name : ''}</p><h1 className="d">{t.x.rep.title}</h1><p className="ap-lead">{t.x.rep.sub}</p></div>
+        <div><p className="mono ap-kicker">{user?.company || user?.name}</p><h1 className="d">{t.x.rep.title}</h1><p className="ap-lead">{t.x.rep.sub}</p></div>
         <div className="rp__ctl">
           <button type="button" className="dr__x" onClick={() => setOffset(offset + 1)} aria-label="Previous month"><Icon name="arrowLeft" size={15} /></button>
           <b className="rp__m">{label}</b>

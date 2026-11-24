@@ -18,3 +18,4 @@ scripts/.*.log
 scripts/.*.cjs
 scripts/.*.mjs
 scripts/.codex-*
+.vercel/

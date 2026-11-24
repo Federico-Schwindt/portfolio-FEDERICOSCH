@@ -1,9 +1,12 @@
 import { defineConfig } from 'astro/config'
 import react from '@astrojs/react'
 import node from '@astrojs/node'
+import vercel from '@astrojs/vercel'
 
 // The Pages workflow sets SITE_URL (canonical origin + path) and BASE_PATH (/<repo>/). Locally both default.
-const SITE_URL = process.env.SITE_URL ?? 'https://federico-schwindt.github.io/portfolio-FEDERICOSCH'
+// On Vercel the whole site runs with the real API and database; GitHub Pages stays a static demo.
+const onVercel = !!process.env.VERCEL
+const SITE_URL = process.env.SITE_URL ?? (onVercel && process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : 'https://federico-schwindt.github.io/portfolio-FEDERICOSCH')
 
 export default defineConfig({
   site: new URL(SITE_URL).origin,
@@ -14,7 +17,7 @@ export default defineConfig({
   // the public plans and checkout are gone: clients get their dashboard from Federico directly
   redirects: { '/pricing': '/contact', '/es/pricing': '/es/contact', '/checkout': '/app', '/es/checkout': '/es/app' },
   // pages are prerendered as before; only /api/* runs on the server (see src/pages/api). Swap the adapter for the host (Vercel, Netlify...).
-  adapter: node({ mode: 'standalone' }),
+  adapter: onVercel ? vercel() : node({ mode: 'standalone' }),
   // the API has its own guard (a custom header plus Origin against Host, see src/server/db.ts); Astro's form check compares against the internal URL and refuses uploads behind proxies
   security: { checkOrigin: false },
   compressHTML: true,

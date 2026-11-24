@@ -89,8 +89,6 @@ try {
     await q.fill('.af input[autocomplete=name]', 'Mate Check'); await q.fill('.af input[type=password]', 'ui check password'); await q.click('.af button[type=submit]')
     await q.waitForSelector('.ov', { timeout: 15000 })
     if (new URL(q.url()).searchParams.has('invite')) throw new Error('invite left in the address')
-    await q.evaluate(() => (location.hash = '/billing')); await q.waitForSelector('.tm__billing')
-    if (await q.locator('.bl__start button, .bl button.ap-btn--red').count()) throw new Error('member can pay')
     await q.evaluate(() => (location.hash = '/board')); await q.waitForSelector('.kb'); const n = await q.locator('.kb .kc, .kb [data-id]').count()
     await q.screenshot({ path: 'scripts/.shots/live-5e-teammate.png' }); await q.context().close()
     if (!n) throw new Error('teammate sees no requests')

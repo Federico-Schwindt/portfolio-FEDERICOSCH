@@ -1,4 +1,4 @@
-// Client app, demo mode, end to end: sign in → dashboard → new request → board → drawer → billing → studio view.
+// Client app, demo mode, end to end: sign in → dashboard → new request → board → drawer → no plans → studio view.
 import { chromium } from 'playwright-core'
 const lang = process.argv[2] === 'es' ? 'es/' : ''
 const theme = process.argv[3] || 'light'
@@ -31,15 +31,7 @@ await step('new request', async () => {
 await step('board', async () => { await p.keyboard.press('Escape'); await p.waitForTimeout(500); await p.evaluate(() => (location.hash = '/board')); await p.waitForSelector('.kb'); await p.waitForTimeout(900); await shot('8-board') })
 await step('review drawer + approve', async () => { const c = p.locator('.kb__col--review .kc__open').first(); if (await c.count()) { await c.click(); await p.waitForSelector('.dr__review'); await p.waitForTimeout(600); await shot('9-review'); await p.click('.dr__review .ap-btn--red'); await p.waitForTimeout(700) } })
 await step('palette', async () => { await p.keyboard.press('Escape'); await p.keyboard.press('Control+k'); await p.waitForSelector('.pl'); await p.keyboard.type('land'); await p.waitForTimeout(300); await shot('10-palette'); await p.keyboard.press('Escape') })
-await step('billing', async () => { await p.evaluate(() => (location.hash = '/billing')); await p.waitForSelector('.bl-now'); await p.waitForTimeout(600); await shot('11-billing') })
-await step('change plan in three steps, pay, applied', async () => {
-  const cur = await p.locator('.bl-card.is-cur h3').innerText()
-  const up = p.locator('.bl-card:not(.is-cur) .ap-btn--red').first(); if (!(await up.count())) return
-  await up.click(); await p.waitForSelector('.bl-total__v'); await p.waitForTimeout(500); await shot('11b-review')
-  await p.click('.bl-total__go'); await p.waitForSelector('.bl-demo', { timeout: 15000 }); await p.click('.bl-demo .ap-btn--red')
-  await p.waitForFunction((c) => { const h = document.querySelector('.bl-card.is-cur h3'); return h && h.textContent !== c }, cur, { timeout: 10000 }); await p.waitForTimeout(400); await shot('11c-upgraded')
-  if (!(await p.locator('.bl-inv tbody tr').count())) throw new Error('no invoice')
-})
+await step('no plans for the client', async () => { if (await p.locator('.ap-nav button', { hasText: /Plan/ }).count()) throw new Error('plan link in the menu'); await p.evaluate(() => (location.hash = '/billing')); await p.waitForSelector('.ov'); if (await p.locator('.bl-card, .rail--plan').count()) throw new Error('plan screen still reachable') })
 await step('studio view', async () => { await p.click('.ap-side__foot button:first-child'); await p.waitForTimeout(400); await p.evaluate(() => (location.hash = '/admin')); await p.waitForSelector('.kb'); await p.waitForTimeout(800); await shot('12-admin') })
 await step('deliver from the board and prepare a bilingual review notice', async () => {
   const card = p.locator('.kb__col--active .kc').first()

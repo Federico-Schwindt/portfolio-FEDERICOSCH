@@ -4,7 +4,7 @@ import { Icon } from '../Icon'
 import { rel } from '../i18n'
 import type { Notify, SessionRow } from '../types'
 
-const NOTIFY: (keyof Notify)[] = ['review', 'comments', 'weekly', 'billing']
+const NOTIFY: (keyof Notify)[] = ['review', 'comments', 'weekly']
 const ZONES = ['America/Argentina/Buenos_Aires', 'America/Mexico_City', 'America/Bogota', 'America/Santiago', 'America/Lima', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Sao_Paulo', 'Europe/Madrid', 'Europe/London', 'Europe/Berlin', 'UTC']
 
 /** a picture becomes a small square JPEG in the browser, so it is light to store and quick to load */

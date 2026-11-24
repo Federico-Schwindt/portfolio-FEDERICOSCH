@@ -45,7 +45,6 @@ export function StudioMetrics({ onOpenDeadlines }: { onOpenDeadlines: () => void
     {failed || !data ? <ReadStatus subject={s.business} failed={failed} retry={refresh} /> : <>
       {!data.breakdown.length && !data.ratings.approved && <p className="card">{t.studioRead.business} <a href="#/admin/clients">{t.adm.clients}</a></p>}
       <div className="ops__kpis">
-        <div className="card stat"><h2>{s.mrr}</h2><strong className="d n">{money.format(data.mrr)}</strong><small>{s.mrrHint}</small>{toggle('revenue')}</div>
         <div className="card stat"><h2>{s.capacity}</h2><strong className="d n">{data.used} / {data.capacity}</strong><small>{s.capacityHint}</small>{toggle('capacity')}</div>
         <div className="card stat"><h2>{s.turnaround}</h2><strong className="d n">{data.avgDays === null ? '—' : data.avgDays.toLocaleString(lang, { maximumFractionDigits: 1 }) + ' ' + t.stats.days}</strong><small>{s.durationHint}</small></div>
         <div className="card stat"><h2>{s.overdue}</h2><strong className="d n">{data.overdue}</strong><small>{s.overdueHint} <a href="#/admin" onClick={onOpenDeadlines}>{s.deadlines}</a></small></div>
@@ -57,7 +56,7 @@ export function StudioMetrics({ onOpenDeadlines }: { onOpenDeadlines: () => void
         </tr></thead><tbody>{accounts.map(c => <tr key={c.id}><th scope="row">
           <a href={'#/admin/clients/' + c.id}>{c.name}</a>
           {c.name !== c.email && <small>{c.email}</small>}
-          <small>{c.plan && PLANS[c.plan].name}{c.status && ' · ' + t.billing.status[c.status]}</small></th>
+          <small>{c.status && t.billing.status[c.status]}</small></th>
           {revenue ? <><td>{money.format(c.base)}</td><td>{money.format(c.addon)}</td><td>{money.format(c.base + c.addon)}</td></>
             : <><td>{c.used}</td><td>{c.slots}</td></>}
         </tr>)}</tbody><tfoot><tr><th scope="row">{s.total}</th>
@@ -73,8 +72,6 @@ export function StudioMetrics({ onOpenDeadlines }: { onOpenDeadlines: () => void
       <div className="ops__grid">
         <section className="card"><div className="card__h"><h2>{s.accounts}</h2><a href="#/admin/clients">{t.adm.clients}</a></div>
           <dl>{(['active', 'pending', 'paused'] as const).map(k => <div key={k}><dt>{s[k]}</dt><dd>{data.clients[k]}</dd></div>)}</dl></section>
-        <section className="card"><div className="card__h"><h2>{s.mix}</h2></div>
-          <dl>{(Object.keys(PLANS) as PlanId[]).map(p => <div key={p}><dt>{PLANS[p].name}</dt><dd>{data.mix[p]}</dd></div>)}</dl></section>
       </div>
       <section className="card ops__breakdown" aria-labelledby="ops-ratings">
         <div className="card__h"><h2 id="ops-ratings">{s.ratings}</h2>

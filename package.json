@@ -7,11 +7,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "admin": "node scripts/admin-access.mjs",
+    "start": "node dist/server/entry.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.13",
     "@astrojs/react": "^7.1.9",
+    "@astrojs/vercel": "^11.0.22",
     "@fontsource-variable/archivo": "^5.3.0",
     "@fontsource-variable/hanken-grotesk": "^5.3.0",
     "@fontsource-variable/martian-mono": "^5.3.0",

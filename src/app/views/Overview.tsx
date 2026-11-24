@@ -165,13 +165,6 @@ export function Overview() {
             <div><dt>{t.status.active}</dt><dd className="n">{active.length}{slots ? ` / ${slots}` : ''}</dd></div>
           </dl>
         </motion.section>
-        {!studio && !user?.member && sub && (
-          <motion.button type="button" className="card rail rail--plan" {...up} transition={{ delay: 0.12 }} onClick={() => go('billing')}>
-            <span className="rail__k">{t.billing.current}</span>
-            <span className="rail__plan"><b>{PLANS[sub.plan].name}</b><span className={`pill pill--${sub.status === 'active' ? 'done' : sub.status === 'building' ? 'active' : 'review'}`}><i />{t.billing.status[sub.status]}</span></span>
-            <span className="rail__go">{t.rail.manage}<Icon name="arrowRight" size={13} /></span>
-          </motion.button>
-        )}
         {!studio && (
           <motion.section className="card rail" {...up} transition={{ delay: 0.14 }}>
             <div className="card__h"><h2>{t.tpl.recurring}</h2><span className="muted rail__n">{recurring.length}</span></div>

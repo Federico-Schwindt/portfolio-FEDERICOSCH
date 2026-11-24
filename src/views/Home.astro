@@ -1,0 +1,446 @@
+---
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import Written from '../components/Written.astro'
+import StudioBoard from '../components/StudioBoard.astro'
+import playSvg from '@phosphor-icons/core/assets/fill/play-fill.svg?raw'
+import { url, SITE_URL } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+import AppShow from '../components/AppShow.astro'
+import Compare from '../components/Compare.astro'
+import Next from '../components/Next.astro'
+import { blocks } from '../data/blocks'
+import '../styles/home.css'
+import '../styles/home-app.css'
+
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const { projects, faq, packages, pricingNote, offers, addons, remote, addonCM } = data(lang)
+const L = (p: string) => url(lp(lang, p))
+const bySlug = (s: string) => projects.find((p) => p.slug === s)!
+
+const C = {
+  en: {
+    title: 'Freelance Web Designer & Developer | Federico Schwindt',
+    desc: 'A whole creative team in one person: design, code, branding and marketing on a monthly plan. Send requests, AI keeps several moving at once. From $600.',
+    slogan: 'From sketch to sold.',
+    eyebrow: 'Schwindt Federico · A whole team, one person',
+    tag: ['From sketch', 'to sold.'],
+    sub: 'Designer, developer, brand strategist and marketer in one person, on a monthly plan. You send requests; AI-powered workflows keep several moving at once.',
+    cta: 'Start a project', prices: 'See the prices',
+    proof: [['+551%', 'sales for Universal Driveshafts after the redesign'], ['$600', 'to build, then from $80 a month'], ['2–6', 'requests moving at the same time'], ['1', 'person with a full team behind the work: you, me and AI']],
+    written: ['Work that moved', 'numbers.'],
+    case: 'Case', clientP: 'Client project', concept: 'Independent concept', udsAlt: 'Universal Driveshafts store: parts search and vehicle finder',
+    udsDoes: 'Find a driveshaft by vehicle, build one to spec, order wholesale.', udsStat: 'sales, 2024 to 2026',
+    novaDoes: 'Pick a treatment and book a visit from a phone.', velDoes: 'Search the stock by make, model and price.',
+    lh: 'Lighthouse performance, homepage, mobile', kindC: 'Concept', kindK: 'Client', all: (n: number) => `All ${n} projects`,
+    roads: ['One idea,', 'six ways to grow it.'], roadsLead: 'Every request starts as a rough idea. The same person takes it down any of six roads, so nothing gets lost between a designer, a developer and an agency.',
+    start: '00 / Start', idea: 'Your idea', ideaNote: 'A sketch, a list, a site you are not happy with.', dead: ['A template', 'A pretty slider'], dropped: 'Dropped', allSvc: 'All services',
+    who: 'Live file, 3 here', sr: 'Most sites get looked at. Mine get bought from.', boardLabel: '# Studio / Manifesto', foot: 'Point at the little guy. Click him.',
+    insp: 'Inspector', text: 'Text', font: 'Font', weight: 'Weight', width: 'Width', size: 'Size', tracking: 'Tracking', fill: 'Fill', fx: 'Effects', paint: 'Paint cursor', on: 'On', notesK: 'Notes', tpl: 'Template / Image', none: 'None',
+    notes: 'You get the output of a team without managing one: one person who designs, codes, writes and markets, with AI agents handling the repetitive work. You send requests, they come back done, every month.',
+    pricesH: ['Plans, not', 'projects.'], pricesLead: 'A one-time build, then a monthly plan: your site online and safe, plus a team working through your requests, 2, 4 or 6 at a time.',
+    rec: 'Recommended', build: 'to build it', then: 'then', choose: 'Choose', chooseA: (n: string) => `Choose the ${n} plan`, every: 'In every plan:',
+    chips: ['Responsive', 'Fast on phones', 'Tested in every browser', 'SEO-ready', 'Accessible', 'Code and accounts you own'],
+    unsure: 'Not sure which? Get a free audit', remoteH: ['Working', 'at a distance.'], compare: 'Compare the plans',
+    runs: ['How the plan', 'works.'], example: 'Build once, then requests every month', stages: 'Project stages', preview: 'Preview', studio: 'Studio', you: 'You', sales: 'Sales, 2024 to 2026', play: 'Play or pause the timeline', wk: 'W',
+    steps: [
+      { t: 'Subscribe', w: 'Day 1', d: 'Pick a plan and tell me about the business. You leave the call with a written plan and a start date.', list: ['A written brief', 'A fixed price', 'Your request board'] },
+      { t: 'Build', w: 'Weeks 1 to 6', d: 'Your site, and your brand on Grow and Scale, designed and built with a link you can open every day.', list: ['Prototype you can click', 'Your content in place', 'Live on your domain'] },
+      { t: 'Request', w: 'Every week', d: 'Ask for anything: a page, a banner, a campaign, a fix. AI-assisted workflows keep 2, 4 or 6 moving at once.', list: ['Pages and features', 'Graphics and content', 'Campaigns and fixes'] },
+      { t: 'Grow', w: 'Every month', d: 'Requests come back in days, and a monthly report shows what moved. You never wait for a new project to start.', list: ['Delivered in days', 'A monthly report', 'Hosting and security included'] },
+    ],
+    tracks: [['Strategy', ['Call and brief']], ['Design', ['Brand', 'Page designs']], ['Build', ['Front end', 'AI and flows', 'QA']], ['Content', ['Copy', 'Images and film']], ['Requests', ['Launch', 'Requests']]] as [string, string[]][],
+    hi: ['A whole team,', 'one person.'], hiLead: 'I am Federico: designer, developer, brand strategist and marketer. You talk to the person who does the work.',
+    hiBody: 'AI agents I connect take the repetitive work, so several requests move at once. From Argentina, for clients in the US, Israel, Australia and India.', more: 'More about me', picAlt: 'Federico Schwindt at his desk',
+    ready: ['Ready when', 'you are.'], readyLead: 'Tell me what you sell and what is not working. You get an honest plan, the right tier, and your first request on the board.', audit: 'Already have a site? Get a free audit', moreQ: 'More questions',
+    live: { tag: 'How a request moves', states: ['Sent', 'In progress', 'Ready for your review', 'Delivered'], items: ['Landing page for the summer promo', 'Instagram carousel, 5 slides', 'Fix the menu on phones', 'Monthly newsletter'] },
+    agents: { h: 'AI agents, working now', rows: ['Drafting three headline options', 'Resizing images for phone and desktop', 'Checking links and spelling'] },
+    svcName: 'Services', sn: ['Intro', 'Work', 'Services', 'Studio', 'Pricing', 'Process', 'About', 'Contact'], svcDesc: 'A whole creative team in one person: web design, development, branding, marketing, community management and 3D, on monthly plans that work through requests, with AI-assisted workflows.',
+  },
+  es: {
+    title: 'Diseñador y desarrollador web freelance | Federico Schwindt',
+    desc: 'Un equipo creativo entero en una persona: diseño, código, branding y marketing en un plan mensual. Envías pedidos y la IA mueve varios a la vez. Desde $600.',
+    slogan: 'Del boceto a la venta.',
+    eyebrow: 'Schwindt Federico · Un equipo entero, una persona',
+    tag: ['Del boceto', 'a la venta.'],
+    sub: 'Diseñador, desarrollador, estratega de marca y marketer en una sola persona, con un plan mensual. Tú envías pedidos; flujos de trabajo con IA mueven varios a la vez.',
+    cta: 'Empezar un proyecto', prices: 'Ver los precios',
+    proof: [['+551%', 'en ventas para Universal Driveshafts después del rediseño'], ['$600', 'de desarrollo, después desde $80 al mes'], ['2–6', 'pedidos avanzando al mismo tiempo'], ['1', 'persona con un equipo entero detrás del trabajo: tú, yo y la IA']],
+    written: ['Trabajos que movieron', 'los números.'],
+    case: 'Caso', clientP: 'Proyecto de cliente', concept: 'Concepto independiente', udsAlt: 'Tienda de Universal Driveshafts: búsqueda de piezas por vehículo',
+    udsDoes: 'Busca un cardán por vehículo, arma uno a medida, compra al por mayor.', udsStat: 'en ventas, de 2024 a 2026',
+    novaDoes: 'Elige un tratamiento y reserva una visita desde el celular.', velDoes: 'Busca en el stock por marca, modelo y precio.',
+    lh: 'Rendimiento Lighthouse, home, móvil', kindC: 'Concepto', kindK: 'Cliente', all: (n: number) => `Los ${n} proyectos`,
+    roads: ['Una idea,', 'seis formas de hacerla crecer.'], roadsLead: 'Todo pedido empieza como una idea en bruto. La misma persona lo lleva por cualquiera de los seis caminos, así nada se pierde entre un diseñador, un desarrollador y una agencia.',
+    start: '00 / Inicio', idea: 'Tu idea', ideaNote: 'Un boceto, una lista, un sitio que no te convence.', dead: ['Una plantilla', 'Un slider bonito'], dropped: 'Descartado', allSvc: 'Todos los servicios',
+    who: 'Archivo en vivo, 3 aquí', sr: 'Muchas webs se miran. Las mías convierten.', boardLabel: '# Studio / Manifiesto', foot: 'Señala al muñequito. Hazle clic.',
+    insp: 'Inspector', text: 'Texto', font: 'Fuente', weight: 'Peso', width: 'Ancho', size: 'Tamaño', tracking: 'Tracking', fill: 'Relleno', fx: 'Efectos', paint: 'Cursor de pintura', on: 'Sí', notesK: 'Notas', tpl: 'Plantilla / Imagen', none: 'Ninguna',
+    notes: 'Recibes el trabajo de un equipo sin tener que gestionarlo: una persona que diseña, programa, escribe y hace marketing, con agentes de IA para lo repetitivo. Envías pedidos y vuelven hechos, todos los meses.',
+    pricesH: ['Planes, no', 'proyectos.'], pricesLead: 'Un desarrollo inicial y después un plan mensual: tu sitio online y seguro, más un equipo trabajando tus pedidos, 2, 4 o 6 a la vez.',
+    rec: 'Recomendado', build: 'para construirlo', then: 'después', choose: 'Elegir', chooseA: (n: string) => `Elegir el plan ${n}`, every: 'En todos los planes:',
+    chips: ['Responsive', 'Rápido en el celular', 'Probado en todos los navegadores', 'Listo para SEO', 'Accesible', 'Código y cuentas a tu nombre'],
+    unsure: '¿No sabes cuál? Pide una auditoría gratis', remoteH: ['Trabajar', 'a distancia.'], compare: 'Comparar los planes',
+    runs: ['Así funciona', 'el plan.'], example: 'Se construye una vez, después pedidos todos los meses', stages: 'Etapas del proyecto', preview: 'Vista previa', studio: 'Estudio', you: 'Tú', sales: 'Ventas, de 2024 a 2026', play: 'Reproducir o pausar la línea de tiempo', wk: 'S',
+    steps: [
+      { t: 'Suscribirte', w: 'Día 1', d: 'Eliges un plan y me cuentas del negocio. Sales de la llamada con un plan por escrito y una fecha de inicio.', list: ['Un brief por escrito', 'Un precio cerrado', 'Tu tablero de pedidos'] },
+      { t: 'Construir', w: 'Semanas 1 a 6', d: 'Tu sitio, y tu marca en Grow y Scale, diseñados y construidos con un link que puedes abrir todos los días.', list: ['Prototipo clickeable', 'Tu contenido cargado', 'Online en tu dominio'] },
+      { t: 'Pedir', w: 'Cada semana', d: 'Pide lo que sea: una página, un banner, una campaña, un arreglo. Flujos con IA mueven 2, 4 o 6 a la vez.', list: ['Páginas y funciones', 'Gráficas y contenido', 'Campañas y arreglos'] },
+      { t: 'Crecer', w: 'Cada mes', d: 'Los pedidos vuelven en días y un reporte mensual muestra qué se movió. Nunca esperas a que empiece un proyecto nuevo.', list: ['Entregas en días', 'Un reporte mensual', 'Hosting y seguridad incluidos'] },
+    ],
+    tracks: [['Estrategia', ['Llamada y brief']], ['Diseño', ['Marca', 'Diseño de páginas']], ['Desarrollo', ['Front end', 'IA y flujos', 'QA']], ['Contenido', ['Textos', 'Imágenes y video']], ['Pedidos', ['Lanzamiento', 'Pedidos']]] as [string, string[]][],
+    hi: ['Un equipo entero,', 'una persona.'], hiLead: 'Soy Federico: diseñador, desarrollador, estratega de marca y marketer. Hablas con quien hace el trabajo.',
+    hiBody: 'Los agentes de IA que conecto se ocupan de lo repetitivo, así varios pedidos avanzan a la vez. Desde Argentina, para clientes de Estados Unidos, Israel, Australia e India.', more: 'Más sobre mí', picAlt: 'Federico Schwindt en su escritorio',
+    ready: ['Cuando', 'tú quieras.'], readyLead: 'Cuéntame qué vendes y qué no está funcionando. Recibes un plan honesto, el nivel justo y tu primer pedido en el tablero.', audit: '¿Ya tienes sitio? Pide una auditoría gratis', moreQ: 'Más preguntas',
+    live: { tag: 'Así se mueve un pedido', states: ['Enviado', 'En curso', 'Listo para que lo revises', 'Entregado'], items: ['Landing para la promo de verano', 'Carrusel de Instagram, 5 slides', 'Arreglar el menú en celulares', 'Newsletter mensual'] },
+    agents: { h: 'Agentes de IA, trabajando ahora', rows: ['Redactando tres opciones de título', 'Adaptando imágenes a celular y escritorio', 'Revisando links y ortografía'] },
+    svcName: 'Servicios', sn: ['Inicio', 'Trabajos', 'Servicios', 'Studio', 'Precios', 'Proceso', 'Sobre mí', 'Contacto'], svcDesc: 'Un equipo creativo entero en una persona: diseño web, desarrollo, branding, marketing, community management y 3D, en planes mensuales por pedidos, con flujos de trabajo con IA.',
+  },
+}[lang]
+const B = blocks[lang]
+
+const uds = bySlug('universal-driveshafts')
+const side = [
+  { p: bySlug('nova-dental-concept'), does: C.novaDoes },
+  { p: bySlug('velocity-motors-concept'), does: C.velDoes },
+]
+// Lighthouse, homepage, mobile: the same device for all three, so they can be read together
+const measured = ['universal-driveshafts', 'andreani-concept', 'la-virginia-concept'].map((slug) => {
+  const p = bySlug(slug), run = p.performance!.runs[0]
+  return { slug, title: p.title, kind: p.concept ? C.kindC : C.kindK, before: run.before!.perf, after: run.after.perf }
+})
+const steps = C.steps
+const spans = [[[0, 1]], [[1, 1.8], [1.85, 3]], [[3, 4.4], [4.45, 5.4], [5.45, 6]], [[1.5, 3.2], [3.3, 5]], [[6, 6.5], [6.55, 7]]]
+const tracks = C.tracks.map(([n, labels], i) => ({ n, clips: labels.map((l, k) => ({ a: spans[i][k][0], b: spans[i][k][1], l })) }))
+const bars = Array.from({ length: 44 }, (_, i) => 18 + Math.round(Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.6)) * 78))
+const code = ['<section class="hero">', '  <h1>Shop the new range.</h1>', '  <Finder make year model />', '  <Button>Find my part</Button>', '</section>', ' ', 'export const perf = 99', 'export const cls = 0']
+const buying = [faq[1], faq[2], faq[4]]
+const typed = "const team = {\n  design: 'Federico',\n  code: 'Federico',\n  brand: 'Federico',\n  marketing: 'Federico',\n  agents: 'always on'\n}"
+const home = `${SITE_URL}${lp(lang, '/')}`
+const orgLd = {
+  '@context': 'https://schema.org', '@type': 'ProfessionalService', '@id': `${SITE_URL}/#service`, name: 'Federico Schwindt',
+  slogan: C.slogan, url: home, image: `${SITE_URL}/og.jpg`, priceRange: '$600+', founder: { '@id': `${SITE_URL}/#person` },
+  description: C.svcDesc,
+  address: { '@type': 'PostalAddress', addressLocality: 'Gualeguaychú', addressRegion: 'Entre Ríos', addressCountry: 'AR' },
+  areaServed: ['United States', 'Israel', 'Australia', 'India', 'Argentina'], availableLanguage: ['English', 'Spanish'],
+  knowsAbout: offers.flatMap((o) => o.keywords),
+  hasOfferCatalog: { '@type': 'OfferCatalog', name: C.svcName, itemListElement: offers.map((o) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: o.name, url: `${SITE_URL}${lp(lang, `/services/${o.slug}/`)}`, description: o.description } })) },
+}
+const siteLd = { '@context': 'https://schema.org', '@type': 'WebSite', '@id': `${SITE_URL}/#website`, name: 'Federico Schwindt', url: `${SITE_URL}/`, inLanguage: ['en', 'es'], publisher: { '@id': `${SITE_URL}/#person` } }
+const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', inLanguage: lang, mainEntity: buying.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }
+---
+<Base title={C.title} description={C.desc} ld={[orgLd, siteLd, faqLd]} lang={lang}>
+  <script is:inline>if(matchMedia('(min-width: 861px) and (hover: hover) and (pointer: fine)').matches&&!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('slides')</script>
+  <!-- 1. HERO: one centred promise, one main action, proof under it. Thin threads run from loose ideas into the button. -->
+  <section class="hx t-paper" data-paint="red" data-hx data-slides data-slide-name={C.sn[0]}>
+    <svg class="hx__threads" aria-hidden="true"></svg>
+    <div class="wrap hx__in">
+      <p class="mono hx__eyebrow" data-fx="type">{C.eyebrow}</p>
+      <h1 class="hx__h1"><span class="d hx__tag">{C.tag[0]} <i>{C.tag[1]}</i></span><span class="hx__sub">{C.sub}</span></h1>
+      <div class="hx__act">
+        <a class="btn hx__cta" data-hx-cta data-plans href={L('/pricing/')}>{C.cta} <Icon name="arrowUpRight" /></a>
+        <a class="link hx__alt" href="#pricing" data-hx-from>{C.prices} <Icon name="arrowRight" /></a>
+      </div>
+      <div class="hx__req" data-live={JSON.stringify(C.live)} aria-hidden="true">
+        <span class="mono hx__req-tag"><span class="hx__req-dot"></span>{C.live.tag}</span>
+        <span class="hx__req-card">
+          <span class="mono" data-live-n>#128</span>
+          <b data-live-title>{C.live.items[0]}</b>
+          <span class="hx__req-bar"><span data-live-bar></span></span>
+          <em data-live-state>{C.live.states[1]}</em>
+        </span>
+      </div>
+      <ul class="hx__proof" data-fx="gap">
+        {C.proof.map(([v, l]) => <li><b class="d n">{v}</b><span>{l}</span></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2. WORK AND MEASUREMENTS -->
+  <section class="section t-main wk2" id="work" data-paint="red" data-slide-name={C.sn[1]}>
+    <div class="wrap">
+      <div class="wk2__head">
+        <Written class="d h-l" lines={[{ text: C.written[0] }, { text: C.written[1], serif: true }]} />
+        <span class="wk2__g" data-gstop data-node="Proof" data-r="48,24,12" data-spin="0,1,0" aria-hidden="true"></span>
+      </div>
+      <div class="wk2__grid">
+        <a class="card wk2__big" data-bd data-frame={`${C.case} 01 / Ecommerce`} href={L(`/work/${uds.slug}/`)} data-reveal>
+          <div class="card__media"><img src={url(`/${uds.cover}`)} alt={C.udsAlt} width="1440" height="900" /></div>
+          <div class="wk2__meta">
+            <div>
+              <p class="mono wk2__kind">{C.clientP}</p>
+              <h3 class="d h-m">{uds.title}</h3>
+              <p class="wk2__does">{C.udsDoes}</p>
+            </div>
+            <p class="wk2__stat"><b class="d n">+551%</b><span>{C.udsStat}</span></p>
+          </div>
+        </a>
+        {side.map(({ p, does }, i) => (
+          <a class="card wk2__small" data-bd data-frame={`${C.case} 0${i + 2} / ${p.category}`} href={L(`/work/${p.slug}/`)} data-reveal style={`--i:${i + 1}`}>
+            <div class="card__media"><img src={url(`/${p.cover}`)} alt={`${p.title}: ${p.category}`} width="1440" height="900" loading="lazy" /></div>
+            <h3 class="d h-s">{p.title}</h3>
+            <p class="wk2__does">{does}</p>
+            <p class="mono wk2__kind">{p.concept ? C.concept : C.clientP}</p>
+          </a>
+        ))}
+        <div class="ms" data-reveal data-bd>
+          <p class="mono ms__label">{C.lh}</p>
+          <ul class="ms__list">
+            {measured.map((m) => (
+              <li>
+                <a href={L(`/work/${m.slug}/`)}>
+                  <span class="d ms__nums"><i>{m.before}</i><Icon name="arrowRight" /><b class="n">{m.after}</b></span>
+                  <span class="ms__name">{m.title} <span class="chip">{m.kind}</span></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a class="link" href={L('/work/')}>{C.all(projects.length)} <Icon name="arrowUpRight" /></a>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SERVICES AS ROADS: one idea, six roads (one per discipline), two that get dropped -->
+  <section class="section t-ink pt" id="services" data-paint="none" data-slide-name={C.sn[2]}>
+    <div class="wrap">
+      <div class="pt__head">
+        <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.roads[0]}</span></span><span class="line" style="--i:1"><span><i>{C.roads[1]}</i></span></span></h2>
+        <p class="pt__lead" data-bd>{C.roadsLead}</p>
+      </div>
+      <div class="pt__map" data-map>
+        <svg class="pt__svg" aria-hidden="true"></svg>
+        <div class="pt__idea" data-idea data-bd>
+          <span class="mono">{C.start}</span>
+          <svg class="pt__scrib" viewBox="0 0 120 60" aria-hidden="true"><path d="M8 40 C 20 8, 34 52, 46 22 S 66 4, 70 34 S 92 54, 98 20 S 112 30, 114 44" /></svg>
+          <b class="d">{C.idea}</b>
+          <span class="pt__note">{C.ideaNote}</span>
+        </div>
+        <p class="pt__dead" data-dead style="--d:0"><s>{C.dead[0]}</s><span class="mono">{C.dropped}</span></p>
+        <p class="pt__dead" data-dead style="--d:1"><s>{C.dead[1]}</s><span class="mono">{C.dropped}</span></p>
+        <ol class="pt__ends">
+          {offers.map((o, i) => (
+            <li>
+              <a class="pt__end" data-end data-bd data-fx-hover data-fx-name={o.name} href={L(`/services/${o.slug}/`)}>
+                <span class="mono pt__n">0{i + 1} / {o.road}</span>
+                <h3 class="d pt__name">{o.name}</h3>
+                <p class="pt__buyer">{o.roadLine}</p>
+                <span class="pt__go"><Icon name="arrowUpRight" /></span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <ul class="of__addons" data-reveal data-bd>
+        {addons.map((a) => <li><b>{a.t}.</b> {a.d}</li>)}
+      </ul>
+      <a class="link" href={L('/services/')} data-bd>{C.allSvc} <Icon name="arrowUpRight" /></a>
+    </div>
+  </section>
+
+  <!-- 4. STUDIO: a design file driven by the scroll, and a stick man who climbs out of a letter -->
+  <section class="t-paper st2" id="studio" data-st2 data-paint="none" data-slide-name={C.sn[3]} data-steps="0.3,0.5,0.72,1">
+    <div class="st2__pin" data-pin>
+      <div class="wrap st2__wrap">
+        <div class="pz__bar mono">
+          <span>01 / Studio</span>
+          <span class="pz__who" aria-hidden="true"><i>D</i><i>C</i><i>W</i> {C.who}</span>
+        </div>
+        <h2 class="sr-only">{C.sr}</h2>
+        <div class="st2__desk">
+          <div class="st2__col">
+            <p class="mono st2__label" aria-hidden="true"><span>{C.boardLabel}</span><span>80%</span></p>
+            <div class="st2__board"><StudioBoard lang={lang} /></div>
+            <p class="mono st2__foot" aria-hidden="true"><span>{C.foot}</span><span>1440 × 900</span></p>
+          </div>
+          <aside class="st2__insp">
+            <p class="st2__ititle">{C.insp}</p>
+            <p class="st2__isel"><span class="st2__t" aria-hidden="true">T</span><span data-i="sel">{C.tpl}</span></p>
+            <p class="mono st2__k">{C.text}</p>
+            <dl class="st2__dl">
+              <div><dt>{C.font}</dt><dd data-i="font">{C.none}</dd></div>
+              <div><dt>{C.weight}</dt><dd data-i="weight">400</dd></div>
+              <div><dt>{C.width}</dt><dd data-i="width">100 %</dd></div>
+              <div><dt>{C.size}</dt><dd data-i="size">16 px</dd></div>
+              <div><dt>{C.tracking}</dt><dd data-i="track">0 %</dd></div>
+            </dl>
+            <p class="mono st2__k">{C.fill}</p>
+            <p class="st2__fill"><i data-i="sw"></i><span data-i="hex">#9B9285</span><span>100%</span></p>
+            <p class="mono st2__k">{C.fx}</p>
+            <p class="st2__fx"><span>{C.paint}</span><b>{C.on}</b></p>
+            <p class="mono st2__k">{C.notesK}</p>
+            <p class="st2__notes" data-words>{C.notes}</p>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. PRICES AND WORKING AT A DISTANCE -->
+  <section class="section t-paper pc" id="pricing" data-paint="none" data-slide-name={C.sn[4]}>
+    <div class="wrap">
+      <div class="pc__head">
+        <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.pricesH[0]} <i>{C.pricesH[1]}</i></span></span></h2>
+        <span class="pc__g" data-gstop data-node="Price" data-r="42,30,-14" data-spin="1,0,0" aria-hidden="true"></span>
+      </div>
+      <p class="body pc__lead" data-reveal data-bd>{C.pricesLead}</p>
+      <div class="pk__grid" data-fx="gap">
+        {packages.map((p, i) => (
+          <article class={`pk${i === 1 ? ' pk--hot' : ''}`} data-bd data-reveal style={`--i:${i}`}>
+            <p class="pk__top mono"><span>{p.code}</span>{i === 1 && <span class="pk__tag">{C.rec}</span>}</p>
+            <h3 class="d pk__name">{p.name}</h3>
+            <p class="pk__for">{p.text}</p>
+            <p class="pk__price"><b class="d n">{p.price}</b><span>{C.build}</span></p>
+            <p class="pk__month"><span class="mono">{C.then}</span> {p.monthly}</p>
+            <p class="pk__req mono"><i aria-hidden="true"></i>{p.requests}</p>
+            <ul class="pk__list">{p.items.map((it) => <li><Icon name="check" />{it}</li>)}</ul>
+            <div class="pk__stub">
+              <a class="btn" href={L(`/checkout/?plan=${p.name.toLowerCase()}`)} aria-label={C.chooseA(p.name)}>{C.choose} {p.name} <Icon name="arrowUpRight" /></a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div class="pk__all" data-reveal data-bd>
+        <p class="pk__allh"><b>{pricingNote.lead}</b> {C.every}</p>
+        <ul class="pk__chips">
+          {C.chips.map((c) => <li>{c}</li>)}
+        </ul>
+        <p class="pk__cm"><b>+ {addonCM.t}</b> {addonCM.price}. {addonCM.d}</p>
+        <a class="link" href={L('/audit/')}>{C.unsure} <Icon name="arrowRight" /></a>
+      </div>
+      <div class="rm" data-reveal data-bd>
+        <h3 class="d h-s">{C.remoteH[0]} <i>{C.remoteH[1]}</i></h3>
+        <dl class="rm__grid">
+          {remote.map((r) => <div><dt class="mono">{r.t}</dt><dd>{r.d}</dd></div>)}
+        </dl>
+        <a class="link" href={L('/pricing/')}>{C.compare} <Icon name="arrowUpRight" /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. PROCESS: an edit you can play, scrub and step through. It never holds the scroll -->
+  <!-- THE PRODUCT: the dashboard every plan comes with, shown for real -->
+  <section class="section t-ink app" id="dashboard" data-paint="none" data-app data-slide-name={B.appName}>
+    <AppShow lang={lang} />
+  </section>
+
+  <section class="section t-main ed" data-paint="red" data-ed data-step="0" id="process" data-wk={C.wk} data-slide-name={C.sn[5]}>
+    <div class="wrap">
+      <div class="ed__head">
+        <h2 class="d h-m" data-bd>{C.runs[0]} <i>{C.runs[1]}</i></h2>
+        <p class="mono" data-bd>{C.example}</p>
+      </div>
+      <div class="ed__tabs" data-bd role="tablist" aria-label={C.stages}>
+        {steps.map((s, i) => <button class="chip" role="tab" id={`ed-t${i}`} aria-controls={`ed-p${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1}>{s.t}</button>)}
+      </div>
+      <div class="ed__mid" data-bd>
+        <div class="ed__steps">
+          {steps.map((s, i) => (
+            <article class="ed__step" data-s={i} role="tabpanel" id={`ed-p${i}`} aria-labelledby={`ed-t${i}`} data-on={i === 0 ? '' : undefined}>
+              <h3 class="d ed__t">{s.t}</h3>
+              <p class="x ed__w">{s.w}</p>
+              <p class="ed__d">{s.d}</p>
+              <ul>{s.list.map((l) => <li><Icon name="check" />{l}</li>)}</ul>
+            </article>
+          ))}
+        </div>
+        <div class="ed__mon t-ink" aria-hidden="true">
+          <div class="ed__monbar mono"><span>{C.preview}</span><span data-tc>{C.wk}01 / D1 / 00:00</span></div>
+          <div class="ed__screen">
+            <div class="pane pane--call" data-s="0">
+              <p class="mono">{C.studio}</p>
+              <div class="wave">{bars.map((h, i) => <i style={`--h:${h}%;--i:${(i / bars.length).toFixed(3)}`}></i>)}</div>
+              <p class="mono">{C.you}</p>
+              <div class="wave wave--b">{bars.map((h, i) => <i style={`--h:${Math.round(100 - h * 0.8)}%;--i:${(i / bars.length).toFixed(3)}`}></i>)}</div>
+            </div>
+            <div class="pane pane--design" data-s="1">
+              <div class="wire"><b></b><i></i><i></i><u></u><s></s><s></s><s></s></div>
+              <img src={url('/work/lavirginia.jpg')} alt="" loading="lazy" />
+            </div>
+            <div class="pane pane--build" data-s="2">
+              <pre>{code.map((l, i) => <span style={`--i:${(i / code.length).toFixed(3)}`}>{l}</span>)}</pre>
+              <img src={url('/work/uds.jpg')} alt="" loading="lazy" />
+            </div>
+            <div class="pane pane--grow" data-s="3">
+              <svg viewBox="0 0 400 200" preserveAspectRatio="none"><path pathLength="1" d="M0 185 C60 180 90 170 130 150 S200 120 240 95 S320 40 400 8" /></svg>
+              <b class="d n">+551%</b>
+              <span class="mono">{C.sales}</span>
+            </div>
+          </div>
+          <span class="ed__g" data-gstop data-node="Plan" data-r="60,-12,18" data-spin="0,1,0"></span>
+        </div>
+      </div>
+      <div class="ed__tl" data-bd>
+        <button class="ed__play" type="button" data-play aria-label={C.play}><Fragment set:html={playSvg} /></button>
+        <div class="ed__lanes" data-lanes aria-hidden="true">
+          <div class="ed__ruler mono">{[1, 2, 3, 4, 5, 6, 7].map((w) => <span>{C.wk}{w}</span>)}</div>
+          {tracks.map((t) => (
+            <div class="ed__lane" data-name={t.n}>
+              {t.clips.map((c) => <span class="ed__clip mono" data-clip={(c.a / 7).toFixed(4)} style={`left:${((c.a / 7) * 100).toFixed(2)}%;width:${(((c.b - c.a) / 7) * 100).toFixed(2)}%`}>{c.l}</span>)}
+            </div>
+          ))}
+          <div class="ed__ph" data-ph></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FEDERICO: the portrait is placed like a frame, and the scroll types the code -->
+  <!-- WHY A PLAN: the honest comparison a buyer is already making -->
+  <section class="section t-paper cmp" id="compare" data-paint="none" data-slide-name={B.cmpName}>
+    <Compare lang={lang} />
+  </section>
+
+  <section class="kbs t-ink" data-paint="none" data-kb id="about" data-slide-name={C.sn[6]} data-steps="1">
+    <div class="wrap kbs__grid" data-pin>
+      <div class="kbs__text">
+        <h2 class="d h-l" data-bd>{C.hi[0]} <i>{C.hi[1]}</i></h2>
+        <p class="lead" data-bd>{C.hiLead}</p>
+        <p class="body muted" data-bd>{C.hiBody}</p>
+        <a class="btn" data-bd href={L('/about/')}>{C.more} <Icon name="arrowUpRight" /></a>
+      </div>
+      <div class="kbs__desk">
+        <div class="kbs__left">
+          <div class="code" data-bd aria-hidden="true">
+            <div class="code__bar mono"><span>team.ts</span><span>1 person</span></div>
+            <pre class="code__body"><code data-code={typed}>{typed}</code><i class="code__caret"></i></pre>
+          </div>
+          <div class="agents" data-bd>
+            <p class="mono agents__h"><i class="agents__live" aria-hidden="true"></i>{C.agents.h}</p>
+            <ul>{C.agents.rows.map((r, i) => <li style={`--i:${i}`}><span>{r}</span><i aria-hidden="true"><b></b></i></li>)}</ul>
+          </div>
+        </div>
+        <figure class="kbs__pic" data-bd>
+          <img src={url('/img/hero-arms.webp')} alt={C.picAlt} width="1031" height="1400" loading="lazy" />
+          <figcaption class="mono"><span>federico.webp</span><span>1031 × 1400</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. QUESTIONS AND CONTACT -->
+  <section class="section t-main end" id="contact" data-paint="red" data-slide-name={C.sn[7]}>
+    <div class="wrap end__grid">
+      <div class="end__cta">
+        <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.ready[0]}</span></span><span class="line" style="--i:1"><span><i>{C.ready[1]}</i></span></span></h2>
+        <p class="lead" data-reveal data-bd>{C.readyLead}</p>
+        <div class="end__btns" data-reveal data-bd style="--i:1">
+          <a class="btn" data-plans href={L('/pricing/')}>{C.cta} <Icon name="arrowUpRight" /></a>
+          <a class="link" href={L('/audit/')}>{C.audit} <Icon name="arrowRight" /></a>
+        </div>
+      </div>
+      <div class="fq__list" data-bd>
+        {buying.map((f) => (
+          <details data-reveal>
+            <summary><span>{f.q}</span><Icon name="plus" /></summary>
+            <p class="body">{f.a}</p>
+          </details>
+        ))}
+        <a class="link end__more" href={L('/pricing/#faq')}>{C.moreQ} <Icon name="arrowUpRight" /></a>
+        <Next lang={lang} />
+      </div>
+    </div>
+    <div class="sold" data-sold aria-hidden="true"><canvas></canvas></div>
+  </section>
+  <script>import '../scripts/home.ts'</script>
+</Base>

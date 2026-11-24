@@ -1,0 +1,63 @@
+---
+/** The product, shown for real: four screens of the client dashboard that advance by themselves until one is picked. */
+import Icon from './Icon.astro'
+import { url } from '../lib/site'
+import { lp, type Lang } from '../i18n'
+import { blocks } from '../data/blocks'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const C = blocks[lang]
+const L = (p: string) => url(lp(lang, p))
+---
+<div class="wrap app__grid">
+  <div class="app__text">
+    <h2 class="d h-l" data-lines data-bd><span class="line"><span>{C.app.h[0]}</span></span><span class="line" style="--i:1"><span><i>{C.app.h[1]}</i></span></span></h2>
+    <p class="lead" data-reveal data-bd>{C.app.lead}</p>
+    <div class="app__tabs" role="tablist" aria-label={C.appName} data-bd>
+      {C.app.tabs.map(([t, d], i) => (
+        <button type="button" role="tab" id={`app-tab-${i}`} aria-selected={i === 0 ? 'true' : 'false'} aria-controls="app-screen" tabindex={i === 0 ? 0 : -1} data-app-tab={i}>
+          <span class="mono">0{i + 1}</span><b>{t}</b><small>{d}</small><i aria-hidden="true"></i>
+        </button>
+      ))}
+    </div>
+    <div class="app__cta" data-reveal data-bd>
+      <a class="btn" href={L('/app/?demo')}>{C.app.demo} <Icon name="arrowUpRight" /></a>
+      <span class="mono">{C.app.note}</span>
+    </div>
+  </div>
+  <div class="app__stage" data-bd>
+    <div class="app__win" id="app-screen" role="tabpanel" aria-labelledby="app-tab-0">
+      <div class="app__bar" aria-hidden="true"><i></i><i></i><i></i><span class="mono">federicoschwindt.com/app</span></div>
+      <div class="app__shots">
+        {C.app.tabs.map(([t, , f], i) => <img class={i === 0 ? 'is-on' : ''} data-app-shot={i} src={url(`/img/app/${f}-${lang}.webp`)} alt={`${C.app.alt}: ${t}`} width="1800" height="1125" loading="lazy" decoding="async" />)}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+  document.querySelectorAll<HTMLElement>('[data-app]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-app-tab]')], shots = [...root.querySelectorAll<HTMLElement>('[data-app-shot]')], panel = root.querySelector('#app-screen')
+    if (!tabs.length) return
+    let cur = 0, timer = 0, hands = false
+    const show = (i: number) => {
+      cur = (i + tabs.length) % tabs.length
+      tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === cur)); t.tabIndex = k === cur ? 0 : -1; t.classList.remove('is-run') })
+      shots.forEach((x, k) => x.classList.toggle('is-on', k === cur))
+      panel?.setAttribute('aria-labelledby', tabs[cur].id)
+      if (!hands && !reduce) { void tabs[cur].offsetWidth; tabs[cur].classList.add('is-run') }
+    }
+    const stop = () => { clearInterval(timer); timer = 0 }
+    const start = () => { stop(); if (hands || reduce) return; show(cur); timer = window.setInterval(() => show(cur + 1), 4200) }
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => { hands = true; stop(); show(i) })
+      t.addEventListener('keydown', (e) => {
+        const d = e.key === 'ArrowDown' || e.key === 'ArrowRight' ? 1 : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? -1 : 0
+        if (!d) return
+        e.preventDefault(); e.stopPropagation(); hands = true; stop(); show(cur + d); tabs[cur].focus()
+      })
+    })
+    new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop()), { threshold: 0.5 }).observe(root)
+  })
+</script>

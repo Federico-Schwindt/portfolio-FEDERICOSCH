@@ -1,6 +1,6 @@
 /**
  * ─────────────────────────────────────────────────────────────
- *  SITE CONTENT — edit everything here. Items marked TODO are
+ *  SITE CONTENT-edit everything here. Items marked TODO are
  *  placeholders waiting for confirmation.
  * ─────────────────────────────────────────────────────────────
  */
@@ -114,7 +114,7 @@ export type Project = {
   features?: { title: string; text: string; image?: string; stat?: string }[]
 }
 
-/** One Lighthouse run: category scores (0–100) and lab metrics (ms, bytes, counts) */
+/** One Lighthouse run: category scores (0-100) and lab metrics (ms, bytes, counts) */
 export type LighthouseRun = {
   perf: number
   a11y: number
@@ -137,7 +137,7 @@ export const projects: Project[] = [
     client: 'Universal Driveshafts · Odessa, FL',
     category: 'E-commerce redesign & growth',
     tags: 'Design, Code, Marketing',
-    year: '2024 — 2026',
+    year: '2024-2026',
     cover: 'work/uds.jpg',
     url: 'https://universaldriveshafts.com',
     featured: true,
@@ -180,7 +180,7 @@ export const projects: Project[] = [
         title: 'Quick order & wholesale',
         text: 'Shops, drivelines and fleets type part numbers with live suggestions, set quantities and add everything to the cart at once. Category pages work the same way: a filterable table by series, brand and style, with cap size and width per row and an Add button on each line. Approved trade accounts get standing discounts at checkout.',
         image: 'case/uds-quick-order.jpg',
-        stat: '7,541 parts, cross-referenced 1310–1810',
+        stat: '7,541 parts, cross-referenced 1310-1810',
       },
       {
         title: 'Built for the shop floor',
@@ -232,7 +232,7 @@ export const projects: Project[] = [
     features: [
       {
         title: 'Built from the catalog, not from photos',
-        text: 'The 2005–2010 Chrysler 300 / Dodge Charger rear shaft, part 2891-401N: two pieces, 18.37" tubes weld to weld, 1310 series, flex discs at both ends and one centre bearing. Every number in the model comes from the fitment record, and the page shows exactly what it was built from.',
+        text: 'The 2005-2010 Chrysler 300 / Dodge Charger rear shaft, part 2891-401N: two pieces, 18.37" tubes weld to weld, 1310 series, flex discs at both ends and one centre bearing. Every number in the model comes from the fitment record, and the page shows exactly what it was built from.',
         image: 'case/uds3d-review.jpg',
         stat: '2-piece · 1310 · 1,283 mm',
       },
@@ -439,86 +439,8 @@ export const projects: Project[] = [
     solution:
       'Story before catalog. The homepage scrubs a film from the crop canopy down into the roots as you scroll, with a live depth gauge and chapters on exudates, microbes and fungal networks. The Plant Health Pyramid becomes interactive, with mineral “periodic table” tiles. The shop uses the real catalog with per-size pricing, a state selector that swaps in state-registered formulations, a slide-out cart and a demo checkout; one setting hands the cart to the existing WooCommerce checkout through shareable checkout links, so no store migration is needed.',
     result:
-      'A static Astro build with 62 pre-rendered pages, about 8.5 KB of global JavaScript and video that only loads after first paint: 95 Lighthouse performance and 97–100 accessibility on mobile. Built as a working proposal for the AEA team, with a first-visit disclaimer making clear it is an unofficial concept.',
+      'A static Astro build with 62 pre-rendered pages, about 8.5 KB of global JavaScript and video that only loads after first paint: 95 Lighthouse performance and 97-100 accessibility on mobile. Built as a working proposal for the AEA team, with a first-visit disclaimer making clear it is an unofficial concept.',
     images: ['case/aea-1.jpg', 'case/aea-2.jpg', 'case/aea-3.jpg', 'case/aea-4.jpg'],
-  },
-  {
-    slug: 'certified-retail-cars',
-    kinds: ['Website'],
-    title: 'Certified Retail Cars',
-    client: 'Certified Retail · Israel',
-    category: 'Car dealer website',
-    tags: 'Design, WordPress',
-    year: '2024',
-    cover: 'work/certified.jpg',
-    featured: true,
-    summary:
-      'Website for a multi-brand car dealer: a filterable inventory of every vehicle in stock, a page per car with gallery and specs, and a contact page with a map and every way to get in touch.',
-    role: ['Web design', 'WordPress development', 'Inventory structure'],
-    stack: ['WordPress', 'Elementor', 'Filterable listings', 'Maps integration'],
-    challenge:
-      'Buyers compare dozens of cars before they pick up the phone. The inventory had to be browsable by brand, price and year, and every car needed a page that answers the questions a buyer has before visiting the lot.',
-    solution:
-      'A dynamic listing with filters by make, model, price and year; a page per car with gallery, overview and feature list; a home page that surfaces the latest arrivals; and a contact page with location tools, a form and direct call, email and WhatsApp buttons.',
-    images: ['case/certified-1.jpg', 'case/certified-2.jpg', 'case/certified-3.jpg', 'case/certified-4.jpg'],
-  },
-  {
-    slug: 'mirage-tlv',
-    kinds: ['Website'],
-    title: 'Mirage TLV',
-    client: 'Mirage · Tel Aviv',
-    category: 'Spa website & booking',
-    tags: 'Design, WordPress',
-    year: '2024',
-    cover: 'work/mirage.jpg',
-    featured: true,
-    summary:
-      'Website for a luxury spa in Tel Aviv: an immersive, photography-led home page, a menu of massages and treatments, and an appointment page that turns visitors into bookings.',
-    role: ['Art direction', 'Web design', 'WordPress development'],
-    stack: ['WordPress', 'Elementor', 'Appointment form', 'Responsive'],
-    challenge:
-      'A spa sells an atmosphere. The site had to feel as calm and premium as the place itself while still making it easy to see the treatments, read what each one includes and book a slot from a phone.',
-    solution:
-      'Full-bleed imagery and a warm, muted palette set the mood. A treatments catalogue with descriptions and durations does the explaining, and one appointment page with a short form and a click-to-call number closes the loop.',
-    images: ['case/mirage-1.jpg', 'case/mirage-2.jpg', 'case/mirage-3.jpg', 'case/mirage-4.jpg'],
-  },
-  {
-    slug: 'minrat-projects',
-    kinds: ['Website'],
-    title: 'Minrat Projects',
-    client: 'Minrat Projects Ltd. · Israel',
-    category: 'Architecture & finishing portfolio',
-    tags: 'Design, WordPress, RTL',
-    year: '2024',
-    cover: 'work/minrat.jpg',
-    featured: true,
-    summary:
-      'Portfolio website for a company that designs and executes high-end finishing work for showrooms, offices and car centres: a project archive on custom post types, service pages and the company story, all in Hebrew and right-to-left.',
-    role: ['Web design', 'WordPress development', 'Custom post types', 'RTL layout'],
-    stack: ['WordPress', 'Elementor', 'Custom post types', 'RTL / Hebrew', 'Responsive'],
-    challenge:
-      'The work is visual and varied. Minrat needed a site that shows finished spaces at full size, lets the team publish new projects without a developer, and reads correctly in Hebrew on every screen.',
-    solution:
-      'Every project is a custom post type with its own gallery, category and location, so the archive and project pages build themselves. Service pages explain what the company does, an about page tells the story with key figures, and the contact page carries a map and a form.',
-    images: ['case/minrat-1.jpg', 'case/minrat-2.jpg', 'case/minrat-3.jpg', 'case/minrat-4.jpg'],
-  },
-  {
-    slug: 'joya-hijab',
-    kinds: ['E-commerce'],
-    title: 'Joya Hijab',
-    client: 'Joya · Israel',
-    category: 'WooCommerce store',
-    tags: 'Design, WooCommerce',
-    year: '2024',
-    cover: 'work/joya.jpg',
-    url: 'https://joyahijab.com',
-    summary:
-      'A right-to-left WooCommerce store for a hijab and modest-fashion brand: editorial photography, clean product grids and a checkout tuned for mobile.',
-    role: ['Web design', 'WooCommerce development', 'RTL layout'],
-    stack: ['WordPress', 'WooCommerce', 'Elementor', 'RTL / Arabic'],
-    challenge: 'Sell a premium, image-led product in Arabic with a store that still feels fast and effortless on a phone.',
-    solution: 'A minimal, photography-first layout with a fully right-to-left interface, simplified navigation and a two-step checkout.',
-    images: ['case/joya-1.jpg', 'case/joya-2.jpg'],
   },
   {
     slug: 'velocity-motors-concept',
@@ -674,15 +596,19 @@ export const audit = {
 export const faq = [
   {
     q: 'How much does a website cost?',
-    a: 'Packages start at $300 setup plus $50/month (Launch), $500 plus $80/month (Grow) and $750 plus $100/month (Scale). The monthly plan covers hosting, maintenance, security updates and small changes, so you never pay for a rebuild because the site was left to rot.',
+    a: 'Launch is $600 to build plus $80/month with 2 requests at a time. Grow is $1,200 plus $150/month with branding and 4 requests at a time. Scale is $3,000 plus $250/month with AI, workflows and 6 requests at a time. Community management can be added to any plan for $1,000/month.',
+  },
+  {
+    q: 'How do requests work?',
+    a: 'You send a request (a new page, a banner, a campaign, a fix, a post) and it goes into your queue. Your plan sets how many move at the same time: 2, 4 or 6. Most are done in two to three business days, and the next one starts as soon as one is delivered.',
   },
   {
     q: 'How long does it take?',
-    a: 'A Launch site usually goes live in one to two weeks. Grow and Scale projects take two to six weeks depending on content, integrations and the size of the catalogue.',
+    a: 'The first build of a Launch site goes live in one to two weeks; Grow and Scale take two to six weeks. After that, requests are delivered in days, every month.',
   },
   {
     q: 'What is included in the monthly plan?',
-    a: 'Hosting, SSL, backups, plugin and security updates, uptime monitoring, and a set amount of small content changes every month. Higher plans add SEO and reporting.',
+    a: 'Hosting, SSL, backups, security updates and uptime monitoring, plus your requests: new pages, changes, graphics, campaigns. The plan sets how many are worked on at once, not how many you can send.',
   },
   {
     q: 'Do you work with clients outside Argentina?',
@@ -704,11 +630,12 @@ export const packages = [
     code: 'FS/PKG.01-L1',
     short: 'LCH',
     name: 'Launch',
-    text: 'Your first serious presence: a sharp, credible site built to go live fast and convert from day one.',
-    textItalic: 'launch fast',
-    items: ['1–3 pages', 'Custom visual direction', 'Conversion-focused layout', 'WordPress or custom code'],
-    price: '$300',
-    monthly: '$50/month',
+    text: "A simple, sharp site live fast, then a team on call every month for whatever the business needs next.",
+    textItalic: '',
+    requests: "2 requests at a time",
+    items: ["Simple site, up to 5 pages","Custom visual direction","Hosting, security and updates","Most requests done in 2 to 3 business days"],
+    price: '$600',
+    monthly: "$80/month",
     stamp: 'IDEAS ARE NOT RECYCLABLE',
     stub: 'CREATIVE MATERIAL, DO NOT RECYCLE',
   },
@@ -716,11 +643,12 @@ export const packages = [
     code: 'FS/PKG.02-G1',
     short: 'GRW',
     name: 'Grow',
-    text: 'You already have traction. Now we remove friction: a structured site with a CMS, a brand system and the integrations your sales need.',
-    textItalic: 'remove friction',
-    items: ['5–8 pages + CMS', 'Complete brand identity', 'Integrations & automations', 'SEO setup & analytics'],
-    price: '$500',
-    monthly: '$80/month',
+    text: "Brand and site designed together: your own identity, a medium-sized custom site and a team that keeps shipping.",
+    textItalic: '',
+    requests: "4 requests at a time",
+    items: ["Complete brand identity","Medium site, up to 12 pages + CMS","Fully custom design","SEO, analytics and integrations","Ahead of Launch in the queue"],
+    price: '$1,200',
+    monthly: "$150/month",
     stamp: '100% ORIGINAL AND HUMAN-MADE',
     stub: '100% ORGANIC AND HUMAN PRODUCED',
   },
@@ -728,20 +656,21 @@ export const packages = [
     code: 'FS/PKG.03-S1',
     short: 'SCL',
     name: 'Scale',
-    text: 'At scale, rough edges cost revenue. A system that keeps growing with you: e-commerce, design system, campaigns.',
-    textItalic: 'cost revenue',
-    items: ['10+ pages + CMS', 'E-commerce & catalog', 'Design system', 'Paid campaigns & reporting'],
-    price: '$750',
-    monthly: '$100/month',
+    text: "The complete build: innovative design, a system of your own, AI connected to the business and workflows that run by themselves.",
+    textItalic: '',
+    requests: "6 requests at a time, unlimited queue",
+    items: ["Complete site with innovative design","Your own design system","AI connected: assistants, content, support","Automated workflows and integrations","First in the queue"],
+    price: '$3,000',
+    monthly: "$250/month",
     stamp: 'STORED IN DIRECT ACCESS OF CLIENTS',
     stub: 'STORE IN DIRECT ACCESS OF CLIENTS',
   },
 ]
 
-export const pricingNote = {
-  lead: 'Quality is not a package option.',
-  text: 'Every project is responsive, performance-optimised, cross-browser tested, SEO-ready, accessible and built on a clean architecture, whatever the tier.',
-}
+/** the add-on every plan can take */
+export const addonCM = {"t":"Community management","price":"$1,000/month","d":"Add it to any plan: posts, replies and a content calendar, every week."}
+
+export const pricingNote = {"lead":"A whole team, in one person.","text":"Design, code, brand and marketing from one person, with AI agents doing the repetitive work so several requests move at once. You subscribe, you ask, it gets done, every month."}
 
 export const contact = {
   title: 'Ready to grow?',
@@ -764,7 +693,7 @@ export const about = {
   skills: [
     { title: 'Design', items: ['Art direction', 'UI / UX', 'Figma', 'Branding & logo', 'Motion'] },
     { title: 'Development', items: ['Astro', 'React / Next.js', 'TypeScript', 'Three.js / WebGL', 'WordPress / WooCommerce', 'Shopify', 'Flutter'] },
-    { title: 'Marketing', items: ['SEO', 'Google & Meta Ads', 'Analytics', 'Landing pages', 'Email'] },
+    { title: 'Marketing', items: ['SEO', 'Google & Meta Ads', 'Analytics', 'Community management', 'Social content', 'Landing pages', 'Email'] },
   ],
   timeline: [
     { year: '2023', title: 'Founded Zyneteq', text: 'A verified agency on Freelancer.com: 13 projects delivered with a 5.0 rating, 100% on time and on budget.' },

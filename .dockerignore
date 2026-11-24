@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+.env
+.env.*
+_legacy
+_research
+scripts/.shots
+scripts/.dev.log
+brand/*.pdf
+docs/plan/screens
+.qa-*

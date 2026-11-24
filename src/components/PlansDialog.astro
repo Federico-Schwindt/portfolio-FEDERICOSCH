@@ -1,0 +1,163 @@
+---
+/**
+ * The plans, one click away: any element with data-plans opens this dialog (its href stays as the no-JS fallback).
+ * Pick a plan → checkout. Not sure → a call or the free audit.
+ */
+import Icon from './Icon.astro'
+import { data, lp } from '../i18n'
+import { url } from '../lib/site'
+interface Props { lang: 'en' | 'es' }
+const { lang } = Astro.props
+const { packages, addonCM } = data(lang)
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const L = (p: string) => `${base}${lang === 'es' ? '/es' : ''}${p}`
+const T = lang === 'es'
+  ? { title: 'Elige cómo empezar', sub: 'Un desarrollo único y un plan mensual por pedidos. Cambias o pausas cuando quieras.', rec: 'El más elegido', build: 'desarrollo', then: 'después', start: 'Empezar con', compare: 'Comparar todo', call: '¿No estás seguro? Hablemos 20 minutos', close: 'Cerrar', forYou: 'Para ti', quizOpen: '¿Cuál me conviene? Tres preguntas', quizAgain: 'Volver a empezar', result: (p: string) => `Te conviene ${p}.`,
+      why: { launch: 'Un sitio simple y pocos pedidos a la vez: empiezas liviano y subes cuando lo necesites.', grow: 'Necesitas marca y sitio juntos, o varios pedidos avanzando a la vez.', scale: 'Un sitio completo con sistema propio, IA y muchos pedidos en paralelo.' } as Record<string, string>,
+      qs: [['¿Qué necesitas construir?', ['Un sitio simple', 'Marca y sitio', 'Sitio con sistema o IA']], ['¿Cuántas cosas pides a la vez?', ['Una o dos', 'Tres o cuatro', 'Cinco o más']], ['¿Ya tienes marca (logo, colores)?', ['Sí', 'A medias', 'No']]] as [string, string[]][] }
+  : { title: 'Choose how to start', sub: 'A one-time build and a monthly plan by requests. Change or pause whenever you want.', rec: 'Most chosen', build: 'build', then: 'then', start: 'Start with', compare: 'Compare everything', call: 'Not sure? Let’s talk for 20 minutes', close: 'Close', forYou: 'For you', quizOpen: 'Which one fits me? Three questions', quizAgain: 'Start over', result: (p: string) => `${p} fits you.`,
+      why: { launch: 'A simple site and a few requests at a time: start light and move up when you need to.', grow: 'You need brand and site together, or several requests moving at once.', scale: 'A complete site with its own system, AI and many requests in parallel.' } as Record<string, string>,
+      qs: [['What do you need built?', ['A simple site', 'Brand and site', 'A site with a system or AI']], ['How many things do you ask for at once?', ['One or two', 'Three or four', 'Five or more']], ['Do you already have a brand (logo, colours)?', ['Yes', 'Partly', 'No']]] as [string, string[]][] }
+---
+<dialog class="pd" id="plans-dialog" aria-labelledby="pd-title">
+  <div class="pd__in">
+    <header class="pd__h">
+      <div><h2 class="d" id="pd-title">{T.title}</h2><p>{T.sub}</p></div>
+      <button type="button" class="pd__x" data-pd-close aria-label={T.close}><Icon name="x" /></button>
+    </header>
+    <div class="pq" data-pq data-result={JSON.stringify({ launch: [T.result('Launch'), T.why.launch], grow: [T.result('Grow'), T.why.grow], scale: [T.result('Scale'), T.why.scale] })}>
+      <button type="button" class="pq__open" data-pq-open aria-expanded="false" aria-controls="pq-body"><Icon name="plus" />{T.quizOpen}</button>
+      <div class="pq__body" id="pq-body" hidden>
+        {T.qs.map(([q, opts], qi) => (
+          <fieldset class="pq__q" data-pq-q={qi} hidden={qi > 0}>
+            <legend><span class="mono">{qi + 1}/3</span>{q}</legend>
+            <div>{opts.map((o, oi) => <button type="button" data-pq-a={oi}>{o}</button>)}</div>
+          </fieldset>
+        ))}
+        <p class="pq__r" data-pq-r hidden aria-live="polite"><b></b><span></span><button type="button" class="link" data-pq-again>{T.quizAgain}</button></p>
+      </div>
+    </div>
+    <div class="pd__grid">
+      {packages.map((p, i) => (
+        <article class={`pd__card${i === 1 ? ' is-hot' : ''}`} style={`--i:${i}`} data-pd-plan={p.name.toLowerCase()} data-for-you={T.forYou}>
+          <p class="pd__top"><b>{p.name}</b>{i === 1 && <span>{T.rec}</span>}</p>
+          <p class="pd__price"><b class="d">{p.price}</b><small>{T.build}</small></p>
+          <p class="pd__month">{T.then} {p.monthly}</p>
+          <p class="pd__req"><i aria-hidden="true"></i>{p.requests}</p>
+          <ul>{p.items.slice(0, 3).map((it) => <li><Icon name="check" />{it}</li>)}</ul>
+          <a class="btn pd__go" href={L(`/checkout/?plan=${p.name.toLowerCase()}`)}>{T.start} {p.name} <Icon name="arrowUpRight" /></a>
+        </article>
+      ))}
+    </div>
+    <footer class="pd__f">
+      <p><b>+ {addonCM.t}</b> {addonCM.price}</p>
+      <a class="link" href={L('/pricing/')}>{T.compare} <Icon name="arrowRight" /></a>
+      <a class="link" href={L('/contact/')}>{T.call} <Icon name="arrowRight" /></a>
+    </footer>
+  </div>
+</dialog>
+
+<script>
+  const d = document.getElementById('plans-dialog') as HTMLDialogElement | null
+  if (d && typeof d.showModal === 'function') {
+    let from: HTMLElement | null = null
+    document.addEventListener('click', (e) => {
+      const el = (e.target as HTMLElement).closest<HTMLElement>('[data-plans]')
+      if (el && !(e as MouseEvent).metaKey && !(e as MouseEvent).ctrlKey) {
+        e.preventDefault(); from = el; d.showModal()
+        const q = d.querySelector<HTMLButtonElement>('[data-pq-open]')
+        if (el.hasAttribute('data-plans-quiz') && q?.getAttribute('aria-expanded') === 'false') q.click()
+      }
+    })
+    d.addEventListener('click', (e) => { if (e.target === d || (e.target as HTMLElement).closest('[data-pd-close]')) d.close() })
+    d.addEventListener('close', () => from?.focus())
+    // block mode listens for the wheel and arrows on the window: keep them inside the dialog while it is open
+    d.addEventListener('wheel', (e) => e.stopPropagation(), { passive: true })
+    d.addEventListener('keydown', (e) => { if (e.key !== 'Escape') e.stopPropagation() })
+
+    // three questions → one plan. Each answer is worth 0, 1 or 2; the plan is the highest need (no brand yet means at least Grow).
+    const pq = d.querySelector<HTMLElement>('[data-pq]')
+    if (pq) {
+      const open = pq.querySelector<HTMLButtonElement>('[data-pq-open]')!, body = pq.querySelector<HTMLElement>('.pq__body')!
+      const qs = [...pq.querySelectorAll<HTMLElement>('[data-pq-q]')], out = pq.querySelector<HTMLElement>('[data-pq-r]')!
+      const texts = JSON.parse(pq.dataset.result!) as Record<string, [string, string]>
+      const cards = [...d.querySelectorAll<HTMLElement>('[data-pd-plan]')]
+      let ans: number[] = []
+      const reset = () => { ans = []; qs.forEach((q, i) => (q.hidden = i > 0)); out.hidden = true; cards.forEach((c) => c.classList.remove('is-pick', 'is-dim')) }
+      open.addEventListener('click', () => { const on = body.hidden; body.hidden = !on; open.setAttribute('aria-expanded', String(on)); if (on) { reset(); qs[0].querySelector('button')?.focus() } else reset() })
+      pq.addEventListener('click', (e) => {
+        const t = e.target as HTMLElement
+        if (t.closest('[data-pq-again]')) { reset(); qs[0].querySelector('button')?.focus(); return }
+        const a = t.closest<HTMLElement>('[data-pq-a]'); if (!a) return
+        ans.push(Number(a.dataset.pqA))
+        qs.forEach((q, i) => (q.hidden = i !== ans.length))
+        if (ans.length < qs.length) { qs[ans.length].querySelector('button')?.focus(); return }
+        const need = Math.max(ans[0], ans[1], ans[2] === 2 ? 1 : 0)
+        const plan = ['launch', 'grow', 'scale'][need]
+        out.querySelector('b')!.textContent = texts[plan][0]; out.querySelector('span')!.textContent = texts[plan][1]; out.hidden = false
+        cards.forEach((c) => { c.classList.toggle('is-pick', c.dataset.pdPlan === plan); c.classList.toggle('is-dim', c.dataset.pdPlan !== plan) })
+        cards.find((c) => c.dataset.pdPlan === plan)?.querySelector<HTMLElement>('.pd__go')?.focus()
+      })
+      d.addEventListener('close', () => { body.hidden = true; open.setAttribute('aria-expanded', 'false'); reset() })
+    }
+  }
+</script>
+
+<style>
+  .pd { margin: auto; width: min(1080px, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); padding: 0; border: 0; border-radius: 22px; background: var(--paper); color: var(--ink); overflow: auto; overscroll-behavior: contain; box-shadow: 0 40px 120px -30px rgb(0 0 0 / 0.6); }
+  .pd::backdrop { background: rgb(11 11 11 / 0.6); backdrop-filter: blur(6px); }
+  .pd[open] { animation: pd-in 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+  .pd[open]::backdrop { animation: pd-fade 0.3s ease; }
+  @keyframes pd-in { from { opacity: 0; transform: translateY(24px) scale(0.97); } }
+  @keyframes pd-fade { from { opacity: 0; } }
+  .pd__in { padding: clamp(1.2rem, 2.6vw, 2.2rem); display: grid; gap: 1.4rem; }
+  .pd__h { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+  .pd__h h2 { font-size: clamp(1.8rem, 3.4vw, 2.8rem); }
+  .pd__h p { margin-top: 0.5rem; color: rgb(var(--ink-rgb) / 0.7); max-width: 52ch; font-size: 1rem; }
+  .pd__x { flex: none; width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid rgb(var(--ink-rgb) / 0.2); background: none; color: inherit; display: grid; place-items: center; cursor: pointer; transition: background 0.2s, color 0.2s; }
+  .pd__x:hover { background: var(--ink); color: var(--paper); }
+  .pd__x :global(svg) { width: 18px; height: 18px; }
+  .pd__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; }
+  .pd__card { display: flex; flex-direction: column; gap: 0.55rem; padding: 1.25rem; border-radius: 16px; background: var(--card, #fff); border: 1.5px solid rgb(var(--ink-rgb) / 0.12); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s; }
+  .pd[open] .pd__card { animation: pd-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) backwards; animation-delay: calc(0.08s + var(--i) * 0.06s); }
+  .pd__card:hover { transform: translateY(-3px); border-color: rgb(var(--ink-rgb) / 0.4); }
+  .pd__card.is-hot { border-color: var(--main); box-shadow: 0 0 0 4px rgb(240 17 17 / 0.1); }
+  .pd__top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; font-size: 1.05rem; }
+  .pd__top span { font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 6px; background: var(--main); color: #fff; }
+  .pd__price { display: flex; align-items: baseline; gap: 0.4rem; }
+  .pd__price b { font-size: clamp(2.2rem, 3.6vw, 3rem); }
+  .pd__price small, .pd__month { color: rgb(var(--ink-rgb) / 0.65); font-size: 0.92rem; }
+  .pd__req { display: flex; align-items: center; gap: 0.5rem; font-weight: 650; font-size: 0.92rem; padding: 0.6rem 0; border-block: 1px solid rgb(var(--ink-rgb) / 0.1); }
+  .pd__req i { width: 8px; height: 8px; border-radius: 50%; background: var(--main); }
+  .pd__card ul { display: grid; gap: 0.4rem; font-size: 0.9rem; padding-bottom: 0.6rem; }
+  .pd__card li { display: flex; gap: 0.5rem; align-items: flex-start; }
+  .pd__card li :global(svg) { width: 14px; height: 14px; flex: none; margin-top: 4px; color: var(--main); }
+  .pd__go { margin-top: auto; justify-content: center; --accent: var(--ink); --on-accent: var(--paper); }
+  .pd__card.is-hot .pd__go { --accent: var(--main); --on-accent: #fff; }
+  .pd__f { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.6rem; padding-top: 1rem; border-top: 1px solid rgb(var(--ink-rgb) / 0.12); font-size: 0.95rem; }
+  .pd__f p { margin-right: auto; }
+  .pq { display: grid; gap: 0.8rem; margin-top: -0.4rem; }
+  .pq [hidden] { display: none; }
+  .pq__open { justify-self: start; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.9rem; border-radius: 999px; border: 1.5px dashed rgb(var(--ink-rgb) / 0.4); background: none; color: inherit; font: inherit; font-weight: 600; font-size: 0.92rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .pq__open:hover { border-color: var(--main); background: rgb(240 17 17 / 0.05); }
+  .pq__open :global(svg) { width: 14px; height: 14px; color: var(--main); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .pq__open[aria-expanded='true'] :global(svg) { transform: rotate(45deg); }
+  .pq__body { padding: 1rem 1.1rem; border-radius: 14px; background: rgb(var(--ink-rgb) / 0.05); }
+  .pq__q { border: 0; padding: 0; margin: 0; display: grid; gap: 0.7rem; animation: pd-in 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .pq__q legend { display: flex; align-items: baseline; gap: 0.7rem; font-weight: 650; font-size: 1.05rem; padding: 0; margin-bottom: 0.7rem; }
+  .pq__q legend .mono { font-size: 0.62rem; color: var(--main); }
+  .pq__q > div { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .pq__q button { padding: 0.6rem 1rem; border-radius: 999px; border: 1.5px solid rgb(var(--ink-rgb) / 0.2); background: var(--card, #fff); color: inherit; font: inherit; font-size: 0.92rem; font-weight: 550; cursor: pointer; transition: border-color 0.15s, transform 0.2s; }
+  .pq__q button:hover { border-color: var(--ink); transform: translateY(-1px); }
+  .pq__r { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.8rem; animation: pd-in 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .pq__r b { font-size: 1.1rem; }
+  .pq__r span { color: rgb(var(--ink-rgb) / 0.7); }
+  .pq__r button { margin-left: auto; background: none; border-width: 0 0 2px; cursor: pointer; font: inherit; color: inherit; }
+  .pd__card.is-pick { border-color: var(--main); box-shadow: 0 0 0 4px rgb(240 17 17 / 0.16); transform: translateY(-4px); }
+  .pd__card.is-pick::before { content: attr(data-for-you); align-self: flex-start; font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 6px; background: var(--main); color: #fff; }
+  .pd__card.is-dim { opacity: 0.55; }
+  .pd__card.is-dim.is-hot { border-color: rgb(var(--ink-rgb) / 0.12); box-shadow: none; }
+  .pd__card.is-pick .pd__go { --accent: var(--main); --on-accent: #fff; }
+  @media (max-width: 820px) { .pd__grid { grid-template-columns: 1fr; } .pd { border-radius: 16px; } }
+  @media (prefers-reduced-motion: reduce) { .pd[open], .pd[open]::backdrop, .pd[open] .pd__card { animation: none; } }
+</style>

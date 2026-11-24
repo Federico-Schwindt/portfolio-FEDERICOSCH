@@ -1,0 +1,21 @@
+---
+import { url, SITE_URL } from '../lib/site'
+import { lp, t, langOf, type Lang } from '../i18n'
+interface Props { trail: { label: string; href?: string }[]; lang?: Lang }
+const { trail, lang = langOf(Astro.url.pathname) } = Astro.props
+const all = [{ label: t(lang).home, href: '/' }, ...trail].map((c) => ({ ...c, href: c.href ? lp(lang, c.href) : undefined }))
+const ld = {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: all.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.label, ...(c.href ? { item: `${SITE_URL}${c.href}` } : {}) })),
+}
+---
+<nav class="crumbs mono" aria-label={lang === 'es' ? 'Migas de pan' : 'Breadcrumb'}>
+  <ol>
+    {all.map((c, i) => (
+      <li>
+        {c.href && i < all.length - 1 ? <a href={url(c.href)}>{c.label}</a> : <span aria-current="page">{c.label}</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />

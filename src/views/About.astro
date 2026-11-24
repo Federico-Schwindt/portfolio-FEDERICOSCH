@@ -1,0 +1,125 @@
+---
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import { url } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+import Next from '../components/Next.astro'
+import Compare from '../components/Compare.astro'
+import '../styles/home-app.css'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const { about, tools } = data(lang)
+const L = (p: string) => url(lp(lang, p))
+const C = {
+  en: { title: 'About Federico Schwindt: Designer, Developer & Marketer', desc: 'Federico Schwindt designs, builds and grows websites and brands for small businesses worldwide. 5.0 rating on 13 Freelancer projects, +551% best result.',
+    h1: ['Designer,', 'developer,', 'marketer.'], lead: 'I am Federico. I work end-to-end: strategy, art direction, code, and the campaigns that bring people in.', alt: 'Federico Schwindt with arms crossed',
+    deskAlt: 'Federico Schwindt working at a laptop, in black and white', craft: ['Craft', 'meets numbers.'], seeWork: 'See the work', range: ['Full', 'range.'], next: ['Your site', 'next?'], cta: 'Start a project' },
+  es: { title: 'Sobre Federico Schwindt: diseñador, desarrollador y marketer', desc: 'Federico Schwindt diseña, construye y hace crecer sitios y marcas para pequeñas empresas de todo el mundo. 5.0 en 13 proyectos de Freelancer y +551% como mejor resultado.',
+    h1: ['Diseñador,', 'desarrollador,', 'marketer.'], lead: 'Soy Federico. Trabajo de punta a punta: estrategia, dirección de arte, código y las campañas que traen gente.', alt: 'Federico Schwindt de brazos cruzados',
+    deskAlt: 'Federico Schwindt trabajando en una laptop, en blanco y negro', craft: ['Oficio', 'con números.'], seeWork: 'Ver los trabajos', range: ['Todo el', 'rango.'], next: ['¿Tu sitio', 'es el próximo?'], cta: 'Empezar un proyecto' },
+}[lang]
+---
+<Base title={C.title} description={C.desc} lang={lang}>
+  <header class="t-main ah">
+    <div class="wrap ah__grid">
+      <div class="ah__text">
+        <h1 class="d ah__title" data-lines>
+          <span class="line"><span class="n">{C.h1[0]}</span></span>
+          <span class="line" style="--i:1"><span>{C.h1[1]}</span></span>
+          <span class="line" style="--i:2"><span class="x">{C.h1[2]}</span></span>
+        </h1>
+        <p class="lead" data-reveal>{C.lead}</p>
+      </div>
+      <img class="ah__me" src={url('/img/hero-arms.webp')} alt={C.alt} width="1030" height="1400" fetchpriority="high" />
+    </div>
+  </header>
+
+  <section class="section t-ink">
+    <div class="wrap">
+      <ul class="af" data-fx="gap">
+        {about.facts.map((f, i) => {
+          const num = f.value.replace(/[^0-9.]/g, '')
+          return <li data-reveal style={`--i:${i}`}><span class="d n af__n" data-count={num} data-prefix={f.value.startsWith('+') ? '+' : ''} data-suffix={f.value.endsWith('%') ? '%' : ''}>{f.value}</span><p class="muted">{f.label.replace(' · ', ', ')}</p></li>
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section t-paper">
+    <div class="wrap ab2">
+      <img src={url('/img/desk.webp')} alt={C.deskAlt} width="1200" height="1500" loading="lazy" data-reveal />
+      <div class="ab2__text">
+        <h2 class="d h-m" data-reveal>{C.craft[0]} <i class="x">{C.craft[1]}</i></h2>
+        {about.bio.map((b) => <p class="ab2__p" data-reveal>{b}</p>)}
+        <a class="btn" href={L('/work/')} data-reveal>{C.seeWork} <Icon name="arrowUpRight" /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section t-ink">
+    <div class="wrap">
+      <h2 class="d h-l" data-lines><span class="line"><span class="x">{C.range[0]}</span> <span class="n">{C.range[1]}</span></span></h2>
+      <div class="sk">
+        {about.skills.map((s, i) => (
+          <div data-reveal style={`--i:${i}`}>
+            <h3 class="d h-s">{s.title}</h3>
+            <ul>{s.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+      <div class="tl">
+        {about.timeline.map((t) => (
+          <div class="tl__row" data-reveal>
+            <span class="d n tl__y">{t.year}</span>
+            <h3 class="d h-s">{t.title}</h3>
+            <p class="muted">{t.text}</p>
+          </div>
+        ))}
+      </div>
+      <div class="tools" data-reveal>{tools.map((t) => <span class="chip">{t}</span>)}</div>
+    </div>
+  </section>
+
+  <section class="section t-paper cmp">
+    <Compare lang={lang} />
+  </section>
+  <section class="section t-main acta">
+    <div class="wrap">
+      <h2 class="d h-xl" data-lines><span class="line"><span class="n">{C.next[0]}</span></span><span class="line" style="--i:1"><span class="x">{C.next[1]}</span></span></h2>
+      <div class="end__btns">
+        <a class="btn" data-plans href={L('/pricing/')}>{C.cta} <Icon name="arrowUpRight" /></a>
+        <a class="link" href={L('/contact/')}>{lang === 'es' ? 'Hablemos 20 minutos' : 'Talk for 20 minutes'} <Icon name="arrowRight" /></a>
+      </div>
+      <Next lang={lang} />
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .ah { padding-top: calc(var(--nav-h) + clamp(3rem, 6vw, 6rem)); overflow: hidden; }
+  .ah__grid { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: end; }
+  .ah__text { padding-bottom: clamp(2.5rem, 6vw, 6rem); display: grid; gap: 2rem; }
+  .ah__title { font-size: clamp(3rem, 7.6vw, 9rem); }
+  .ah__me { height: min(80dvh, 46vw); width: auto; max-width: none; justify-self: end; }
+  .af { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+  .af__n { font-size: clamp(4rem, 9vw, 10rem); line-height: 0.8; color: var(--hl); display: block; margin-bottom: 1rem; }
+  .ab2 { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(2rem, 6vw, 7rem); align-items: center; }
+  .ab2 img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .ab2__text { display: grid; gap: 1.5rem; justify-items: start; }
+  .ab2__p { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.45rem); line-height: 1.45; max-width: 50ch; }
+  .sk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: clamp(3rem, 6vw, 6rem); }
+  .sk h3 { color: var(--hl); margin-bottom: 1rem; }
+  .sk li { padding: 0.5rem 0; border-top: 1px solid var(--line); font-weight: 500; }
+  .tl { margin-top: clamp(3rem, 7vw, 7rem); border-top: 2px solid var(--line); }
+  .tl__row { display: grid; grid-template-columns: 0.6fr 1fr 1.6fr; gap: 2rem; align-items: center; padding: 1.6rem 0; border-bottom: 2px solid var(--line); }
+  .tl__y { font-size: clamp(3rem, 6vw, 6.5rem); line-height: 0.8; }
+  .tools { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: clamp(2.5rem, 5vw, 5rem); }
+  .acta .wrap { display: grid; gap: 2.5rem; justify-items: start; }
+  @media (max-width: 860px) {
+    .ah__grid, .ab2, .sk { grid-template-columns: 1fr; }
+    .ah__text { padding-bottom: 0; }
+    .ah__me { height: 52dvh; justify-self: center; }
+    .af { grid-template-columns: 1fr 1fr; }
+    .tl__row { grid-template-columns: 1fr; gap: 0.6rem; }
+  }
+</style>

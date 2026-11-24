@@ -1,0 +1,206 @@
+---
+/**
+ * Case study, one template for all 14. Five blocks, each shown only when there is material:
+ * brief and evidence, problem and decision, product tour, documented result, next step.
+ * Every screenshot is a whole plate at its real 16:10 proportion: never cropped, never stretched.
+ */
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import Crumbs from '../components/Crumbs.astro'
+import type { LighthouseRun } from '../data/content'
+import { url, hostOf, SITE_URL } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+import '../styles/pages.css'
+import '../styles/case.css'
+
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props
+const { projects, offerForCase } = data(lang)
+const p = projects.find((x) => x.slug === slug)!
+const L = (x: string) => url(lp(lang, x))
+const C = {
+  en: { work: 'Work', concept: 'Concept', clientWork: 'Client work', film: 'film', problem: ['The', 'problem.'], did: ['What I', 'did.'], client: 'Client', year: 'Year', role: 'Role', stack: 'Stack',
+    built: ['What I', 'built.'], open: 'Open the full image', view: 'view', result: ['The', 'result.'], metric: 'Metric', before: 'Before', after: 'After', measured: 'Measured',
+    want: ['Want this', 'for your business?'], incl: 'what is included', service: 'Service', timeline: 'Timeline', price: 'Price', disc: 'Self-initiated concept.', notAff: 'Not affiliated with the brand shown.', next: 'Next project', study: 'case study',
+    cta: (n?: string) => (n ? `Start a ${n.toLowerCase()} project` : 'Discuss a similar project'),
+    m: ['Performance', 'Accessibility', 'Main content (LCP)', 'Blocking time', 'Page weight', 'Requests'] },
+  es: { work: 'Trabajos', concept: 'Concepto', clientWork: 'Trabajo para cliente', film: 'video', problem: ['El', 'problema.'], did: ['Lo que', 'hice.'], client: 'Cliente', year: 'Año', role: 'Rol', stack: 'Stack',
+    built: ['Lo que', 'construí.'], open: 'Abrir la imagen completa', view: 'vista', result: ['El', 'resultado.'], metric: 'Métrica', before: 'Antes', after: 'Después', measured: 'Medido el',
+    want: ['¿Quieres esto', 'para tu negocio?'], incl: 'qué incluye', service: 'Servicio', timeline: 'Plazo', price: 'Precio', disc: 'Concepto propio.', notAff: 'Sin relación con la marca que se muestra.', next: 'Siguiente proyecto', study: 'caso de estudio',
+    cta: (n?: string) => (n ? `Empezar un proyecto de ${n.toLowerCase()}` : 'Hablemos de un proyecto similar'),
+    m: ['Rendimiento', 'Accesibilidad', 'Contenido principal (LCP)', 'Tiempo de bloqueo', 'Peso de la página', 'Solicitudes'] },
+}[lang]
+const next = projects[(projects.indexOf(p) + 1) % projects.length]
+const offer = offerForCase(p.slug)
+const [big, ...rest] = p.stats ?? []
+
+// Figures: features first (they carry a caption), then the remaining plates. No view appears twice.
+type Fig = { src: string; alt: string; title?: string; text?: string; stat?: string }
+const seen = new Set<string>([p.cover])
+const tour: Fig[] = []
+for (const f of p.features ?? []) if (f.image && !seen.has(f.image)) { seen.add(f.image); tour.push({ src: f.image, alt: `${p.title}: ${f.title}`, title: f.title, text: f.text, stat: f.stat }) }
+const textOnly = (p.features ?? []).filter((f) => !f.image)
+const plates: Fig[] = p.images.filter((s) => !seen.has(s)).map((src, i) => ({ src, alt: `${p.title}, ${p.category.toLowerCase()}: ${C.view} ${i + 1}` }))
+// rhythm: one wide figure, then a pair, and so on
+const rows: Fig[][] = []
+for (let i = 0; i < tour.length; ) { const n = rows.length % 2 === 0 ? 1 : 2; rows.push(tour.slice(i, i + n)); i += n }
+
+const kb = (b: number) => (b > 1e6 ? `${(b / 1e6).toFixed(1)} MB` : `${Math.round(b / 1e3)} KB`)
+const sec = (ms: number) => `${(ms / 1000).toFixed(2)} s`
+const metrics = (r: LighthouseRun) => [
+  [C.m[0], String(r.perf)],
+  [C.m[1], String(r.a11y)],
+  [C.m[2], sec(r.lcp)],
+  [C.m[3], `${r.tbt} ms`],
+  [C.m[4], kb(r.bytes)],
+  [C.m[5], String(r.reqs)],
+]
+const full = `${p.title}: ${p.category}`
+const title = full.length <= 42 ? `${full} | Federico Schwindt` : `${p.title}: ${C.study} | Federico Schwindt`
+const ld = {
+  '@context': 'https://schema.org', '@type': 'CreativeWork', name: p.title, headline: `${p.title}: ${p.category}`, description: p.summary,
+  url: `${SITE_URL}${lp(lang, `/work/${p.slug}/`)}`, inLanguage: lang, image: `${SITE_URL}/${p.cover}`, creator: { '@id': `${SITE_URL}/#person` },
+}
+const cta = C.cta(offer?.name)
+---
+<Base title={title} description={p.summary.slice(0, 158)} image={`${SITE_URL}/${p.cover}`} ld={[ld]} lang={lang}>
+  <!-- 1. Brief and evidence -->
+  <header class="phead t-paper cs-head">
+    <div class="wrap">
+      <Crumbs trail={[{ label: C.work, href: '/work/' }, { label: p.title }]} lang={lang} />
+      <div class="cs-head__grid">
+        <div class="cs-head__copy">
+          <p class="cs-chips">{p.kinds.map((k) => <span class="chip">{k}</span>)}<span class={`chip ${p.concept ? 'chip--fill' : ''}`}>{p.concept ? C.concept : C.clientWork}</span></p>
+          <h1 class="d cs-title">{p.title}</h1>
+          <p class="x cs-fn">{p.category}</p>
+          <p class="cs-sum">{p.summary}</p>
+          {big && <p class="cs-proof"><b class="d n">{big.value}</b><span>{big.label}</span></p>}
+          <div class="cs-cta">
+            <a class="btn" href={L(`/contact/?case=${p.slug}${offer ? `&service=${offer.slug}` : ''}`)}>{cta} <Icon name="arrowUpRight" /></a>
+            {p.url && <a class="link" href={p.url} target="_blank" rel="noopener">{hostOf(p.url)} <Icon name="arrowUpRight" /></a>}
+          </div>
+        </div>
+        <figure class="plate cs-cover">
+          {p.video
+            ? <video src={url(`/${p.video}`)} poster={url(`/${p.cover}`)} muted loop playsinline controls preload="none" width="1440" height="900" aria-label={`${p.title} ${C.film}`}></video>
+            : <img src={url(`/${p.cover}`)} alt={`${p.title}: ${p.category}`} width="1440" height="900" />}
+        </figure>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. Problem and decision -->
+  {(p.challenge || p.solution) && (
+    <section class="section t-ink">
+      <div class="wrap cs-why">
+        {p.challenge && <div data-reveal><h2 class="d h-m">{C.problem[0]} <i>{C.problem[1]}</i></h2><p class="cs-text">{p.challenge}</p></div>}
+        {p.solution && <div data-reveal style="--i:1"><h2 class="d h-m">{C.did[0]} <i>{C.did[1]}</i></h2><p class="cs-text">{p.solution}</p></div>}
+        <dl class="cs-meta" data-reveal>
+          <div><dt class="mono">{C.client}</dt><dd>{p.client}</dd></div>
+          <div><dt class="mono">{C.year}</dt><dd>{p.year}</dd></div>
+          <div><dt class="mono">{C.role}</dt><dd>{p.role.join(', ')}</dd></div>
+          <div><dt class="mono">{C.stack}</dt><dd>{p.stack.join(', ')}</dd></div>
+        </dl>
+      </div>
+    </section>
+  )}
+
+  <!-- 3. Product tour: one wide figure, then a pair, with a caption for what each view lets a visitor do -->
+  {(rows.length > 0 || plates.length > 0) && (
+    <section class="section t-paper">
+      <div class="wrap">
+        <h2 class="d h-l" data-lines><span class="line"><span>{C.built[0]} <i>{C.built[1]}</i></span></span></h2>
+        <div class="cs-tour">
+          {rows.map((row) => (
+            <div class={`cs-row cs-row--${row.length}`}>
+              {row.map((f) => (
+                <figure class="cs-fig" data-reveal>
+                  <a class="plate" href={url(`/${f.src}`)} target="_blank" rel="noopener" aria-label={`${C.open}: ${f.title}`}>
+                    <img src={url(`/${f.src}`)} alt={f.alt} width="1440" height="900" loading="lazy" />
+                  </a>
+                  <figcaption>
+                    <h3 class="d h-s">{f.title}</h3>
+                    <p>{f.text}</p>
+                    {f.stat && <p class="mono cs-fstat">{f.stat}</p>}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          ))}
+          {textOnly.length > 0 && (
+            <ul class="cs-notes">{textOnly.map((f) => <li data-reveal><h3 class="d h-s">{f.title}</h3><p>{f.text}</p></li>)}</ul>
+          )}
+          {plates.length > 0 && (
+            <div class={`cs-plates cs-plates--${Math.min(plates.length, 2)}`}>
+              {plates.map((f) => (
+                <a class="plate" href={url(`/${f.src}`)} target="_blank" rel="noopener" data-reveal aria-label={C.open}>
+                  <img src={url(`/${f.src}`)} alt={f.alt} width="1440" height="900" loading="lazy" />
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- 4. Documented result -->
+  {(p.result || rest.length > 0 || p.performance) && (
+    <section class="section t-ink">
+      <div class="wrap">
+        <h2 class="d h-l" data-lines><span class="line"><span>{C.result[0]} <i>{C.result[1]}</i></span></span></h2>
+        {p.result && <p class="cs-text cs-result" data-reveal>{p.result}</p>}
+        {rest.length > 0 && (
+          <ul class="cs-rest" data-fx="gap">{rest.map((s, i) => <li data-reveal style={`--i:${i}`}><b class="d n">{s.value}</b><p class="muted">{s.label}</p></li>)}</ul>
+        )}
+        {p.performance && (
+          <div class="cs-perf">
+            {p.performance.runs.map((r) => (
+              <div class="cs-run" data-reveal>
+                <table>
+                  <caption>Lighthouse, {r.device.toLowerCase()}</caption>
+                  <thead><tr><th scope="col">{C.metric}</th>{r.before && <th scope="col">{C.before}</th>}<th scope="col">{C.after}</th></tr></thead>
+                  <tbody>
+                    {metrics(r.after).map(([name, val], i) => (
+                      <tr><th scope="row">{name}</th>{r.before && <td>{metrics(r.before)[i][1]}</td>}<td><b>{val}</b></td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+            <p class="cs-pnote muted">{p.performance.tool}. {C.measured} {p.performance.measured}. {p.performance.note}</p>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- 5. Next step -->
+  <section class="section t-main" data-paint="cream">
+    <div class="wrap cs-end">
+      <div class="end__cta">
+        <h2 class="d h-l">{C.want[0]} <i>{C.want[1]}</i></h2>
+        <div class="end__btns">
+          <a class="btn" href={L(`/contact/?case=${p.slug}${offer ? `&service=${offer.slug}` : ''}`)}>{cta} <Icon name="arrowUpRight" /></a>
+          {offer && <a class="link" href={L(`/services/${offer.slug}/`)}>{offer.name}: {C.incl} <Icon name="arrowRight" /></a>}
+        </div>
+      </div>
+      {offer && (
+        <dl class="cs-offer">
+          <div><dt class="mono">{C.service}</dt><dd>{offer.name}</dd></div>
+          <div><dt class="mono">{C.timeline}</dt><dd>{offer.timeline}</dd></div>
+          <div><dt class="mono">{C.price}</dt><dd>{offer.from}</dd></div>
+        </dl>
+      )}
+      {p.concept && <p class="cs-disc">{C.disc} {/not affiliated|sin relación/i.test(p.client) ? C.notAff : ''}</p>}
+    </div>
+  </section>
+
+  <a class="t-ink cs-next" href={L(`/work/${next.slug}/`)}>
+    <div class="wrap">
+      <span class="mono muted">{C.next}</span>
+      <span class="d h-xl cs-next__t">{next.title}</span>
+      <span class="link">{next.category} <Icon name="arrowUpRight" /></span>
+    </div>
+  </a>
+</Base>

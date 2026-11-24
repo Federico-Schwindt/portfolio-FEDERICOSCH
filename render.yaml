@@ -1,0 +1,14 @@
+# Render blueprint: one web service from the Dockerfile. The secrets are typed in Render's dashboard, never here.
+services:
+  - type: web
+    name: federico-schwindt
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health/
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_EMAILS
+        sync: false
+      - key: SITE_URL
+        sync: false

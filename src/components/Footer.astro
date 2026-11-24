@@ -1,34 +1,41 @@
 ---
-import { nav, site, socials } from '../data/content'
+import Icon from './Icon.astro'
 import { url } from '../lib/site'
+import { data, lp, t, type Lang } from '../i18n'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const T = t(lang)
+const { site, socials } = data(lang)
+const L = (p: string) => url(lp(lang, p))
 ---
-<footer class="ftr t-ink" data-theme="ink">
+<footer class="footer t-ink" data-slide-name={lang === 'es' ? 'Final' : 'End'}>
   <div class="wrap">
-    <div class="ftr__top">
-      <div>
-        <p class="tag" style="color:var(--red);margin-bottom:16px">Have a project in mind?</p>
-        <a class="ftr__mail" href={`mailto:${site.email}`}>{site.email}</a>
+    <div class="footer__grid">
+      <div class="footer__top" data-bd>
+        <p class="lead footer__lead">{T.footer}</p>
+        <div class="footer__cta">
+          <a class="btn" data-plans href={L('/pricing/')}>{T.cta} <Icon name="arrowUpRight" /></a>
+          <a class="link" href={url(lp(lang, '/app/'))}>{T.login} <Icon name="arrowRight" /></a>
+        </div>
       </div>
-      <div class="ftr__col">
-        <h2>Pages</h2>
-        <a href={url('/')}>Home</a>
-        {nav.map((n) => <a href={url(n.href)}>{n.label}</a>)}
-        <a href={url('/contact/')}>Contact</a>
+      <div class="footer__col" data-bd>
+        <a href={L('/work/')}>{T.nav.work}</a>
+        <a href={L('/services/')}>{T.nav.services}</a>
+        <a href={L('/pricing/')}>{T.nav.pricing}</a>
+        <a href={L('/audit/')}>{T.nav.audit}</a>
+        <a href={L('/about/')}>{T.nav.about}</a>
+        <a href={L('/contact/')}>{T.nav.contact}</a>
       </div>
-      <div class="ftr__col">
-        <h2>Elsewhere</h2>
-        {socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label} ↗</a>)}
-      </div>
-      <div class="ftr__col">
-        <h2>Based in</h2>
-        <p>{site.city}</p>
-        <p><span data-clock>--:--</span> {site.utc}</p>
+      <div class="footer__col" data-bd>
+        {socials.map((s) => <a href={s.href} target="_blank" rel="noopener">{s.label}</a>)}
+        <a href={`mailto:${site.email}`}>{T.email}</a>
       </div>
     </div>
-    <p class="ftr__word" aria-hidden="true">Schwindt<i></i></p>
-    <div class="ftr__bot tag">
-      <span>© {site.year} {site.name} · {site.agency}</span>
-      <span>Built with Astro · No trackers</span>
+    <img class="footer__word" data-bd src={url('/brand/wordmark-main.svg')} alt="Federico Schwindt" width="1200" height="290" loading="lazy" />
+    <div class="footer__base mono muted">
+      <span>&copy; {site.year} Federico Schwindt</span>
+      <span class="footer__live"><i aria-hidden="true"></i>{lang === 'es' ? 'Tomando proyectos nuevos' : 'Taking new projects'}</span>
+      <span>{site.city}</span>
     </div>
   </div>
 </footer>

@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro'
+import Crumbs from '../components/Crumbs.astro'
+import LeadForm from '../components/LeadForm.astro'
+import { url } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+import '../styles/pages.css'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const { audit, site } = data(lang)
+const L = (p: string) => url(lp(lang, p))
+const C = {
+  en: { title: 'Free Website Audit in 48 Hours | Federico Schwindt', desc: 'Send your URL and get an honest review within 48 hours: what slows your site down, what Google sees, and the three changes that would bring more enquiries.',
+    crumb: 'Free audit', h1: ['Is your site', 'losing clients?'], prefer: 'Prefer email?', write: 'Write to me', how: ['How it', 'works.'], scratch: 'Starting from scratch instead?', start: 'Start a project',
+    steps: [{ t: 'Send your URL', d: 'Two fields. No call, no account.' }, { t: 'I review it by hand', d: 'Speed, what Google sees, and where enquiries get lost.' }, { t: 'You get three changes', d: 'A short written review within 48 hours, in order of impact.' }] },
+  es: { title: 'Auditoría web gratis en 48 horas | Federico Schwindt', desc: 'Envía tu URL y recibe una revisión honesta en 48 horas: qué hace lento tu sitio, qué ve Google y los tres cambios que traerían más consultas.',
+    crumb: 'Auditoría gratis', h1: ['¿Tu sitio está', 'perdiendo clientes?'], prefer: '¿Prefieres email?', write: 'Escríbeme', how: ['Cómo', 'funciona.'], scratch: '¿Empiezas desde cero?', start: 'Empezar un proyecto',
+    steps: [{ t: 'Envía tu URL', d: 'Dos campos. Sin llamadas, sin crear cuenta.' }, { t: 'Lo reviso a mano', d: 'Velocidad, lo que ve Google y dónde se pierden las consultas.' }, { t: 'Recibes tres cambios', d: 'Una revisión corta por escrito en 48 horas, ordenada por impacto.' }] },
+}[lang]
+const steps = C.steps
+---
+<Base title={C.title} description={C.desc} lang={lang}>
+  <section class="t-ink au">
+    <div class="wrap au__grid">
+      <div class="au__text">
+        <Crumbs trail={[{ label: C.crumb }]} lang={lang} />
+        <h1 class="d au__h1" data-lines><span class="line"><span>{C.h1[0]}</span></span><span class="line" style="--i:1"><span><i>{C.h1[1]}</i></span></span></h1>
+        <p class="lead" data-reveal>{audit.text}</p>
+        <ul class="au__points" data-reveal style="--i:1">{audit.points.map((p) => <li class="chip">{p}</li>)}</ul>
+      </div>
+      <div class="au__form" data-reveal>
+        <LeadForm variant="audit" lang={lang} />
+        <p class="muted au__alt">{C.prefer} <a class="link" href={`mailto:${site.email}`}>{C.write}</a></p>
+      </div>
+    </div>
+  </section>
+  <section class="section t-paper">
+    <div class="wrap">
+      <h2 class="d h-l" data-lines><span class="line"><span>{C.how[0]} <i>{C.how[1]}</i></span></span></h2>
+      <ol class="au__steps" data-fx="gap">
+        {steps.map((s, i) => <li data-reveal style={`--i:${i}`}><span class="d n au__n">{i + 1}</span><h3 class="d h-s">{s.t}</h3><p>{s.d}</p></li>)}
+      </ol>
+      <p class="au__after" data-reveal>{C.scratch} <a class="link" href={L('/contact/')}>{C.start}</a></p>
+    </div>
+  </section>
+</Base>

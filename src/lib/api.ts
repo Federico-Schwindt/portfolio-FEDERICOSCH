@@ -37,7 +37,7 @@ export async function submitLead(input: LeadInput): Promise<LeadResult> {
     const r = await call('leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...input, page: input.page ?? window.location.pathname }),
+      body: JSON.stringify({ ...input, page: input.page ?? pageWithEntry() }),
     })
     const data = (await r.json().catch(() => ({}))) as { id?: string | null; error?: string }
     if (!r.ok) return { ok: false, error: data.error ?? `Request failed (${r.status})` }
@@ -63,6 +63,14 @@ export async function uploadBrief(leadId: string, file: File): Promise<LeadResul
 /** mailto: fallback used when the API is not configured or unreachable. */
 export function mailtoFor(email: string, input: LeadInput) {
   const subject = encodeURIComponent(input.source === 'audit' ? `Free audit request: ${input.website ?? ''}` : `Project enquiry from ${input.name || 'your website'}`)
-  const lines = [input.message ?? '', '', `— ${input.name}`, input.email, input.company ?? '', input.website ?? '', input.package ? `Package: ${input.package}` : '', input.budget ? `Budget: ${input.budget}` : '']
+  const lines = [input.message ?? '', '', input.name, input.email, input.company ?? '', input.website ?? '', input.package ? `Package: ${input.package}` : '', input.budget ? `Budget: ${input.budget}` : '']
   return `mailto:${email}?subject=${subject}&body=${encodeURIComponent(lines.filter(Boolean).join('\n'))}`
+}
+
+/** The page the form was sent from, plus the page the visit started on when it differs */
+function pageWithEntry() {
+  const here = window.location.pathname + window.location.search
+  let entry = ''
+  try { entry = sessionStorage.getItem('entry') ?? '' } catch { /* private mode */ }
+  return entry && entry !== here ? `${here} (entry ${entry})` : here
 }

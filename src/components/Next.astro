@@ -1,0 +1,11 @@
+---
+/** What happens after picking a plan, in three steps. */
+import { type Lang } from '../i18n'
+import { blocks } from '../data/blocks'
+interface Props { lang: Lang }
+const C = blocks[Astro.props.lang]
+---
+<div class="nx" data-reveal>
+  <p class="mono nx__h">{C.next.h}</p>
+  <ol>{C.next.steps.map(([t, d], i) => <li><b class="d n">{i + 1}</b><span><strong>{t}</strong>{d}</span></li>)}</ol>
+</div>

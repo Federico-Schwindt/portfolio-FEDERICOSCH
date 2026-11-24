@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro'
+import LeadForm from '../components/LeadForm.astro'
+import Icon from '../components/Icon.astro'
+import { data, lp, type Lang } from '../i18n'
+import { url } from '../lib/site'
+import Next from '../components/Next.astro'
+import '../styles/home-app.css'
+interface Props { lang: Lang }
+const { lang } = Astro.props
+const { site, socials } = data(lang)
+const C = {
+  en: { title: 'Contact: Start a Project | Federico Schwindt', desc: 'Tell me what you are working on. I reply within one business day, in English or Spanish, with an honest plan and a fixed quote.',
+    h1: ['Start a', 'project.'], lead: 'Treat it like a first coffee. I look at what you have and tell you honestly what I would do.', reply: 'Reply time', replyV: 'One business day', based: 'Based in', elsewhere: 'Elsewhere' },
+  es: { title: 'Contacto: empecemos un proyecto | Federico Schwindt', desc: 'Cuéntame en qué estás trabajando. Respondo en un día hábil, en español o en inglés, con un plan honesto y un presupuesto cerrado.',
+    h1: ['Empecemos un', 'proyecto.'], lead: 'Tómalo como un primer café. Miro lo que tienes y te digo con honestidad qué haría yo.', reply: 'Respuesta', replyV: 'En un día hábil', based: 'Desde', elsewhere: 'En otros lados' },
+}[lang]
+---
+<Base title={C.title} description={C.desc} lang={lang}>
+  <section class="t-ink co">
+    <div class="wrap co__grid">
+      <div class="co__intro">
+        <h1 class="d co__title" data-lines>
+          <span class="line"><span class="n">{C.h1[0]}</span></span>
+          <span class="line" style="--i:1"><span class="x">{C.h1[1]}</span></span>
+        </h1>
+        <p class="lead" data-reveal>{C.lead}</p>
+        <p class="co__plans" data-reveal><a class="btn" data-plans href={url(lp(lang, '/pricing/'))}>{lang === 'es' ? '¿Ya sabes qué quieres? Elige un plan' : 'Already know what you want? Pick a plan'} <Icon name="arrowRight" /></a></p>
+        <dl class="co__meta" data-reveal>
+          <div><dt class="mono muted">Email</dt><dd><a class="link" href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+          <div><dt class="mono muted">{C.reply}</dt><dd>{C.replyV}</dd></div>
+          <div><dt class="mono muted">{C.based}</dt><dd>{site.city} ({site.utc})</dd></div>
+          <div><dt class="mono muted">{C.elsewhere}</dt><dd class="co__soc">{socials.map((s) => <a class="link" href={s.href} target="_blank" rel="noopener">{s.label} <Icon name="arrowUpRight" /></a>)}</dd></div>
+        </dl>
+      </div>
+      <div class="co__form" data-reveal><LeadForm variant="contact" lang={lang} /></div>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .co { padding-top: calc(var(--nav-h) + clamp(4rem, 8vw, 8rem)); padding-bottom: var(--section); }
+  .co__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+  .co__intro { display: grid; gap: 2rem; }
+  .co__title { font-size: clamp(3rem, 8.6vw, 9.5rem); }
+  .co__title .x { color: var(--hl); }
+  .co__meta { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; padding-top: 1.5rem; border-top: 2px solid var(--line); }
+  .co__meta div { display: grid; gap: 0.4rem; align-content: start; }
+  .co__meta dd { font-weight: 550; overflow-wrap: anywhere; }
+  .co__soc { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; }
+  .co__form { padding-top: 0.8rem; }
+  @media (max-width: 860px) { .co__grid { grid-template-columns: 1fr; } .co__meta { grid-template-columns: 1fr; } }
+</style>

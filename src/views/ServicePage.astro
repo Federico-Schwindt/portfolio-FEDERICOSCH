@@ -1,0 +1,196 @@
+---
+import Base from '../layouts/Base.astro'
+import Icon from '../components/Icon.astro'
+import Crumbs from '../components/Crumbs.astro'
+import { url, heroStat, SITE_URL } from '../lib/site'
+import { data, lp, type Lang } from '../i18n'
+import '../styles/pages.css'
+
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props
+const D = data(lang)
+const { addons, projects } = D
+const { fitment, treatments, slots, cars } = D.samples
+const o = D.offers.find((x) => x.slug === slug)!
+const cases = o.cases.map((s) => projects.find((p) => p.slug === s)!).filter(Boolean)
+const money = (n: number) => '$' + n.toLocaleString('en-US')
+const path = lp(lang, `/services/${o.slug}/`)
+const L = (p: string) => url(lp(lang, p))
+const C = {
+  en: { crumb: 'Services', for: 'For', timeline: 'Timeline', price: 'Price', start: 'Start a project', demo: 'Try the demo', how: 'How it works', howH: ['How it', 'works.'], step: 'Step',
+    sample: 'Sample data', explore: 'Explore the concept', real: 'The real one', make: 'Make', year: 'Year', model: 'Model', part: 'Part', fits: 'Fits', treatment: 'Treatment', time: 'Time', booking: 'Booking request', minutes: 'minutes',
+    bookNote: "Preview only. On a real site this lands in the spa's inbox and calendar.", anyMake: 'Any make', maxPrice: 'Max price', anyPrice: 'Any price', of: 'of', carsW: 'cars', miles: 'miles', carNote: 'An enquiry from this page would name this car.',
+    get: ['What you', 'get.'], need: 'What I need from you', added: 'Often added', proof: ['Proof,', 'not adjectives.'], concept: 'Concept', client: 'Client', ready: ['Ready when', 'you are.'], compare: 'Compare the plans' },
+  es: { crumb: 'Servicios', for: 'Para', timeline: 'Plazo', price: 'Precio', start: 'Empezar un proyecto', demo: 'Probar la demo', how: 'Cómo funciona', howH: ['Cómo', 'funciona.'], step: 'Paso',
+    sample: 'Datos de ejemplo', explore: 'Ver el concepto', real: 'El real', make: 'Marca', year: 'Año', model: 'Modelo', part: 'Pieza', fits: 'Compatible con', treatment: 'Tratamiento', time: 'Horario', booking: 'Pedido de turno', minutes: 'minutos',
+    bookNote: 'Solo una vista previa. En un sitio real esto llega a la bandeja y al calendario del spa.', anyMake: 'Cualquier marca', maxPrice: 'Precio máximo', anyPrice: 'Cualquier precio', of: 'de', carsW: 'autos', miles: 'millas', carNote: 'Una consulta desde esta página nombraría este auto.',
+    get: ['Lo que', 'recibes.'], need: 'Lo que necesito de ti', added: 'Se suele sumar', proof: ['Pruebas,', 'no adjetivos.'], concept: 'Concepto', client: 'Cliente', ready: ['Cuando', 'tú quieras.'], compare: 'Comparar los planes' },
+}[lang]
+const serviceLd = {
+  '@context': 'https://schema.org', '@type': 'Service', name: o.name, serviceType: o.name, alternateName: o.keywords, description: o.description,
+  url: `${SITE_URL}${path}`, inLanguage: lang, provider: { '@id': `${SITE_URL}/#person` }, areaServed: ['US', 'IL', 'AU', 'IN', 'AR'],
+  ...(o.from.includes('$600') ? { offers: { '@type': 'Offer', price: '600', priceCurrency: 'USD', description: o.from } } : {}),
+}
+const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: o.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }
+const f0 = fitment[0], c0 = cars[0]
+---
+<Base title={o.title} description={o.description} ld={[serviceLd, faqLd]} lang={lang}>
+  <header class="phead t-main sp-head">
+    <div class="wrap sp-head__grid">
+      <div>
+        <Crumbs trail={[{ label: C.crumb, href: '/services/' }, { label: o.name }]} lang={lang} />
+        <h1 class="d sp-h1" data-lines><span class="line"><span>{o.h1[0]}</span></span><span class="line" style="--i:1"><span><i>{o.h1[1]}</i></span></span></h1>
+        <p class="lead sp-intro" data-reveal>{o.intro}</p>
+        <dl class="sp-facts" data-reveal style="--i:1">
+          <div><dt class="mono">{C.for}</dt><dd>{o.buyer}</dd></div>
+          <div><dt class="mono">{C.timeline}</dt><dd>{o.timeline}</dd></div>
+          <div><dt class="mono">{C.price}</dt><dd>{o.from}</dd></div>
+        </dl>
+        <div class="sp-cta" data-reveal style="--i:2">
+          <a class="btn" href={L(`/contact/?service=${o.slug}`)}>{C.start} <Icon name="arrowUpRight" /></a>
+          {o.demo ? <a class="link" href="#demo">{C.demo} <Icon name="arrowRight" /></a> : <a class="link" href="#how">{C.how} <Icon name="arrowRight" /></a>}
+        </div>
+      </div>
+      <div class="sp-head__art" aria-hidden="true">
+        <img class="sp-shot" src={url(`/${o.image}`)} alt="" width="1440" height="900" />
+      </div>
+    </div>
+  </header>
+
+  <!-- how it works: three steps, for every service -->
+  <section class="section t-paper" id="how">
+    <div class="wrap">
+      <h2 class="d h-l" data-lines><span class="line"><span>{C.howH[0]} <i>{C.howH[1]}</i></span></span></h2>
+      <ol class="sp-steps" data-fx="gap">
+        {o.steps.map((s, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <span class="mono">{C.step} 0{i + 1}</span>
+            <h3 class="d h-s">{s.t}</h3>
+            <p>{s.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- the moment of this page: a small working demo on sample data, where the service has one -->
+  {o.demo && (<section class="section t-main" id="demo">
+    <div class="wrap demo__grid">
+      <div class="demo__text">
+        <h2 class="d h-m">{o.demoTitle}</h2>
+        <p class="body">{o.demoText}</p>
+        <p><span class="chip">{C.sample}</span></p>
+        {cases[0] && <a class="link" href={L(`/work/${cases[0].slug}/`)}>{cases[0].concept ? C.explore : C.real}: {cases[0].title} <Icon name="arrowUpRight" /></a>}
+      </div>
+
+      {o.demo === 'fitment' && (
+        <div class="demo" data-demo="fitment">
+          <div class="demo__controls">
+            <label>{C.make}<select class="input" disabled><option>{f0.make}</option></select></label>
+            <label>{C.year}<select class="input" disabled><option>{f0.year}</option></select></label>
+            <label>{C.model}<select class="input" disabled><option>{f0.model}</option></select></label>
+          </div>
+          <div class="demo__out" data-out aria-live="polite">
+            <p class="mono">{C.part} {f0.part}</p><p class="demo__big">{f0.name}</p><p><b>{money(f0.price)}</b> <span class="chip">{f0.stock}</span></p><p class="demo__fit">{C.fits} {f0.year} {f0.make} {f0.model}</p>
+          </div>
+        </div>
+      )}
+      {o.demo === 'booking' && (
+        <div class="demo" data-demo="booking">
+          <div class="demo__controls demo__controls--stack">
+            <fieldset><legend>{C.treatment}</legend>{treatments.map((t, i) => <button type="button" class="chip" data-t aria-pressed={i === 0 ? 'true' : 'false'}>{t.name}</button>)}</fieldset>
+            <fieldset><legend>{C.time}</legend>{slots.map((s, i) => <button type="button" class="chip" data-slot aria-pressed={i === 0 ? 'true' : 'false'}>{s}</button>)}</fieldset>
+          </div>
+          <div class="demo__out" data-out aria-live="polite">
+            <p class="mono">{C.booking}</p><p class="demo__big">{treatments[0].name}</p><p>{slots[0]}, {treatments[0].mins} {C.minutes}, <b>{money(treatments[0].price)}</b></p><p class="demo__fit">{C.bookNote}</p>
+          </div>
+        </div>
+      )}
+      {o.demo === 'inventory' && (
+        <div class="demo" data-demo="inventory">
+          <div class="demo__controls">
+            <label>{C.make}<select class="input"><option value="">{C.anyMake}</option></select></label>
+            <label>{C.maxPrice}<select class="input"><option value="">{C.anyPrice}</option><option value="16000">$16,000</option><option value="19000">$19,000</option><option value="21000">$21,000</option><option value="24000">$24,000</option></select></label>
+            <p class="mono demo__count" data-count-out>{cars.length} {C.of} {cars.length} {C.carsW}</p>
+          </div>
+          <div class="demo__split">
+            <div class="demo__list" data-list>
+              {cars.map((c, i) => <button type="button" class="demo__car" data-car={i} aria-pressed={i === 0 ? 'true' : 'false'}><span class="mono">{c.year}</span><b>{c.make} {c.model}</b><span>{money(c.price)}</span></button>)}
+            </div>
+            <div class="demo__out" data-out aria-live="polite">
+              <p class="mono">{c0.year} / {c0.miles.toLocaleString('en-US')} {C.miles}</p><p class="demo__big">{c0.make} {c0.model}</p><p><b>{money(c0.price)}</b></p><p>{c0.notes}.</p><p class="demo__fit">{C.carNote}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>)}
+
+  <section class="section t-ink">
+    <div class="wrap">
+      <h2 class="d h-l" data-lines><span class="line"><span>{C.get[0]} <i>{C.get[1]}</i></span></span></h2>
+      <ol class="sp-inc">
+        {o.includes.map((x, i) => (
+          <li data-reveal style={`--i:${i % 3}`}>
+            <h3 class="d h-s">{x.t}</h3>
+            <p class="muted">{x.d}</p>
+          </li>
+        ))}
+      </ol>
+      <div class="sp-two">
+        <div data-reveal>
+          <h3 class="mono">{C.need}</h3>
+          <ul class="sp-list">{o.youBring.map((y) => <li><Icon name="check" />{y}</li>)}</ul>
+        </div>
+        <div data-reveal style="--i:1">
+          <h3 class="mono">{C.added}</h3>
+          <ul class="sp-list sp-list--plain">{addons.map((a) => <li><b>{a.t}.</b> {a.d}</li>)}</ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section t-paper">
+    <div class="wrap">
+      <h2 class="d h-l" data-lines><span class="line"><span>{C.proof[0]} <i>{C.proof[1]}</i></span></span></h2>
+      <div class="sp-cases">
+        {cases.map((p) => {
+          const s = heroStat(p)
+          return (
+            <a class="card" data-fx-hover data-fx-name={p.title} href={L(`/work/${p.slug}/`)} data-hover-video data-reveal>
+              <div class="card__media">
+                <img src={url(`/${p.cover}`)} alt={`${p.title}: ${p.category}`} width="1440" height="900" loading="lazy" />
+                {p.video && <video muted loop playsinline preload="none" data-src={url(`/${p.video}`)} />}
+              </div>
+              <div class="card__meta"><h3 class="d h-s">{p.title}</h3><span class="chip">{p.concept ? C.concept : C.client}</span></div>
+              <p class="muted">{p.category}</p>
+              {s && <p class="card__stat"><span class="d n">{s.value}</span> {s.label}</p>}
+            </a>
+          )
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="section t-main">
+    <div class="wrap end__grid">
+      <div class="end__cta">
+        <h2 class="d h-l">{C.ready[0]} <i>{C.ready[1]}</i></h2>
+        <p class="lead">{o.timeline}. {o.from}.</p>
+        <div class="end__btns">
+          <a class="btn" href={L(`/contact/?service=${o.slug}`)}>{C.start} <Icon name="arrowUpRight" /></a>
+          <a class="link" href={L('/pricing/')}>{C.compare} <Icon name="arrowRight" /></a>
+        </div>
+      </div>
+      <div class="fq__list">
+        {o.faq.map((f) => (
+          <details>
+            <summary><span>{f.q}</span><Icon name="plus" /></summary>
+            <p class="body">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+  <script>import '../scripts/demos.ts'</script>
+</Base>

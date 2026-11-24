@@ -1,74 +1,63 @@
 ---
-import '@fontsource-variable/geist'
-import '@fontsource-variable/geist-mono'
-import geistWoff2 from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url'
 import '../styles/global.css'
 import Nav from '../components/Nav.astro'
 import Footer from '../components/Footer.astro'
-import { site } from '../data/content'
-import { canonicalFor, DEFAULT_IMAGE, url } from '../lib/site'
-
-interface Props {
-  title: string
-  description: string
-  /** route path, e.g. "/work/joya-hijab" */
-  path: string
-  image?: string
-  type?: 'website' | 'article' | 'profile'
-  noindex?: boolean
-  jsonLd?: Record<string, unknown> | Record<string, unknown>[]
-  /** theme of the first section, so the nav starts with the right colors */
-  nav?: 'ink' | 'paper' | 'red'
-  footer?: boolean
+import { site, socials } from '../data/content'
+import { SITE_URL, canonicalFor, url } from '../lib/site'
+import { langOf, twin, t, type Lang } from '../i18n'
+import PlansDialog from '../components/PlansDialog.astro'
+interface Props { title?: string; description?: string; path?: string; image?: string; noindex?: boolean; ld?: Record<string, unknown>[]; lang?: Lang }
+const {
+  title = 'Federico Schwindt | From sketch to sold. Web design and development',
+  description = 'I design, build and grow websites for businesses that measure results. E-commerce, business sites, SEO and ads. +551% sales for Universal Driveshafts.',
+  path = Astro.url.pathname,
+  image = `${SITE_URL}/og.jpg`,
+  noindex = false,
+  ld = [],
+  lang = langOf(Astro.url.pathname),
+} = Astro.props
+const T = t(lang)
+const enPath = twin(path, 'en'), esPath = twin(path, 'es')
+const person = {
+  '@context': 'https://schema.org', '@type': 'Person', '@id': `${SITE_URL}/#person`, name: site.name,
+  jobTitle: 'Web designer, developer and marketer', url: `${SITE_URL}/`, image: `${SITE_URL}/img/hero-glasses.webp`,
+  address: { '@type': 'PostalAddress', addressLocality: 'Gualeguaychú', addressRegion: 'Entre Ríos', addressCountry: 'AR' },
+  sameAs: socials.map((s) => s.href),
 }
-const { title, description, path, image = DEFAULT_IMAGE, type = 'website', noindex = false, jsonLd, nav = 'ink', footer = true } = Astro.props
-const canonical = canonicalFor(path)
-const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
-    <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#0b0b0b" />
-    <meta property="og:type" content={type} />
-    <meta property="og:site_name" content={site.name} />
+    <link rel="canonical" href={canonicalFor(twin(path, lang))} />
+    <link rel="alternate" hreflang="en" href={canonicalFor(enPath)} />
+    <link rel="alternate" hreflang="es" href={canonicalFor(esPath)} />
+    <link rel="alternate" hreflang="x-default" href={canonicalFor(enPath)} />
+    <meta property="og:locale" content={lang === 'es' ? 'es_AR' : 'en_US'} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#f01111" />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    <meta property="og:url" content={canonicalFor(twin(path, lang))} />
     <meta property="og:image" content={image} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
-    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
-    <link rel="sitemap" href={url('/sitemap.xml')} />
-    <link rel="preload" href={geistWoff2} as="font" type="font/woff2" crossorigin />
-    {ld.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
-    <script is:inline>document.documentElement.classList.add('js')</script>
+    {[person, ...ld].map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    <script is:inline>(function(){try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch(e){}})();document.documentElement.classList.add('js');setTimeout(function(){if(!window.__ready)document.documentElement.classList.remove('js')},3500)</script>
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
-    <Nav on={nav} />
+    <div class="pre" id="pre" aria-hidden="true"><canvas></canvas><p class="mono pre__l"><b>000</b><span data-stage>noise</span></p><p class="mono pre__r">{T.slogan}</p></div>
+    <script is:inline>(function(){var d=document.documentElement,p=document.getElementById('pre');try{if(sessionStorage.getItem('pre')||matchMedia('(prefers-reduced-motion: reduce)').matches){p.remove()}else{d.classList.add('pre-on');setTimeout(function(){d.classList.remove('pre-on')},7000)}}catch(e){p.remove()}})()</script>
+    <a class="skip" href="#main">{T.skip}</a>
+    <Nav lang={lang} />
     <main id="main"><slot /></main>
-    {footer && <Footer />}
-    <script is:inline>
-      // What is already on screen is shown before first paint, so the largest paint never waits for JS
-      (function () {
-        var h = innerHeight
-        document.querySelectorAll('[data-rv],[data-lines]').forEach(function (el) {
-          var r = el.getBoundingClientRect()
-          if (r.top < h && r.bottom > 0) el.classList.add('in')
-        })
-        setTimeout(function () { document.querySelectorAll('[data-rv],[data-lines]').forEach(function (el) { el.classList.add('in') }) }, 5000)
-      })()
-    </script>
-    <script>
-      import '../scripts/app'
-    </script>
+    <Footer lang={lang} />
+    <script>import '../scripts/preload.ts'</script>
+    <script>import '../scripts/core.ts'</script>
+    <PlansDialog lang={lang} />
   </body>
 </html>

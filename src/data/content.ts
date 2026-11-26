@@ -263,6 +263,67 @@ export const projects: Project[] = [
     images: ['case/uds3d-1.jpg', 'case/uds3d-2.jpg', 'case/uds3d-3.jpg', 'case/uds3d-4.jpg'],
   },
   {
+    slug: 'stefania-nails-studio',
+    kinds: ['Website'],
+    title: 'Stefania Nails Studio',
+    client: 'Stefania Nails Studio · Argentina',
+    category: 'Nail studio website with online booking',
+    tags: 'Web design, Code, Booking system, Admin panel',
+    year: '2026',
+    cover: 'work/stefania.jpg',
+    url: 'https://federico-schwindt.github.io/stefania-nails-studio/',
+    featured: true,
+    summary:
+      'A website and booking system for a one-woman nail studio: the next free slot on the homepage, a five-step booking flow with a deposit by bank transfer or Mercado Pago, a gallery of her real work, and a studio panel where Stefania runs her agenda, clients and cash from her phone.',
+    role: ['UX / UI design', 'Art direction', 'Front-end development', 'Booking logic & database', 'Studio panel'],
+    stack: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS v4', 'Motion', 'Neon Postgres', 'Zustand', 'GitHub Pages + Actions'],
+    stats: [
+      { value: '5 steps', label: 'From service to a paid deposit' },
+      { value: '20', label: 'Real designs from her own clients' },
+      { value: '9', label: 'Sections in the studio panel' },
+      { value: '100', label: 'Lighthouse SEO and best practices (mobile)' },
+    ],
+    challenge:
+      'Small nail studios usually take bookings over WhatsApp: a back-and-forth to find a free slot, photos sent to explain a design, deposits chased by hand and reminders sent one by one. Every message is time away from the table, and a missed appointment loses a whole slot. The goal: let clients book and leave the deposit on their own, and give Stefania one place to run the studio from her phone.',
+    solution:
+      'A dark, editorial site with her name as the masthead and a burgundy accent, built around one action: booking. The homepage shows the next free slot and lets clients pick a service and a time before they scroll. The booking flow goes through service, design, date, contact details and deposit, with extras added to the total as they are chosen. Her real work is the catalog: clients tap a design they like and book it. Deposits go by bank transfer (alias and CBU with a copy button, plus proof upload) or a Mercado Pago link, and “My booking” lets clients check the status, pay, add it to their calendar or cancel. Behind it, a light-themed panel covers today, the weekly agenda, clients with notes and allergies, cash and reports, the waitlist, availability and holidays, designs, services and settings, including WhatsApp message templates.',
+    result:
+      'Live on GitHub Pages, with the data in Neon Postgres behind a restricted role that can only run the booking functions, so client details are never exposed to the browser. On mobile, Lighthouse gives the homepage 100 for SEO and best practices and 96 for accessibility. Without a database connection the same build runs as a self-contained demo, which makes it easy to show and test without touching real bookings.',
+    features: [
+      {
+        title: 'Book before you scroll',
+        text: 'The homepage shows the next free slot and a quick booker: pick a service, tap one of the next open times and continue. Availability comes straight from the database.',
+        image: 'case/sn-quick.jpg',
+        stat: 'Next free slot, live',
+      },
+      {
+        title: 'Five steps, deposit included',
+        text: 'Service, design, date, details and deposit. Extras such as nail art or removal add to the total as they are chosen, and a summary of the booking stays on screen the whole time.',
+        image: 'case/sn-booking.jpg',
+        stat: 'Deposit online, the rest at the studio',
+      },
+      {
+        title: 'Her real work is the catalog',
+        text: 'Photos of her own clients’ nails, not stock. Each design opens up close, and clients book the one they like: it travels with the booking, so Stefania knows what to prepare.',
+        image: 'case/sn-gallery.jpg',
+        stat: '20 real designs',
+      },
+      {
+        title: 'A studio panel built for one person',
+        text: 'Today, the weekly agenda filtered by status, clients with history and notes, the waitlist, availability and holidays, services and designs. The panel switches to a light theme for long working sessions. (Screenshots show the demo mode with sample bookings.)',
+        image: 'case/sn-agenda.jpg',
+        stat: '9 sections',
+      },
+      {
+        title: 'Cash and reports',
+        text: 'What came in, deposits, appointments attended, no-shows and new clients for any period, broken down by day, service, payment method and most-booked design, with a CSV export.',
+        image: 'case/sn-reports.jpg',
+        stat: 'CSV export',
+      },
+    ],
+    images: ['case/sn-1.jpg', 'case/sn-2.jpg', 'case/sn-3.jpg', 'case/sn-4.jpg'],
+  },
+  {
     slug: 'andreani-concept',
     kinds: ['Website', 'Motion'],
     title: 'Andreani',

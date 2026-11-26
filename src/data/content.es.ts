@@ -212,6 +212,67 @@ export const projects: Project[] = [
     images: ['case/uds3d-1.jpg', 'case/uds3d-2.jpg', 'case/uds3d-3.jpg', 'case/uds3d-4.jpg'],
   },
   {
+    slug: 'stefania-nails-studio',
+    kinds: ['Website'],
+    title: 'Stefania Nails Studio',
+    client: 'Stefania Nails Studio · Argentina',
+    category: 'Sitio para estudio de uñas con turnos online',
+    tags: 'Diseño web, Código, Sistema de turnos, Panel de gestión',
+    year: '2026',
+    cover: 'work/stefania.jpg',
+    url: 'https://federico-schwindt.github.io/stefania-nails-studio/',
+    featured: true,
+    summary:
+      'Sitio y sistema de turnos para un estudio de uñas de una sola persona: el próximo turno libre en la portada, una reserva en cinco pasos con seña por transferencia o Mercado Pago, una galería con sus trabajos reales y un panel donde Stefania maneja su agenda, sus clientas y la caja desde el celular.',
+    role: ['Diseño UX / UI', 'Dirección de arte', 'Desarrollo front-end', 'Lógica de turnos y base de datos', 'Panel del estudio'],
+    stack: ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS v4', 'Motion', 'Neon Postgres', 'Zustand', 'GitHub Pages + Actions'],
+    stats: [
+      { value: '5 pasos', label: 'Del servicio a la seña pagada' },
+      { value: '20', label: 'Diseños reales de sus propias clientas' },
+      { value: '9', label: 'Secciones en el panel del estudio' },
+      { value: '100', label: 'SEO y buenas prácticas en Lighthouse (móvil)' },
+    ],
+    challenge:
+      'Los estudios de uñas chicos suelen tomar turnos por WhatsApp: idas y vueltas para encontrar un horario, fotos para explicar un diseño, señas que hay que perseguir a mano y recordatorios uno por uno. Cada mensaje es tiempo fuera de la mesa, y un turno que se cae es un horario perdido. El objetivo: que las clientas reserven y dejen la seña solas, y que Stefania tenga un solo lugar para manejar el estudio desde el celular.',
+    solution:
+      'Un sitio oscuro y editorial, con su nombre como cabecera y un acento bordó, armado alrededor de una sola acción: reservar. La portada muestra el próximo turno libre y deja elegir servicio y horario antes de bajar. La reserva pasa por servicio, diseño, fecha, datos y seña, y los extras se suman al total a medida que se eligen. Sus trabajos reales son el catálogo: la clienta toca el diseño que le gusta y lo reserva. La seña se paga por transferencia (alias y CBU con botón para copiar, más el comprobante) o con un link de Mercado Pago, y “Mi turno” permite ver el estado, pagar, agendarlo en el calendario o cancelarlo. Detrás, un panel claro reúne el día, la agenda semanal, las clientas con notas y alergias, la caja y los reportes, la lista de espera, la disponibilidad y las vacaciones, los diseños, los servicios y los ajustes, incluidas las plantillas de WhatsApp.',
+    result:
+      'Publicado en GitHub Pages, con los datos en Neon Postgres detrás de un rol restringido que sólo puede ejecutar las funciones de turnos, así los datos de las clientas nunca quedan expuestos en el navegador. En móvil, Lighthouse le da a la portada 100 en SEO y buenas prácticas y 96 en accesibilidad. Sin conexión a la base, el mismo build funciona como una demo autónoma, lo que permite mostrarlo y probarlo sin tocar turnos reales.',
+    features: [
+      {
+        title: 'Reservar sin bajar',
+        text: 'La portada muestra el próximo turno libre y un reservador rápido: eliges el servicio, tocas uno de los próximos horarios y sigues. La disponibilidad sale directo de la base de datos.',
+        image: 'case/sn-quick.jpg',
+        stat: 'Próximo turno libre, en vivo',
+      },
+      {
+        title: 'Cinco pasos, con seña',
+        text: 'Servicio, diseño, fecha, datos y seña. Los extras, como decoraciones o retirado, se suman al total a medida que se eligen, y el resumen del turno queda siempre a la vista.',
+        image: 'case/sn-booking.jpg',
+        stat: 'Seña online, el resto en el estudio',
+      },
+      {
+        title: 'Sus trabajos son el catálogo',
+        text: 'Fotos de las uñas de sus propias clientas, no de banco de imágenes. Cada diseño se abre de cerca y la clienta reserva el que le gusta: viaja con el turno, así Stefania sabe qué preparar.',
+        image: 'case/sn-gallery.jpg',
+        stat: '20 diseños reales',
+      },
+      {
+        title: 'Un panel pensado para una persona',
+        text: 'El día, la agenda semanal filtrada por estado, las clientas con historial y notas, la lista de espera, la disponibilidad y las vacaciones, los servicios y los diseños. El panel pasa a un tema claro para trabajar muchas horas. (Las capturas muestran el modo demo con turnos de ejemplo.)',
+        image: 'case/sn-agenda.jpg',
+        stat: '9 secciones',
+      },
+      {
+        title: 'Caja y reportes',
+        text: 'Lo cobrado, las señas, los turnos atendidos, las ausencias y las clientas nuevas en cualquier período, por día, servicio, medio de pago y diseño más pedido, con exportación a CSV.',
+        image: 'case/sn-reports.jpg',
+        stat: 'Exportación a CSV',
+      },
+    ],
+    images: ['case/sn-1.jpg', 'case/sn-2.jpg', 'case/sn-3.jpg', 'case/sn-4.jpg'],
+  },
+  {
     slug: 'andreani-concept',
     kinds: ['Website', 'Motion'],
     title: 'Andreani',

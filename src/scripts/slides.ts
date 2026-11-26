@@ -5,8 +5,10 @@
  *  - Arriving is what starts things: the section gets a `slide:enter` event (scenes listen, see enter.ts) and
  *    three labelled cursors lay its pieces out like a Figma file: text is drawn as a box and then appears,
  *    cards are dragged from a little off and snap, with alignment guides. Rectangles and numbers are measured.
- * Touch screens and narrow windows keep the normal, free scroll, but the same cursors still lay each piece out
- * as it scrolls into view (initScrollBuild). Reduced motion keeps the plain page: nothing here runs.
+ * Phones, tablets and narrow windows (initScrollBuild): blocks there are taller than a screen and cannot be
+ * shrunk to fit, so the deck is made of screens instead: every block starts a stop, and a tall block gets more
+ * stops inside it, each starting at the top of one of its pieces. One swipe (or wheel gesture, or key) moves one
+ * stop, and the same cursors lay out whatever arrives. Reduced motion keeps the plain page: nothing here runs.
  */
 import { soldDive } from './dive'
 
@@ -287,7 +289,7 @@ function builder() {
   }
   /** free scroll: lay out one piece on the least busy cursor. If its turn comes late (a fast scroll) or it has
    *  left the screen, it simply appears, so the content never lags behind the reader. */
-  const one = (el: HTMLElement) => {
+  const one = (el: HTMLElement, patience = 1400) => {
     if (pending.has(el) || el.classList.contains('bd-done')) return
     const sec = (el.closest('section, header, footer') as HTMLElement | null) ?? document.body
     pending.add(el)
@@ -296,7 +298,7 @@ function builder() {
     c.jobs++
     c.busy = c.busy.then(() => {
       const r = el.getBoundingClientRect()
-      const late = performance.now() - queued > 1400 || r.bottom < 0 || r.top > innerHeight
+      const late = performance.now() - queued > patience || r.bottom < 0 || r.top > innerHeight
       return g === gen && !late ? build(el, c, g, sec, true) : finish(el)
     }).then(() => {
       if (--c.jobs === 0) setTimeout(() => { if (c.jobs === 0) c.el.classList.add('is-idle') }, 450)
@@ -322,7 +324,7 @@ export function initSlides() {
   return c
 }
 
-/** Phones, tablets and narrow windows: free scroll, and the builder lays out each piece as it comes into view. */
+/** Phones, tablets and narrow windows: the deck moves one screen per gesture and the builder lays out each screen. */
 export function initScrollBuild() {
   if (slideMode() || !document.querySelector('[data-slides]') || matchMedia('(prefers-reduced-motion: reduce)').matches) return null
   const root = document.documentElement
@@ -334,20 +336,177 @@ export function initScrollBuild() {
   els.forEach((el) => { if (!el.getClientRects().length) el.classList.add('bd-show', 'bd-done') })
   // these pieces arrive with the builder, not with the fade-in
   els.forEach((el) => el.classList.add('in'))
-  root.classList.add('bd-scroll')
+  root.classList.add('bd-scroll', 'bd-deck')
+  // the deck moves the page by itself: the smooth-scroll library would fight it
+  window.__lenis?.destroy(); root.classList.remove('lenis', 'lenis-smooth')
   const b = builder()
-  let started = false
-  const start = () => {
-    if (started) return
-    started = true
-    const io = new IntersectionObserver((es) => es.forEach((e) => {
-      if (!e.isIntersecting) return
-      io.unobserve(e.target)
-      b.one(e.target as HTMLElement)
-    }), { rootMargin: '0px 0px -8% 0px', threshold: 0.12 })
-    els.filter((el) => !el.classList.contains('bd-done')).forEach((el) => io.observe(el))
+
+  /* ── stops: every block starts one; a tall block gets more, each at the top of one of its pieces ── */
+  let stops: number[] = []
+  const PIECES = 'h2, h3, p, li, figure, img, form, table, pre, [data-bd], .card'
+  const compute = () => {
+    const vh = innerHeight, max = root.scrollHeight - vh, out: number[] = []
+    for (const blk of blocks()) {
+      const T = topOf(blk), B = T + blk.offsetHeight
+      out.push(T)
+      if (B - T <= vh + 8) continue
+      const tops = [...new Set([...blk.querySelectorAll<HTMLElement>(PIECES)].filter((e) => e.getClientRects().length).map((e) => topOf(e)))].sort((a, c) => a - c)
+      let pos = T
+      while (B - pos > vh + 8) {
+        const ideal = pos + vh * 0.86
+        // the last piece that starts before the bottom of this screen, as long as it is not too close to the top
+        const pick = tops.filter((t) => t - 16 > pos + vh * 0.4 && t - 16 <= ideal).pop()
+        let next = Math.min(pick !== undefined ? pick - 16 : ideal, B - vh)
+        if (next <= pos + 24) next = Math.min(pos + vh * 0.86, B - vh)
+        if (next <= pos + 24) break
+        out.push(next)
+        pos = next
+      }
+    }
+    const sorted = [...new Set(out.map((y) => Math.round(Math.max(0, Math.min(y, max)))))].sort((a, c) => a - c)
+    // a stop too close to the one before feels like nothing happened: drop it when the next one is still
+    // within a screen of the previous (so nothing in between is skipped)
+    // (a few pixels of overlap may go: a screen is allowed to be 3% taller than the window)
+    const reach = vh * 1.03
+    stops = []
+    sorted.forEach((y, i) => {
+      const prev = stops[stops.length - 1], prev2 = stops[stops.length - 2], next = sorted[i + 1]
+      if (prev !== undefined && y - prev < vh * 0.3) {
+        if (prev2 !== undefined && y - prev2 <= reach) { stops[stops.length - 1] = y; return } // keep the later one (a block start)
+        if (next === undefined ? max - prev <= reach : next - prev <= reach) return
+      }
+      stops.push(y)
+    })
   }
-  if (preOn) { addEventListener('pre:done', () => setTimeout(start, 150), { once: true }); setTimeout(start, 7600) } // the preloader gives up at 7 s
-  else start()
-  return b
+  const nearest = (y: number) => stops.reduce((bi, s, i) => (Math.abs(s - y) < Math.abs(stops[bi] - y) ? i : bi), 0)
+
+  /* ── arriving: the cursors lay out whatever is on this screen ── */
+  const arrive = () => {
+    for (const el of els) {
+      if (el.classList.contains('bd-done')) continue
+      const r = el.getBoundingClientRect()
+      if (r.height && r.bottom > 0 && r.top < innerHeight * 0.96) b.one(el, 5000)
+    }
+  }
+
+  /* ── movement ── */
+  let anim = 0, moving = false, lockUntil = 0, cur = 0
+  const go = (i: number, dur = 760) => {
+    i = Math.max(0, Math.min(stops.length - 1, i))
+    cur = i
+    const to = stops[i], from = scrollY, d = to - from
+    cancelAnimationFrame(anim)
+    if (Math.abs(d) < 2) { scrollTo(0, to); arrive(); return }
+    moving = true
+    const t0 = performance.now()
+    dur = Math.min(dur, 360 + Math.abs(d) * 0.45)
+    let early = false
+    const step = (now: number) => {
+      const k = Math.min(1, (now - t0) / dur)
+      scrollTo(0, from + d * ease(k))
+      if (!early && k > 0.6) { early = true; arrive() }
+      if (k < 1) anim = requestAnimationFrame(step)
+      else { moving = false; lockUntil = performance.now() + 180; arrive() }
+    }
+    anim = requestAnimationFrame(step)
+  }
+
+  /* ── touch: the page follows the finger, and on release it moves one stop (or settles back) ── */
+  const own = (t: EventTarget | null) => {
+    let el = t as HTMLElement | null
+    if (!el || !el.closest) return false
+    if (el.closest('input, textarea, select, [contenteditable], [data-lanes], iframe, .is-open[data-menu], [data-menu].is-open')) return true
+    for (; el && el !== document.body; el = el.parentElement) {
+      const cs = getComputedStyle(el)
+      if (/(auto|scroll)/.test(cs.overflowX) && el.scrollWidth > el.clientWidth + 2) return true // its own horizontal scroll
+      if (/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight + 2) return true // its own vertical scroll
+    }
+    return false
+  }
+  let g: { y0: number; s0: number; i0: number; native: boolean; last: { y: number; t: number }[] } | null = null
+  addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) { g = null; return }
+    const y = e.touches[0].clientY
+    const native = own(e.target) || !!document.querySelector('[data-nav].is-open')
+    if (moving) { g = { y0: y, s0: scrollY, i0: cur, native, last: [] }; return }
+    g = { y0: y, s0: scrollY, i0: nearest(scrollY), native, last: [{ y, t: performance.now() }] }
+  }, { passive: true })
+  addEventListener('touchmove', (e) => {
+    if (!g || g.native || e.touches.length !== 1) return
+    e.preventDefault()
+    if (moving) return
+    const y = e.touches[0].clientY, dy = y - g.y0
+    // follow the finger, but only as far as the neighbouring stops
+    const lo = stops[Math.max(0, g.i0 - 1)] - 30, hi = stops[Math.min(stops.length - 1, g.i0 + 1)] + 30
+    scrollTo(0, Math.max(lo, Math.min(hi, g.s0 - dy)))
+    g.last.push({ y, t: performance.now() }); if (g.last.length > 6) g.last.shift()
+  }, { passive: false })
+  const release = () => {
+    if (!g || g.native || moving || g.last.length < 1) { g = null; return }
+    const a = g.last[0], z = g.last[g.last.length - 1]
+    const dy = z.y - g.y0, v = (z.y - a.y) / Math.max(1, z.t - a.t) // px per ms, negative = finger going up
+    const i0 = g.i0
+    g = null
+    if (dy < -44 || v < -0.35) go(i0 + 1)
+    else if (dy > 44 || v > 0.35) go(i0 - 1)
+    else go(i0, 420)
+  }
+  addEventListener('touchend', release, { passive: true })
+  addEventListener('touchcancel', release, { passive: true })
+
+  /* ── wheel and keys (narrow windows and tablets with a trackpad): one gesture, one stop ── */
+  let lastWheel = 0, acc = 0
+  addEventListener('wheel', (e) => {
+    if (e.ctrlKey || own(e.target)) return
+    e.preventDefault()
+    const now = performance.now(), gap = now - lastWheel
+    lastWheel = now
+    if (moving || now < lockUntil) { acc = 0; return }
+    if (gap > 180) acc = 0
+    acc += e.deltaY * (e.deltaMode === 1 ? 32 : 1)
+    if (Math.abs(acc) < 24) return
+    const dir = acc > 0 ? 1 : -1
+    acc = 0
+    go(nearest(scrollY) + dir)
+  }, { passive: false })
+  addEventListener('keydown', (e) => {
+    const t = e.target as HTMLElement
+    if (t.closest('input, textarea, select, [contenteditable], [role=tablist], [data-lanes]') || e.altKey || e.ctrlKey || e.metaKey) return
+    const k = e.key
+    if (k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey)) { e.preventDefault(); if (!moving) go(nearest(scrollY) + 1) }
+    else if (k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey)) { e.preventDefault(); if (!moving) go(nearest(scrollY) - 1) }
+    else if (k === 'Home') { e.preventDefault(); go(0, 1000) }
+    else if (k === 'End') { e.preventDefault(); go(stops.length - 1, 1000) }
+  })
+
+  // in-page links land on the stop of their block
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href*="#"]')
+    if (!a || a.pathname !== location.pathname) return
+    const el = a.hash.length > 1 && document.getElementById(a.hash.slice(1))
+    if (!el) return
+    e.preventDefault()
+    const blk = el.closest('main > section, main > header') as HTMLElement | null
+    go(nearest(blk ? topOf(blk) : topOf(el)), 1000)
+  }, true)
+
+  // anything that moves the page some other way (find in page, focus, the browser restoring a position):
+  // what ends up on screen is laid out too
+  let settle = 0
+  addEventListener('scroll', () => { if (moving) return; clearTimeout(settle); settle = window.setTimeout(arrive, 220) }, { passive: true })
+
+  compute()
+  let rt = 0
+  const remeasure = () => { clearTimeout(rt); rt = window.setTimeout(() => { compute(); if (!moving && !g) go(nearest(scrollY), 300) }, 180) }
+  addEventListener('resize', remeasure)
+  addEventListener('orientationchange', remeasure)
+  addEventListener('load', () => setTimeout(compute, 200))
+  document.fonts?.ready.then(compute)
+  // images and late layout change the heights: measure again when they settle
+  new ResizeObserver(() => { clearTimeout(rt); rt = window.setTimeout(compute, 250) }).observe(document.querySelector('main')!)
+
+  const first = () => setTimeout(() => { cur = nearest(scrollY); arrive() }, 150)
+  if (preOn) { addEventListener('pre:done', first, { once: true }); setTimeout(first, 7600) } // the preloader gives up at 7 s
+  else first()
+  return { go, compute }
 }

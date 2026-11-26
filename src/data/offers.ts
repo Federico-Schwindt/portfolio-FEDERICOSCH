@@ -65,7 +65,7 @@ export const offers: Offer[] = [
       { t: 'A small design system', d: 'Colours, type and components written down, so the next page matches the first.' },
     ],
     youBring: ['What you sell and who buys it', 'Your logo, or a brief for one', 'Photos, or access to the products'],
-    cases: ['nova-dental-concept', 'atelier-norte-concept', 'la-virginia-concept'],
+    cases: ['stefania-nails-studio', 'atelier-norte-concept', 'la-virginia-concept'],
     demo: 'booking',
     demoTitle: 'One road to one action',
     demoText: 'A booking flow for a spa, designed so a first-time visitor can pick a treatment and a time in two taps. Try it.',

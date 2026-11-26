@@ -183,8 +183,9 @@ initSold({ reduce })
 // triggers are created in page order here, but measure again once everything has loaded
 addEventListener('load', () => { ScrollTrigger.sort(); ScrollTrigger.refresh() })
 
-// block scroll and the Figma builder (desktop with a mouse); measured after the pinned scenes exist
-import('./slides').then((m) => m.initSlides())
+// block scroll and the Figma builder (desktop with a mouse); measured after the pinned scenes exist.
+// Everywhere else the scroll stays free and the builder lays each piece out as it comes into view.
+import('./slides').then((m) => m.initSlides() ?? m.initScrollBuild())
 
 /* WebGL arrives after the page is usable */
 const startGL = async () => {

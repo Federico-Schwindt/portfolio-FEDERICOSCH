@@ -5,7 +5,8 @@
  *  - Arriving is what starts things: the section gets a `slide:enter` event (scenes listen, see enter.ts) and
  *    three labelled cursors lay its pieces out like a Figma file: text is drawn as a box and then appears,
  *    cards are dragged from a little off and snap, with alignment guides. Rectangles and numbers are measured.
- * Touch screens, narrow windows and reduced motion keep the normal page: nothing here runs.
+ * Touch screens and narrow windows keep the normal, free scroll, but the same cursors still lay each piece out
+ * as it scrolls into view (initScrollBuild). Reduced motion keeps the plain page: nothing here runs.
  */
 import { soldDive } from './dive'
 
@@ -227,11 +228,12 @@ function builder() {
     el.classList.add('bd-show', 'bd-done'); pending.delete(el)
   }
 
-  const build = async (el: HTMLElement, c: Cur, g: number, secEl: HTMLElement) => {
-    // page coordinates measured against where the block will rest (it may still be arriving)
+  const build = async (el: HTMLElement, c: Cur, g: number, secEl: HTMLElement, view = false) => {
+    // page coordinates measured against where the block will rest (it may still be arriving).
+    // In free scroll (view) the piece is where it is, and the cursors come in from the edges of the screen.
     const r = el.getBoundingClientRect(), sr = secEl.getBoundingClientRect()
-    const top = topOf(secEl), bot = top + sr.height
-    const x = r.left + scrollX, y = r.top - sr.top + top, w = r.width, h = r.height
+    const top = view ? scrollY : topOf(secEl), span = view ? innerHeight : sr.height, bot = top + span
+    const x = r.left + scrollX, y = view ? r.top + scrollY : r.top - sr.top + top, w = r.width, h = r.height
     const label = `${Math.round(w)} × ${Math.round(h)}`
     el.style.transition = 'none'
     if (isText(el)) {
@@ -263,7 +265,7 @@ function builder() {
         c.x = cx0 - ox * k; c.y = cy0 - oy * k; place(c)
       })
       s.classList.remove('is-grab')
-      guides(x, y, w, top, sr.height)
+      guides(x, y, w, top, span)
       setTimeout(() => { s.classList.add('is-out'); setTimeout(() => s.remove(), 300) }, 300)
       finish(el)
     }
@@ -283,9 +285,26 @@ function builder() {
       })
     })
   }
+  /** free scroll: lay out one piece on the least busy cursor. If its turn comes late (a fast scroll) or it has
+   *  left the screen, it simply appears, so the content never lags behind the reader. */
+  const one = (el: HTMLElement) => {
+    if (pending.has(el) || el.classList.contains('bd-done')) return
+    const sec = (el.closest('section, header, footer') as HTMLElement | null) ?? document.body
+    pending.add(el)
+    const c = curs.reduce((a, b) => (b.jobs < a.jobs ? b : a))
+    const g = gen, queued = performance.now()
+    c.jobs++
+    c.busy = c.busy.then(() => {
+      const r = el.getBoundingClientRect()
+      const late = performance.now() - queued > 1400 || r.bottom < 0 || r.top > innerHeight
+      return g === gen && !late ? build(el, c, g, sec, true) : finish(el)
+    }).then(() => {
+      if (--c.jobs === 0) setTimeout(() => { if (c.jobs === 0) c.el.classList.add('is-idle') }, 450)
+    })
+  }
   /** leaving mid-build: whatever is still waiting appears at once */
   const flush = () => { gen++; [...pending].forEach((el) => finish(el)) }
-  return { run, flush }
+  return { run, one, flush }
 }
 
 export function initSlides() {
@@ -301,4 +320,34 @@ export function initSlides() {
   if (document.documentElement.classList.contains('pre-on')) addEventListener('pre:done', first, { once: true })
   else first()
   return c
+}
+
+/** Phones, tablets and narrow windows: free scroll, and the builder lays out each piece as it comes into view. */
+export function initScrollBuild() {
+  if (slideMode() || !document.querySelector('[data-slides]') || matchMedia('(prefers-reduced-motion: reduce)').matches) return null
+  const root = document.documentElement
+  const preOn = root.classList.contains('pre-on')
+  const els = [...document.querySelectorAll<HTMLElement>('main [data-bd]')]
+  // without the preloader to cover it, what is already on screen stays as it is (no flash, then rebuild)
+  if (!preOn) els.forEach((el) => { const r = el.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) el.classList.add('bd-show', 'bd-done') })
+  // pieces this layout does not render (hidden on phones) are left visible for when the window changes
+  els.forEach((el) => { if (!el.getClientRects().length) el.classList.add('bd-show', 'bd-done') })
+  // these pieces arrive with the builder, not with the fade-in
+  els.forEach((el) => el.classList.add('in'))
+  root.classList.add('bd-scroll')
+  const b = builder()
+  let started = false
+  const start = () => {
+    if (started) return
+    started = true
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return
+      io.unobserve(e.target)
+      b.one(e.target as HTMLElement)
+    }), { rootMargin: '0px 0px -8% 0px', threshold: 0.12 })
+    els.filter((el) => !el.classList.contains('bd-done')).forEach((el) => io.observe(el))
+  }
+  if (preOn) { addEventListener('pre:done', () => setTimeout(start, 150), { once: true }); setTimeout(start, 7600) } // the preloader gives up at 7 s
+  else start()
+  return b
 }

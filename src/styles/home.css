@@ -547,7 +547,7 @@
 @media (max-width: 960px) { .pk__grid { grid-template-columns: 1fr; } .pk__for { min-height: 0; } }
 
 /* ── Block mode (src/scripts/slides.ts): one gesture, one block; pieces are laid out by three cursors ── */
-html.slides [data-bd]:not(.bd-show) { opacity: 0; }
+html.slides [data-bd]:not(.bd-show), html.bd-scroll [data-bd]:not(.bd-show) { opacity: 0; }
 html.slides [data-bd] { will-change: transform; }
 html.slides [data-bd].bd-done { will-change: auto; }
 .bd-layer { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 46; pointer-events: none; }
@@ -572,6 +572,9 @@ html.slides [data-bd].bd-done { will-change: auto; }
 .bd-guide--h { height: 1px; }
 .bd-guide > b { position: absolute; left: 6px; top: 50%; font: 500 10px/1 var(--f-mono); padding: 3px 5px; border-radius: 3px; background: var(--main); color: #fff; white-space: nowrap; }
 .bd-guide.is-out { opacity: 0; }
+@media (max-width: 860px) { .bd-cur { transform-origin: 0 0; scale: 0.86; } }
+/* the deck moves the page itself: no rubber band, no browser smooth scroll in the way */
+html.bd-deck, html.bd-deck body { overscroll-behavior-y: none; scroll-behavior: auto; }
 /* the dots on the right */
 .slides-rail { position: fixed; right: calc(var(--gutter) * 0.32); top: 50%; translate: 0 -50%; z-index: 48; display: grid; gap: 0.35rem; }
 .slides-rail button { position: relative; display: grid; place-items: center; width: 22px; height: 22px; border: 0; background: transparent; cursor: pointer; }
